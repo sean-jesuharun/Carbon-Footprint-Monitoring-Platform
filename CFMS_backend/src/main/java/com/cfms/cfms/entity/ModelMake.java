@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "model_make")
-public class Model_Make {
+public class ModelMake {
 
     @Id
     private String model;

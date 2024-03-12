@@ -18,7 +18,7 @@ public class Vehicle {
 
     @ManyToOne
     @JoinColumn(name = "model", nullable = false)
-    private Model_Make model;
+    private ModelMake model;
 
     @Basic
     @Column(name = "engine_size", nullable = false)
