@@ -15,7 +15,7 @@ public class TransportationService {
         this.transportationRepository = transportationRepository;
     }
 
-    public void saveTransportation(Transportation transportation){
-        transportationRepository.save(transportation);
+    public Transportation saveTransportation(Transportation transportation){
+        return transportationRepository.save(transportation);
     }
 }
