@@ -1,15 +1,13 @@
 package com.cfms.cfms.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransportationEmissionData {
+@Builder
+public class TransportationEmissionDataDto {
 
     private String vehicleModel;
 

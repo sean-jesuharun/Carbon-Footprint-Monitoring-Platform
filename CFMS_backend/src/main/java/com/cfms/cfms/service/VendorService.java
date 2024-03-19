@@ -5,6 +5,8 @@ import com.cfms.cfms.repository.VendorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class VendorService {
 
@@ -15,7 +17,7 @@ public class VendorService {
         this.vendorRepository = vendorRepository;
     }
 
-    public Vendor getVendor(Long id){
-        return vendorRepository.getReferenceById(id);
+    public Optional<Vendor> getVendor(Long id){
+        return vendorRepository.findById(id);
     }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @ToString
 @Entity
 @Table(name = "transportation")
@@ -35,8 +36,6 @@ public class Transportation {
     @Basic
     @Column(name = "fuel_consumption", nullable = false)
     private double fuel_consumption;
-
-//    private double distance;
 
     @Basic
     @Column(name = "transportation_type", nullable = false, columnDefinition = "enum('INBOUND','OUTBOUND')")
