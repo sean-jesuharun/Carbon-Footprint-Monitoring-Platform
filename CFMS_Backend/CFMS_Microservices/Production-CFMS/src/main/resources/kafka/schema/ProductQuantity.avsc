@@ -1,0 +1,32 @@
+{
+  "fields": [
+    {
+      "name": "transportationType",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "vendor",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "productName",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "quantity",
+      "type": "int"
+    }
+  ],
+  "name": "ProductQuantity",
+  "namespace": "com.cfms.kafka",
+  "type": "record"
+}
