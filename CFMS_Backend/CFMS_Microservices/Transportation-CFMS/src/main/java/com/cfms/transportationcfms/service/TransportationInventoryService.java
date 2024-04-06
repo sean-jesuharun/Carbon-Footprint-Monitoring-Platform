@@ -58,14 +58,12 @@ public class TransportationInventoryService {
 
         }
 
-
     }
 
-
+    // Saving Transportation
     public void saveTransportationInventory(TransportationInventory transportationInventory){
         transportationInventoryRepository.save(transportationInventory);
     }
-
 
     // Converting the String of transport_inventory to Map <String, Integer> <productName, Quantity>
     private Map<String, Integer> parseTransportInventoryString(String propertyIds) {

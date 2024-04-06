@@ -1,22 +1,10 @@
 package com.cfms.transportationcfms.service;
 
-import com.cfms.kafka.ProductQuantity;
 import com.cfms.transportationcfms.dto.TransportationDTO;
-import com.cfms.transportationcfms.dto.TransportationEmissionDataDTO;
 import com.cfms.transportationcfms.entity.Transportation;
-import com.cfms.transportationcfms.entity.TransportationInventory;
-import com.cfms.transportationcfms.entity.TransportationInventoryKey;
 import com.cfms.transportationcfms.repository.TransportationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.MediaType;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class TransportationService {

@@ -3,8 +3,6 @@ package com.cfms.productioncfms.service;
 import com.cfms.productioncfms.dto.ProductionMatrixDTO;
 import com.cfms.productioncfms.entity.ProductionMatrix;
 import com.cfms.productioncfms.entity.Vendor;
-import com.cfms.productioncfms.entity.VendorSupply;
-import com.cfms.productioncfms.entity.VendorSupplyKey;
 import com.cfms.productioncfms.repository.ProductionMatrixRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +23,9 @@ public class ProductionMatrixService {
     }
 
     // Add new ProductionMatrix if it's not available already.
-    public void addProductionMatrix(List<ProductionMatrixDTO> productMatrixList, Vendor vendor){
+    public void addProductionMatrix(List<ProductionMatrixDTO> productionMatrixList, Vendor vendor){
 
-        for (ProductionMatrixDTO productionMatrixDTO: productMatrixList){
+        for (ProductionMatrixDTO productionMatrixDTO: productionMatrixList){
 
             ProductionMatrix productionMatrix = getProductionMatrix(productionMatrixDTO);
 
