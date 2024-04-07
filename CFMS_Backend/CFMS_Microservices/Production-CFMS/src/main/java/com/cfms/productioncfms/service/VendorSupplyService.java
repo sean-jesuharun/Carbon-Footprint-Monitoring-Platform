@@ -14,9 +14,12 @@ public class VendorSupplyService {
 
     private VendorSupplyRepository vendorSupplyRepository;
 
+    private ProductionKafkaProducerService productionKafkaProducerService;
+
     @Autowired
-    public VendorSupplyService(VendorSupplyRepository vendorSupplyRepository) {
+    public VendorSupplyService(VendorSupplyRepository vendorSupplyRepository, ProductionKafkaProducerService productionKafkaProducerService) {
         this.vendorSupplyRepository = vendorSupplyRepository;
+        this.productionKafkaProducerService = productionKafkaProducerService;
     }
 
     // Adding Vendor Supply.
@@ -33,6 +36,9 @@ public class VendorSupplyService {
 
         // Saving VendorSupply
         saveVendorSupply(vendorSupply);
+
+        // Produce VendorSupplyInventory Data
+        productionKafkaProducerService.produceVendorSupplyInventory(vendor.getVendorName(), productName);
     }
 
     public void saveVendorSupply(VendorSupply vendorSupply){

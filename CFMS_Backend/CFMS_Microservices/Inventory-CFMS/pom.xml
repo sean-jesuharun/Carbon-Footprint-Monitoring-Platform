@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.cfms</groupId>
-    <artifactId>Production-CFMS</artifactId>
+    <artifactId>Inventory-CFMS</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Production-CFMS</name>
-    <description>Production-CFMS</description>
+    <name>Inventory-CFMS</name>
+    <description>Inventory-CFMS</description>
 
     <properties>
         <java.version>17</java.version>
@@ -72,11 +72,6 @@
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
             <version>1.11.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
         <dependency>

@@ -25,8 +25,9 @@ public class VendorService {
     public void addNewVendor(VendorDTO vendorDTO) {
 
         // Building Vendor entity to save in database
+        // Convert VendorName to UpperCase
         Vendor vendor = Vendor.builder()
-                .vendorName(vendorDTO.getVendorName())
+                .vendorName(vendorDTO.getVendorName().toUpperCase())
                 .location(vendorDTO.getLocation())
                 .build();
 

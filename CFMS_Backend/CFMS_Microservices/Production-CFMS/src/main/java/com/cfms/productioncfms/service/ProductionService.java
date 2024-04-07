@@ -43,11 +43,14 @@ public class ProductionService {
             // Retrieving the ProductionMatrix Details of the relevant VendorSupply.
             ProductionMatrix productionMatrix = productionMatrixService.getProductionMatrix(vendorSupply.getProductionMatrix().getProductionMatrixId());
 
-            // Predicting Production Emission.
-            double predictedProductionCO2Emission = productionEmissionService.predictProductionEmission(productionMatrix.getRegion(), productionMatrix.getAnimalSpecies(), productionMatrix.getProductionSystem(), productionMatrix.getCommodity());
+            // Predicting Production CO2eEmission Per Kg.
+            double predictedProductionCO2eEmissionPerKg = productionEmissionService.predictProductionEmission(productionMatrix.getRegion(), productionMatrix.getAnimalSpecies(), productionMatrix.getProductionSystem(), productionMatrix.getCommodity());
+
+            // Calculating Total Production CO2e Emission.
+            double totalProductionCO2eEmission = calculateTotalProductionCO2eEmission(predictedProductionCO2eEmissionPerKg, transportedProductData.getQuantity());
 
             // Updating Production Emission.
-            vendorSupply.setCo2eEmission(vendorSupply.getCo2eEmission() + predictedProductionCO2Emission);
+            vendorSupply.setCo2eEmission(vendorSupply.getCo2eEmission() + totalProductionCO2eEmission);
 
             // Updating Product Supplied Quantity
             vendorSupply.setSuppliedQuantity(vendorSupply.getSuppliedQuantity() + transportedProductData.getQuantity());
@@ -56,6 +59,12 @@ public class ProductionService {
             vendorSupplyService.saveVendorSupply(vendorSupply);
         }
 
+    }
+
+    // Calculating Total Production Emission using Quantity and predictedProductionCO2eEmissionPerKg.
+    public double calculateTotalProductionCO2eEmission(double predictedProductionCO2eEmissionPerKg, int quantity){
+
+        return predictedProductionCO2eEmissionPerKg*quantity;
     }
 
 }

@@ -1,0 +1,14 @@
+{
+  "fields": [
+    {
+      "name": "productName",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ],
+  "name": "InventoryProduct",
+  "namespace": "com.cfms.kafka",
+  "type": "record"
+}

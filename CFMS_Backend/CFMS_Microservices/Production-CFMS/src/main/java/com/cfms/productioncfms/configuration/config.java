@@ -1,4 +1,4 @@
-package com.cfms.transportationcfms.configuration;
+package com.cfms.productioncfms.configuration;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
@@ -7,18 +7,18 @@ import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
-public class Config {
+public class config {
 
     // Creating a Bean Of WebClient Builder.
     @Bean
-    public WebClient.Builder webClientBuilder() {
+    public WebClient.Builder webClientBuilder(){
         return WebClient.builder();
     }
 
-    // Creating a Kafka Topic called "transportInventoryQuantity"
+    // Creating a Kafka Topic called "vendorSupplyInventory"
     @Bean
-    public NewTopic transportInventoryQuantity(){
-        return TopicBuilder.name("transportInventoryQuantity")
+    public NewTopic vendorSupplyInventory(){
+        return TopicBuilder.name("vendorSupplyInventory")
                 .build();
     }
 

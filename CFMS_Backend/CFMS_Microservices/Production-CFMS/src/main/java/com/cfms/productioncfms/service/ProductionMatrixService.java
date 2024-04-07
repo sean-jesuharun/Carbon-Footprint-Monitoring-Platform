@@ -46,7 +46,8 @@ public class ProductionMatrixService {
             }
 
             // Adding the VendorSupply with Vendor, ProductName, ProductionMatrix.
-            vendorSupplyService.addVendorSupply(vendor, productionMatrixDTO.getProductName(), productionMatrix);
+            // Convert productName to UpperCase
+            vendorSupplyService.addVendorSupply(vendor, productionMatrixDTO.getProductName().toUpperCase(), productionMatrix);
 
         }
 
