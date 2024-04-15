@@ -1,7 +1,7 @@
 package com.cfms.transportationcfms.service;
 
-
-import com.cfms.kafka.ProductQuantity;
+import com.cfms.transportationcfms.dto.TransportationInventoryCo2eDTO;
+import com.cfms.transportationcfms.dto.TransportInventoryQuantityDTO;
 import com.cfms.transportationcfms.entity.Transportation;
 import com.cfms.transportationcfms.entity.TransportationInventory;
 import com.cfms.transportationcfms.entity.TransportationInventoryKey;
@@ -9,52 +9,77 @@ import com.cfms.transportationcfms.repository.TransportationInventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Service
 public class TransportationInventoryService {
 
     private TransportationInventoryRepository transportationInventoryRepository;
 
-    private TransportationKafkaProducerService transportationKafkaProducerService;
 
     @Autowired
-    public TransportationInventoryService(TransportationInventoryRepository transportationInventoryRepository, TransportationKafkaProducerService transportationKafkaProducerService) {
+    public TransportationInventoryService(TransportationInventoryRepository transportationInventoryRepository) {
         this.transportationInventoryRepository = transportationInventoryRepository;
-        this.transportationKafkaProducerService = transportationKafkaProducerService;
     }
 
-    // Update Transportation Inventory.
-    public void addTransportationInventory(String transportInventory, Transportation transportation){
+//     Update Transportation Inventory.
+//    public void addTransportationInventory(String transportInventory, Transportation transportation){
+//
+//        // Map the transportInventory with the related Quantities of their transport
+//        Map<String, Integer> transportInventoriesQuantityList = parseTransportInventoryString(transportInventory);
+//
+//        // Finding the Total Quantity of Products Being involved in the Transportation.
+//        int totalQuantity = transportInventoriesQuantityList.values().stream()
+//                .mapToInt(Integer::intValue)
+//                .sum();
+//
+//        // Distributing total Transportation emission between products and updating the TransportationInventory Table
+//        // Producing Kafka messages using "ProductQuantity.avsc" avro schema
+//        for(String productName : transportInventoriesQuantityList.keySet()) {
+//
+//            // Creating TransportationInventoryKey (composite key) & Transient TransportationInventory Entity
+//            TransportationInventory transportationInventory = TransportationInventory.builder()
+//                    .transportationInventoryKey(TransportationInventoryKey.builder()
+//                            .transportation(transportation)
+//                            .productName(productName)
+//                            .build())
+//                    .productQuantity(transportInventoriesQuantityList.get(productName))
+//                    .co2eEmission((transportInventoriesQuantityList.get(productName).doubleValue()/totalQuantity)*transportation.getCo2eEmission())
+//                    .build();
+//
+//            // Saving TransportationInventory
+//            saveTransportationInventory(transportationInventory);
+//
+//            // Produce TransportedProduct Data
+//            transportationKafkaProducerService.produceTransportedProductData(transportation.getTransportationId(), transportation.getTransportationType(), transportation.getVendor(), productName, transportInventoriesQuantityList.get(productName));
+//
+//        }
+//
+//    }
 
-        // Map the transportInventory with the related Quantities of their transport
-        Map<String, Integer> transportInventoriesQuantityList = parseTransportInventoryString(transportInventory);
+    // Update Transportation Inventory.
+    public void addTransportationInventory(List<TransportInventoryQuantityDTO> transportInventoryList, Transportation transportation){
 
         // Finding the Total Quantity of Products Being involved in the Transportation.
-        int totalQuantity = transportInventoriesQuantityList.values().stream()
-                .mapToInt(Integer::intValue)
+        int totalQuantity = transportInventoryList.stream()
+                .mapToInt(TransportInventoryQuantityDTO::getQuantity)
                 .sum();
 
         // Distributing total Transportation emission between products and updating the TransportationInventory Table
-        // Producing Kafka messages using "ProductQuantity.avsc" avro schema
-        for(String productName : transportInventoriesQuantityList.keySet()) {
+        for(TransportInventoryQuantityDTO transportInventory : transportInventoryList) {
 
             // Creating TransportationInventoryKey (composite key) & Transient TransportationInventory Entity
             TransportationInventory transportationInventory = TransportationInventory.builder()
                     .transportationInventoryKey(TransportationInventoryKey.builder()
                             .transportation(transportation)
-                            .productName(productName)
+                            .productName(transportInventory.getProductName())
                             .build())
-                    .productQuantity(transportInventoriesQuantityList.get(productName))
-                    .co2eEmission((transportInventoriesQuantityList.get(productName).doubleValue()/totalQuantity)*transportation.getCo2eEmission())
+                    .productQuantity(transportInventory.getQuantity())
+                    .co2eEmission(((double)transportInventory.getQuantity()/totalQuantity)*transportation.getCo2eEmission())
                     .build();
 
             // Saving TransportationInventory
             saveTransportationInventory(transportationInventory);
-
-            // Produce TransportedProduct Data
-            transportationKafkaProducerService.produceTransportedProductData(transportation.getTransportationId(), transportation.getTransportationType(), transportation.getVendor(), productName, transportInventoriesQuantityList.get(productName));
 
         }
 
@@ -65,24 +90,29 @@ public class TransportationInventoryService {
         transportationInventoryRepository.save(transportationInventory);
     }
 
-    // Converting the String of transport_inventory to Map <String, Integer> <productName, Quantity>
-    private Map<String, Integer> parseTransportInventoryString(String propertyIds) {
-        Map<String, Integer> result = new HashMap<>();
-        String[] pairs = propertyIds.split(",");
-        for (String pair : pairs) {
-            String[] keyValue = pair.split("=");
-            if (keyValue.length == 2) {
-                try {
-                    String key = keyValue[0];
-                    int quantity = Integer.parseInt(keyValue[1]);
-                    result.put(key, quantity);
-                } catch (NumberFormatException e) {
-                    // Handle parsing error if needed
-                }
-            }
-        }
-        return result;
+    public TransportationInventoryCo2eDTO getProductTransportationEmission(String productName) {
+
+        return transportationInventoryRepository.retrieveProductTransportationC02eEmissionData(productName);
+
     }
 
+//    // Converting the String of transport_inventory to Map <String, Integer> <productName, Quantity>
+//    private Map<String, Integer> parseTransportInventoryString(String propertyIds) {
+//        Map<String, Integer> result = new HashMap<>();
+//        String[] pairs = propertyIds.split(",");
+//        for (String pair : pairs) {
+//            String[] keyValue = pair.split("=");
+//            if (keyValue.length == 2) {
+//                try {
+//                    String key = keyValue[0];
+//                    int quantity = Integer.parseInt(keyValue[1]);
+//                    result.put(key, quantity);
+//                } catch (NumberFormatException e) {
+//                    // Handle parsing error if needed
+//                }
+//            }
+//        }
+//        return result;
+//    }
 
 }

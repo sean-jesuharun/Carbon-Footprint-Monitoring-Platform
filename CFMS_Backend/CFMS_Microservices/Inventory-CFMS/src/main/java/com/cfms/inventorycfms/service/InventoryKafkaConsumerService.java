@@ -1,7 +1,6 @@
 package com.cfms.inventorycfms.service;
 
 import com.cfms.kafka.InventoryProduct;
-import com.cfms.kafka.ProductQuantity;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -33,22 +32,20 @@ public class InventoryKafkaConsumerService {
 
     }
 
-
-    // Consuming Transported Inventory Data.
-    @KafkaListener(topics = "transportInventoryQuantity",
-            groupId = "inventoryUpdateGroup",
-            properties = {
-                    "key.deserializer=org.apache.kafka.common.serialization.LongDeserializer"
-            })
-    public void consumeTransportedProductData(ConsumerRecord<Long, ProductQuantity> record){
-
-        // Deserialize according to ProductQuantity Schema (local).
-        ProductQuantity productQuantity = record.value();
-
-        // Update quantity in hand of Inventories.
-        inventoryService.updateInventoryQuantity(productQuantity.getTransportationType().toString(), productQuantity.getProductName().toString(), productQuantity.getQuantity());
-
-    }
-
+//    // Consuming Transported Inventory Data.
+//    @KafkaListener(topics = "transportInventoryQuantity",
+//            groupId = "inventoryUpdateGroup",
+//            properties = {
+//                    "key.deserializer=org.apache.kafka.common.serialization.LongDeserializer"
+//            })
+//    public void consumeTransportedProductData(ConsumerRecord<Long, ProductQuantity> record){
+//
+//        // Deserialize according to ProductQuantity Schema (local).
+//        ProductQuantity productQuantity = record.value();
+//
+//        // Update quantity in hand of Inventories.
+//        inventoryService.updateInventoryQuantity(productQuantity.getTransportationType().toString(), productQuantity.getProductName().toString(), productQuantity.getQuantity());
+//
+//    }
 
 }

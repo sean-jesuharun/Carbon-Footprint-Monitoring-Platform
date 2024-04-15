@@ -1,5 +1,6 @@
 package com.cfms.productioncfms.service;
 
+import com.cfms.productioncfms.dto.ProductionInventoryCo2eDTO;
 import com.cfms.productioncfms.entity.ProductionMatrix;
 import com.cfms.productioncfms.entity.Vendor;
 import com.cfms.productioncfms.entity.VendorSupply;
@@ -48,5 +49,11 @@ public class VendorSupplyService {
 
     public VendorSupply getVendorSupply(VendorSupplyKey vendorSupplyKey){
         return vendorSupplyRepository.findById(vendorSupplyKey).get();
+    }
+
+    public ProductionInventoryCo2eDTO getInventoryProductionEmission(String productName) {
+
+        return vendorSupplyRepository.retrieveInventoryProductionC02eEmissionData(productName);
+
     }
 }

@@ -26,16 +26,42 @@ public class TransportationService {
         this.transportationEmissionService = transportationEmissionService;
     }
 
-    public void processTransportation(Long vehicleId, String transportInventory, String vendor, TransportationDTO transportationDTO) {
+//    public void processTransportation(Long vehicleId, String transportInventory, String vendor, TransportationDTO transportationDTO) {
+//
+//        // Building Transportation entity to save in database.
+//        Transportation transportation = Transportation.builder()
+//                .vehicle(vehicleService.getVehicle(vehicleId))
+//                .date(transportationDTO.getDate())
+//                .fuelType(transportationDTO.getFuelType())
+//                .fuelConsumption(transportationDTO.getFuelConsumption())
+//                .transportationType(transportationDTO.getTransportationType())
+//                .vendor(vendor)
+//                .build();
+//
+//        // Predicting Transportation Emission.
+//        Integer predictedTransportationCo2Emission = transportationEmissionService.predictProductionEmission(transportation.getVehicle().getModel().getModel(), transportation.getVehicle().getEngineSize(), transportation.getVehicle().getCylinders(), transportation.getFuelConsumption(), transportation.getVehicle().getVehicleType(), transportation.getFuelType());
+//
+//        // Assigning the predicted CO2e Emission for the Transportation
+//        transportation.setCo2eEmission(predictedTransportationCo2Emission);
+//
+//        // Saving Transportation
+//        transportation = saveTransportation(transportation);
+//
+//        // Update TransportInventory
+//        transportationInventoryService.addTransportationInventory(transportInventory, transportation);
+//
+//    }
+
+    public void processTransportation(TransportationDTO transportationDTO) {
 
         // Building Transportation entity to save in database.
         Transportation transportation = Transportation.builder()
-                .vehicle(vehicleService.getVehicle(vehicleId))
+                .vehicle(vehicleService.getVehicle(transportationDTO.getVehicleId()))
                 .date(transportationDTO.getDate())
                 .fuelType(transportationDTO.getFuelType())
                 .fuelConsumption(transportationDTO.getFuelConsumption())
                 .transportationType(transportationDTO.getTransportationType())
-                .vendor(vendor)
+                .vendor(transportationDTO.getVendor())
                 .build();
 
         // Predicting Transportation Emission.
@@ -48,7 +74,7 @@ public class TransportationService {
         transportation = saveTransportation(transportation);
 
         // Update TransportInventory
-        transportationInventoryService.addTransportationInventory(transportInventory, transportation);
+        transportationInventoryService.addTransportationInventory(transportationDTO.getTransportInventoryList(), transportation);
 
     }
 
@@ -56,6 +82,5 @@ public class TransportationService {
     public Transportation saveTransportation(Transportation transportation){
         return transportationRepository.save(transportation);
     }
-
 
 }

@@ -27,12 +27,12 @@
 		</repository>
 	</repositories>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>confluent</id>
-			<url>https://packages.confluent.io/maven/</url>
-		</pluginRepository>
-	</pluginRepositories>
+<!--	<pluginRepositories>-->
+<!--		<pluginRepository>-->
+<!--			<id>confluent</id>-->
+<!--			<url>https://packages.confluent.io/maven/</url>-->
+<!--		</pluginRepository>-->
+<!--	</pluginRepositories>-->
 
 	<dependencies>
 
@@ -51,28 +51,28 @@
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.kafka</groupId>-->
+<!--			<artifactId>spring-kafka</artifactId>-->
+<!--		</dependency>-->
 
-		<dependency>
-			<groupId>io.confluent</groupId>
-			<artifactId>kafka-avro-serializer</artifactId>
-			<version>${confluent.version}</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>io.confluent</groupId>-->
+<!--			<artifactId>kafka-avro-serializer</artifactId>-->
+<!--			<version>${confluent.version}</version>-->
+<!--		</dependency>-->
 
-		<dependency>
-			<groupId>io.confluent</groupId>
-			<artifactId>kafka-schema-registry-client</artifactId>
-			<version>${confluent.version}</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>io.confluent</groupId>-->
+<!--			<artifactId>kafka-schema-registry-client</artifactId>-->
+<!--			<version>${confluent.version}</version>-->
+<!--		</dependency>-->
 
-		<dependency>
-			<groupId>org.apache.avro</groupId>
-			<artifactId>avro</artifactId>
-			<version>1.11.0</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.apache.avro</groupId>-->
+<!--			<artifactId>avro</artifactId>-->
+<!--			<version>1.11.0</version>-->
+<!--		</dependency>-->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -97,11 +97,11 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.kafka</groupId>-->
+<!--			<artifactId>spring-kafka-test</artifactId>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
 
 	</dependencies>
 
@@ -134,26 +134,26 @@
 			</plugin>
 
 
-			<plugin>
-				<groupId>org.apache.avro</groupId>
-				<artifactId>avro-maven-plugin</artifactId>
-				<version>1.8.2</version>
-				<executions>
-					<execution>
-						<id>schemas</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>schema</goal>
-							<goal>protocol</goal>
-							<goal>idl-protocol</goal>
-						</goals>
-						<configuration>
-							<sourceDirectory>${project.basedir}/src/main/resources/kafka/schema</sourceDirectory>
-							<outputDirectory>${project.basedir}/src/main/java</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>org.apache.avro</groupId>-->
+<!--				<artifactId>avro-maven-plugin</artifactId>-->
+<!--				<version>1.8.2</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>schemas</id>-->
+<!--						<phase>generate-sources</phase>-->
+<!--						<goals>-->
+<!--							<goal>schema</goal>-->
+<!--							<goal>protocol</goal>-->
+<!--							<goal>idl-protocol</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<sourceDirectory>${project.basedir}/src/main/resources/kafka/schema</sourceDirectory>-->
+<!--							<outputDirectory>${project.basedir}/src/main/java</outputDirectory>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 
 		</plugins>
 	</build>
