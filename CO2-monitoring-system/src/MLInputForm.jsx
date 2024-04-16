@@ -9,42 +9,48 @@ const MLInputForm = () => {
     fuelConsumption: null,
     transportationType: '',
     vendor: '',
-    ProductList: [{ productName: '', quantity: null }]
+    transportInventoryList: [{ productName: '', quantity: null }]
   });
 
   const handleMainInputChange = (e) => {
     const { name, value } = e.target;
+    const parsedValue = name === 'fuelConsumption' || name === 'vehicleId' ? parseInt(value, 10) : value; // Parse as integer if it's fuelConsumption or vehicleId
     setFormData({
       ...formData,
-      [name]: value
+      [name]: parsedValue
     });
   };
+  
 
   const handleProductInputChange = (index, e) => {
     const { name, value } = e.target;
-    const updatedProducts = [...formData.ProductList];
-    updatedProducts[index][name] = value;
+    const parsedValue = name === 'quantity' ? parseInt(value, 10) : value; // Parse as integer if it's quantity
+    const updatedProducts = [...formData.transportInventoryList];
+    updatedProducts[index][name] = parsedValue;
     setFormData({
       ...formData,
-      ProductList: updatedProducts
+      transportInventoryList: updatedProducts
     });
   };
+  
 
   const handleAddProduct = () => {
     setFormData({
       ...formData,
-      ProductList: [...formData.ProductList, { productName: '', quantity: '' }]
+      transportInventoryList: [...formData.transportInventoryList, { productName: '', quantity: '' }]
     });
   };
 
   const handleRemoveProduct = (index) => {
-    const updatedProducts = [...formData.ProductList];
+    const updatedProducts = [...formData.transportInventoryList];
     updatedProducts.splice(index, 1);
     setFormData({
       ...formData,
-      ProductList: updatedProducts
+      transportInventoryList: updatedProducts
     });
   };
+
+  //Uncomment following comment to send post requests
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,7 +68,7 @@ const MLInputForm = () => {
           fuelConsumption: formData.fuelConsumption,
           transportationType: formData.transportationType,
           vendor: formData.vendor,
-          ProductList: formData.ProductList
+          transportInventoryList: formData.transportInventoryList
         })
       });
 
@@ -78,7 +84,7 @@ const MLInputForm = () => {
         fuelConsumption: null,
         transportationType: '',
         vendor: '',
-        ProductList: [{ productName: '', quantity: null }]
+        transportInventoryList: [{ productName: '', quantity: null }]
       });
 
       console.log('Form submitted successfully');
@@ -86,6 +92,34 @@ const MLInputForm = () => {
       console.error('Error submitting form:', error);
     }
   };
+
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  
+  //   // Log the payload to the console
+  //   console.log({
+  //     date: formData.date,
+  //     vehicleId: formData.vehicleId,
+  //     fuelType: formData.fuelType,
+  //     fuelConsumption: formData.fuelConsumption,
+  //     transportationType: formData.transportationType,
+  //     vendor: formData.vendor,
+  //     transportInventoryListist: formData.transportInventoryList
+  //   });
+  
+  // Optionally, you can reset the form data here
+  //   setFormData({
+  //     date: '',
+  //     vehicleId: null,
+  //     fuelType: '',
+  //     fuelConsumption: null,
+  //     transportationType: '',
+  //     vendor: '',
+  //     transportInventoryList: [{ productName: '', quantity: null }]
+  //   });
+  // };
+  
 
   return (
     <form onSubmit={handleSubmit}>
@@ -149,14 +183,17 @@ const MLInputForm = () => {
             onChange={handleMainInputChange}
           >
             <option value="Butcher">Butcher</option>
+            <option value="Vendor1">Vendor1</option>
+            <option value="Vendor2">Vendor2</option>
+            <option value="Vendor3">Vendor3</option>
             {/* Add other vendors as options */}
           </select>
           <br />
         </>
       )}
       <hr />
-      <h3>Product List</h3>
-      {formData.ProductList.map((product, index) => (
+      <h3>transport Inventory List</h3>
+      {formData.transportInventoryList.map((product, index) => (
         <div key={index}>
           <label>Product Name:</label>
           <select
@@ -166,6 +203,8 @@ const MLInputForm = () => {
           >
             <option value="SheepMeat">SheepMeat</option>
             <option value="BuffaloMeat">BuffaloMeat</option>
+            <option value="Milk">Milk</option>
+            <option value="Cheese">Cheese</option>
             {/* Add other product names as options */}
           </select>
           <label>Quantity:</label>
