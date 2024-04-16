@@ -45,9 +45,36 @@ const MLInputForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    
+    try {
+      const response = await fetch('http://your-backend-api.com/submit-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit form');
+      }
+
+      // Reset the form data after successful submission
+      setFormData({
+        date: '',
+        fuelType: '',
+        fuelConsumption: '',
+        transportationType: '',
+        vendor: '',
+        ProductList: [{ productName: '', quantity: '' }]
+      });
+
+      console.log('Form submitted successfully');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
   };
 
   return (
