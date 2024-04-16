@@ -4,11 +4,12 @@ import './MLInputForm.css'; // Import CSS file for styling
 const MLInputForm = () => {
   const [formData, setFormData] = useState({
     date: '',
+    vehicleId: null, // Added vehicleId property
     fuelType: '',
-    fuelConsumption: '',
+    fuelConsumption: null,
     transportationType: '',
     vendor: '',
-    ProductList: [{ productName: '', quantity: '' }]
+    ProductList: [{ productName: '', quantity: null }]
   });
 
   const handleMainInputChange = (e) => {
@@ -54,7 +55,15 @@ const MLInputForm = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+          body: JSON.stringify({
+          date: formData.date,
+          vehicleId: formData.vehicleId,
+          fuelType: formData.fuelType,
+          fuelConsumption: formData.fuelConsumption,
+          transportationType: formData.transportationType,
+          vendor: formData.vendor,
+          ProductList: formData.ProductList
+        })
       });
 
       if (!response.ok) {
@@ -64,11 +73,12 @@ const MLInputForm = () => {
       // Reset the form data after successful submission
       setFormData({
         date: '',
+        vehicleId: null,
         fuelType: '',
-        fuelConsumption: '',
+        fuelConsumption: null,
         transportationType: '',
         vendor: '',
-        ProductList: [{ productName: '', quantity: '' }]
+        ProductList: [{ productName: '', quantity: null }]
       });
 
       console.log('Form submitted successfully');
@@ -79,6 +89,7 @@ const MLInputForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
+
       <label>Date:</label>
       <input
         type="date"
@@ -87,6 +98,16 @@ const MLInputForm = () => {
         onChange={handleMainInputChange}
       />
       <br />
+
+      <label>Vehicle ID:</label>
+        <input
+        type="number"
+        name="vehicleId"
+        value={formData.vehicleId}
+        onChange={handleMainInputChange}
+      />
+      <br />
+
       <label>Fuel Type:</label>
       <select
         name="fuelType"
