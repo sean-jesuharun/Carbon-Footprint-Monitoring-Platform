@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Grid, Card, CardContent, TextField, Select, MenuItem, Button, Typography } from '@mui/material';
-import './MLInputForm.css'; // Import CSS file for styling
+
+
+
+
 
 const MLInputForm = () => {
   const [formData, setFormData] = useState({
@@ -123,8 +126,8 @@ const MLInputForm = () => {
   
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '20px' }}>
-      <form onSubmit={handleSubmit}>
+    <div style={{minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '20px'  }}>
+      <form onSubmit={handleSubmit} >
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
             <Card style={{ height: '98%' }}>
