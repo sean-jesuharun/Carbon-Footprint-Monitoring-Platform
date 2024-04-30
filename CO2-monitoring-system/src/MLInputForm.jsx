@@ -248,7 +248,9 @@ const MLInputForm = () => {
             </Card>
           </Grid>
         </Grid>
-        <Button type="submit" variant='contained' color='primary' fullWidth>Submit</Button>
+        <div style={{ display: 'flex', justifyContent: 'center',marginTop:'5px' }}>
+  <Button type="submit" variant='contained' color='primary' style={{ width: '200px' }}>Submit</Button>
+</div>
       </form>
     </div>
   );
