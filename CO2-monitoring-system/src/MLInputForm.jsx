@@ -124,10 +124,10 @@ const MLInputForm = () => {
     });
   };
   
-
   return (
     <div style={{minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '20px'  }}>
       <form onSubmit={handleSubmit} >
+      <Typography variant='h2'marginTop={1} marginBottom={3} color='#78909c' >Transportation data input form</Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
             <Card style={{ height: '98%' }}>
