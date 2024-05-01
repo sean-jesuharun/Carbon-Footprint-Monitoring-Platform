@@ -83,7 +83,7 @@ const VendorInputForm = () => {
             </Card>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Card style={{ height: '500px'}}>
+            <Card style={{ height: 'fix'}}>
               <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
                 {formData.supplyProductDetailList.map((product, index) => (
                   <div key={index}>
