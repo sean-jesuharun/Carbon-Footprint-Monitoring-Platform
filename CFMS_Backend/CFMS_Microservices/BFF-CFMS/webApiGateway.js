@@ -1,6 +1,6 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const axios = require('axios');
+const cors = require('cors');
 const Eureka = require('eureka-js-client').Eureka;
 
 const PORT = 8080;
@@ -15,6 +15,58 @@ const app = express();
 // Middleware to parse incoming request bodies
 app.use(express.json());
 
+// If your React application is running on a different origin (e.g., http://localhost:3000) than your Express server (e.g., http://localhost:8080), you need to enable CORS in your Express server to allow requests from the React application.
+app.use(cors());
+
+
+// Route to handle combined transportationProduction request.
+app.use('/transportationProduction', async (req, res) => {
+    
+  const { date, vehicleId, fuelType, fuelConsumption, transportationType, vendor, transportInventoryDetailList } = req.body;
+
+  try {
+
+    // Create object for transportation data
+    const transportation = {
+      date,
+      vehicleId,
+      fuelType,
+      fuelConsumption,
+      transportationType,
+      vendor,
+      transportInventoryDetailList
+    }
+ 
+    // Forward transportation data to transportation microservice
+    const transportationService = getTargetServiceUrl(TRANSPORTATION_SERVICE_NAME);
+    await axios.post(transportationService + '/transportation', transportation);
+
+    // Forward production data to production microservice
+    const productionService = getTargetServiceUrl(PRODUCTION_SERVICE_NAME);
+
+    // Iterate over each transport inventory detail
+    for (const transportInventoryDetail of transportInventoryDetailList) {
+
+      // Create production data object for each transport inventory detail
+      const productionData = {
+        vendorName: vendor, // Assuming vendorName corresponds to vendor in your DTO
+        productName: transportInventoryDetail.productName, // Assuming productName is available in transportInventoryDetail
+        transportInventoryQuantityDataDTO: {
+          quantity: transportInventoryDetail.quantity // Assuming quantity is available in transportInventoryDetail
+        }
+      };
+      
+      // Send patch request for each item in the list
+      await axios.patch(productionService + `/production/${productionData.vendorName}/${productionData.productName}`, productionData.transportInventoryQuantityDataDTO);
+    }
+    
+    res.status(200).send('Data forwarded successfully to Transportation, Production, and Inventory services.');
+
+  } catch (error) {
+      console.error('Error forwarding data to Transportation, Production, and Inventory services.', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // Route to handle addVendor request
 app.use('/addVendor', async (req, res) => {
@@ -32,7 +84,7 @@ app.use('/addVendor', async (req, res) => {
  
     // Forward vendor data to production microservice
     const productionService = getTargetServiceUrl(PRODUCTION_SERVICE_NAME);
-    await axios.post(productionService + '/vendor/addVendor', vendor);
+    await axios.post(productionService + '/vendor', vendor);
     
     res.status(200).send('Data forwarded successfully to Production service.');
 
@@ -40,57 +92,6 @@ app.use('/addVendor', async (req, res) => {
       console.error('Error forwarding data to Production service.', error);
       res.status(500).json({ error: 'Internal server error' });
   }
-});
-
-// Route to handle combined transportationProduction request.
-app.use('/transportationProduction', async (req, res) => {
-    
-    const { date, vehicleId, fuelType, fuelConsumption, transportationType, vendor, transportInventoryList } = req.body;
-
-    try {
-
-      // Create object for transportation data
-      const transportation = {
-        date,
-        vehicleId,
-        fuelType,
-        fuelConsumption,
-        transportationType,
-        vendor,
-        transportInventoryList
-      }
-
-      // Create object for production data
-      const production = {
-        transportationType,
-        vendor,
-        transportInventoryList
-      }
-
-      // Create object for Inventory data
-      const inventory = {
-        transportationType,
-        transportInventoryList
-      }
-   
-      // Forward transportation data to transportation microservice
-      const transportationService = getTargetServiceUrl(TRANSPORTATION_SERVICE_NAME);
-      await axios.post(transportationService + '/transportation/transportationData', transportation);
-
-      // Forward production data to production microservice
-      const productionService = getTargetServiceUrl(PRODUCTION_SERVICE_NAME);
-      await axios.post(productionService + '/production/productionData', production);
-
-      // Forward inventory data to inventory microservice
-      const inventoryService = getTargetServiceUrl(INVENTORY_SERVICE_NAME);
-      await axios.post(inventoryService + '/inventory/inventoryData', inventory);
-      
-      res.status(200).send('Data forwarded successfully to Transportation, Production, and Inventory services.');
-
-    } catch (error) {
-        console.error('Error forwarding data to Transportation, Production, and Inventory services.', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
 });
 
 

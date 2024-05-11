@@ -6,15 +6,15 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @ToString
-public class VendorDTO {
+public class VendorResDTO {
 
+    private Long vendorId;
     private String vendorName;
-
     private String location;
-
-    private List<ProductionMatrixDTO> productList;
+    private List<ProductDetailResDTO> supplyProductDetailList;
 
 }

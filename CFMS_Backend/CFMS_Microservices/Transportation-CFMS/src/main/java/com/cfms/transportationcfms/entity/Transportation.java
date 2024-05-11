@@ -2,8 +2,10 @@ package com.cfms.transportationcfms.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,7 +18,20 @@ import java.util.Date;
 public class Transportation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "transportation_generator"
+    )
+    @GenericGenerator(
+            name = "transportation_generator",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "transportation_sequence"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "1"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "4"),
+                    @org.hibernate.annotations.Parameter(name = "optimizer", value = "pooled-lo")
+            }
+    )
     private Long transportationId;
 
     @ManyToOne
@@ -34,7 +49,7 @@ public class Transportation {
 
     @Basic
     @Column(name = "fuel_consumption", nullable = false)
-    private double fuelConsumption;
+    private Double fuelConsumption;
 
     @Basic
     @Column(name = "transportation_type", nullable = false, columnDefinition = "enum('INBOUND','OUTBOUND')")
@@ -46,6 +61,9 @@ public class Transportation {
 
     @Basic
     @Column(name = "co2e_emission", nullable = false)
-    private double co2eEmission;
+    private Double co2eEmission;
+
+    @OneToMany(mappedBy = "transportation")
+    List<TransportationInventory> transportationInventories;
 
 }

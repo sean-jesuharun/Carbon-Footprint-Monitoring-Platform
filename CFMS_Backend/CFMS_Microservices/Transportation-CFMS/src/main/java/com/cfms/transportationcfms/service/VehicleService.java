@@ -16,8 +16,5 @@ public class VehicleService {
         this.vehicleRepository = vehicleRepository;
     }
 
-    public Vehicle getVehicle(Long vehicleId){
-        return vehicleRepository.findById(vehicleId).get();
-    }
 
 }

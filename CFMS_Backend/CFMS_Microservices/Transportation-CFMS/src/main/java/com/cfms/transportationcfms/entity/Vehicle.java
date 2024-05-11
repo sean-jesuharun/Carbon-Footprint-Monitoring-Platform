@@ -24,11 +24,11 @@ public class Vehicle {
 
     @Basic
     @Column(name = "engine_size", nullable = false)
-    private double engineSize;
+    private Double engineSize;
 
     @Basic
     @Column(name = "cylinders", nullable = false)
-    private int cylinders;
+    private Integer cylinders;
 
     @Basic
     @Column(name = "vehicle_type", nullable = false, columnDefinition = "varchar(50)")

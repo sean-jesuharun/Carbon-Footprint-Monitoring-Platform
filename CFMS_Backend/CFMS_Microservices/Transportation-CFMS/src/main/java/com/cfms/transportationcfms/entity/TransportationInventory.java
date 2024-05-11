@@ -15,12 +15,16 @@ public class TransportationInventory {
     @EmbeddedId
     private TransportationInventoryKey transportationInventoryKey;
 
+    @ManyToOne
+    @JoinColumn(name = "transportation_id", nullable = false, insertable = false, updatable = false)
+    private Transportation transportation;
+
     @Basic
     @Column(name = "product_quantity", nullable = false)
-    private int productQuantity;
+    private Integer productQuantity;
 
     @Basic
     @Column(name = "co2e_emission", nullable = false)
-    private double co2eEmission;
+    private Double co2eEmission;
 
 }

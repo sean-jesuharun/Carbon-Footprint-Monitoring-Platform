@@ -7,10 +7,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class TransportInventoryQuantityDTO {
+public class TransportInventoryResDTO {
 
     private String productName;
 
-    private int quantity;
+    private String vendorName;
+
+    private Integer transportedQuantity;
+
+    private Double co2eEmission;
 
 }

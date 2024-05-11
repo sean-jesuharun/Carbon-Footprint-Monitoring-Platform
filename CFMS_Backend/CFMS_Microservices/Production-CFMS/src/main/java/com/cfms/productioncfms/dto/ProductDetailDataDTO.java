@@ -1,13 +1,14 @@
 package com.cfms.productioncfms.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @ToString
-public class ProductionMatrixDTO {
+public class ProductDetailDataDTO {
 
     private String productName;
 

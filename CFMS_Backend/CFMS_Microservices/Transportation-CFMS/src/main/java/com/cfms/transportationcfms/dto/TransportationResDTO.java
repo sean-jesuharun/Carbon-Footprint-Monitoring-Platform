@@ -10,20 +10,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class TransportationDTO {
+public class TransportationResDTO {
 
+    private Long transportationId;
     private Date date;
-
     private Long vehicleId;
-
     private String fuelType;
-
-    private double fuelConsumption;
-
+    private Double fuelConsumption;
     private String transportationType;
-
     private String vendor;
-
-    private List<TransportInventoryQuantityDTO> transportInventoryList;
+    private List<TransportedProductResDTO> transportInventoryDetailList;
 
 }

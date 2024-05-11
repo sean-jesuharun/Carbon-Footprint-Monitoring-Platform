@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class VendorSupplyKey implements Serializable {
 
     @ManyToOne
-    @JoinColumn(name = "vendor_name", nullable = false)
+    @JoinColumn(name = "vendor_id")
     private Vendor vendor;
 
     @Basic

@@ -1,4 +1,4 @@
-package com.cfms.productioncfms.dto;
+package com.cfms.transportationcfms.dto;
 
 import lombok.*;
 
@@ -7,10 +7,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class TransportInventoryQuantityDTO {
+public class TransportedProductDataDTO {
 
     private String productName;
 
-    private int quantity;
+    private Integer quantity;
 
 }

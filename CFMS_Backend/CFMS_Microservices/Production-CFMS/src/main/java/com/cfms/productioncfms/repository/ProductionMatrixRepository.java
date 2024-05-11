@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductionMatrixRepository extends JpaRepository<ProductionMatrix, Long> {
 
-    @Query(value = "select p from ProductionMatrix p where p.region=:region and p.animalSpecies=:animal_species and p.productionSystem=:production_system and p.commodity=:commodity")
-    ProductionMatrix getProductionMatrix(@Param("region") String region,@Param("animal_species") String animalSpecies,@Param("production_system") String productionSystem,@Param("commodity") String commodity);
+//    @Query(value = "select p from ProductionMatrix p where p.region=:region and p.animalSpecies=:animal_species and p.productionSystem=:production_system and p.commodity=:commodity")
+//    ProductionMatrix getProductionMatrix(@Param("region") String region,@Param("animal_species") String animalSpecies,@Param("production_system") String productionSystem,@Param("commodity") String commodity);
+
+    ProductionMatrix findByRegionAndAnimalSpeciesAndProductionSystemAndCommodity(String region, String animalSpecies, String productionSystem, String commodity);
 
 }

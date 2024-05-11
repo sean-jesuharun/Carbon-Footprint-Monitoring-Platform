@@ -1,72 +1,44 @@
 package com.cfms.transportationcfms.service;
 
-import com.cfms.transportationcfms.dto.TransportationInventoryCo2eDTO;
-import com.cfms.transportationcfms.dto.TransportInventoryQuantityDTO;
+import com.cfms.transportationcfms.dto.TransportInventoryResDTO;
+import com.cfms.transportationcfms.dto.TransportedProductDataDTO;
 import com.cfms.transportationcfms.entity.Transportation;
 import com.cfms.transportationcfms.entity.TransportationInventory;
 import com.cfms.transportationcfms.entity.TransportationInventoryKey;
 import com.cfms.transportationcfms.repository.TransportationInventoryRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class TransportationInventoryService {
 
     private TransportationInventoryRepository transportationInventoryRepository;
 
+    private ModelMapper modelMapper;
+
 
     @Autowired
-    public TransportationInventoryService(TransportationInventoryRepository transportationInventoryRepository) {
+    public TransportationInventoryService(TransportationInventoryRepository transportationInventoryRepository, ModelMapper modelMapper) {
         this.transportationInventoryRepository = transportationInventoryRepository;
+        this.modelMapper = modelMapper;
     }
 
-//     Update Transportation Inventory.
-//    public void addTransportationInventory(String transportInventory, Transportation transportation){
-//
-//        // Map the transportInventory with the related Quantities of their transport
-//        Map<String, Integer> transportInventoriesQuantityList = parseTransportInventoryString(transportInventory);
-//
-//        // Finding the Total Quantity of Products Being involved in the Transportation.
-//        int totalQuantity = transportInventoriesQuantityList.values().stream()
-//                .mapToInt(Integer::intValue)
-//                .sum();
-//
-//        // Distributing total Transportation emission between products and updating the TransportationInventory Table
-//        // Producing Kafka messages using "ProductQuantity.avsc" avro schema
-//        for(String productName : transportInventoriesQuantityList.keySet()) {
-//
-//            // Creating TransportationInventoryKey (composite key) & Transient TransportationInventory Entity
-//            TransportationInventory transportationInventory = TransportationInventory.builder()
-//                    .transportationInventoryKey(TransportationInventoryKey.builder()
-//                            .transportation(transportation)
-//                            .productName(productName)
-//                            .build())
-//                    .productQuantity(transportInventoriesQuantityList.get(productName))
-//                    .co2eEmission((transportInventoriesQuantityList.get(productName).doubleValue()/totalQuantity)*transportation.getCo2eEmission())
-//                    .build();
-//
-//            // Saving TransportationInventory
-//            saveTransportationInventory(transportationInventory);
-//
-//            // Produce TransportedProduct Data
-//            transportationKafkaProducerService.produceTransportedProductData(transportation.getTransportationId(), transportation.getTransportationType(), transportation.getVendor(), productName, transportInventoriesQuantityList.get(productName));
-//
-//        }
-//
-//    }
-
-    // Update Transportation Inventory.
-    public void addTransportationInventory(List<TransportInventoryQuantityDTO> transportInventoryList, Transportation transportation){
+    // Add Transportation Inventory.
+    public void addTransportationInventory(List<TransportedProductDataDTO> transportInventoryDetailList, Transportation transportation){
 
         // Finding the Total Quantity of Products Being involved in the Transportation.
-        int totalQuantity = transportInventoryList.stream()
-                .mapToInt(TransportInventoryQuantityDTO::getQuantity)
+        int totalQuantity = transportInventoryDetailList.stream()
+                .mapToInt(TransportedProductDataDTO::getQuantity)
                 .sum();
 
         // Distributing total Transportation emission between products and updating the TransportationInventory Table
-        for(TransportInventoryQuantityDTO transportInventory : transportInventoryList) {
+        for(TransportedProductDataDTO transportInventory : transportInventoryDetailList) {
 
             // Creating TransportationInventoryKey (composite key) & Transient TransportationInventory Entity
             TransportationInventory transportationInventory = TransportationInventory.builder()
@@ -79,40 +51,45 @@ public class TransportationInventoryService {
                     .build();
 
             // Saving TransportationInventory
-            saveTransportationInventory(transportationInventory);
+            transportationInventoryRepository.save(transportationInventory);
 
+        }
+    }
+
+
+    // Retrieve TransportInventory Details
+    public List<TransportInventoryResDTO> retrieveTransportInventories(String productName, String vendorName) {
+
+        // Retrieving all Transport Inventories and map to TransportInventoryResDTO
+        List<TransportInventoryResDTO> transportInventoryResDTOList = transportationInventoryRepository.findAll()
+                .stream()
+                .map(transportationInventory -> modelMapper.map(transportationInventory, TransportInventoryResDTO.class))
+                .toList();
+
+        // Filter TransportInventories by ProductName && VendorName
+        if (productName != null && vendorName != null){
+            return transportInventoryResDTOList.stream()
+                    .filter(transportInventoryResDTO -> productName.equalsIgnoreCase(transportInventoryResDTO.getProductName()) && vendorName.equalsIgnoreCase(transportInventoryResDTO.getVendorName()))
+                    .toList();
+        } else if (productName != null){
+            return transportInventoryResDTOList.stream()
+                    .filter(transportInventoryResDTO -> productName.equalsIgnoreCase(transportInventoryResDTO.getProductName()))
+                    .toList();
+        } else if (vendorName != null) {
+            return transportInventoryResDTOList.stream()
+                    .filter(transportInventoryResDTO -> vendorName.equalsIgnoreCase(transportInventoryResDTO.getVendorName()))
+                    .toList();
+        } else {
+            return transportInventoryResDTOList;
         }
 
     }
 
-    // Saving Transportation
-    public void saveTransportationInventory(TransportationInventory transportationInventory){
-        transportationInventoryRepository.save(transportationInventory);
-    }
 
-    public TransportationInventoryCo2eDTO getProductTransportationEmission(String productName) {
-
-        return transportationInventoryRepository.retrieveProductTransportationC02eEmissionData(productName);
-
-    }
-
-//    // Converting the String of transport_inventory to Map <String, Integer> <productName, Quantity>
-//    private Map<String, Integer> parseTransportInventoryString(String propertyIds) {
-//        Map<String, Integer> result = new HashMap<>();
-//        String[] pairs = propertyIds.split(",");
-//        for (String pair : pairs) {
-//            String[] keyValue = pair.split("=");
-//            if (keyValue.length == 2) {
-//                try {
-//                    String key = keyValue[0];
-//                    int quantity = Integer.parseInt(keyValue[1]);
-//                    result.put(key, quantity);
-//                } catch (NumberFormatException e) {
-//                    // Handle parsing error if needed
-//                }
-//            }
-//        }
-//        return result;
+//    public TransportationInventoryCo2eDTO getProductTransportationEmission(String productName) {
+//
+//        return transportationInventoryRepository.retrieveProductTransportationC02eEmissionData(productName);
+//
 //    }
 
 }
