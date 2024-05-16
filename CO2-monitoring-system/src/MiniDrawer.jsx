@@ -10,7 +10,6 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -18,6 +17,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import PersonIcon from '@mui/icons-material/Person';
 import BusinessIcon from '@mui/icons-material/Business';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 const drawerWidth = 250;
 
@@ -130,36 +130,20 @@ export default function MiniDrawer() {
 
         <List>
           {[
-            { text: 'Dashboard', icon: <DashboardIcon /> },
-            { text: 'Vehicle Management', icon: <DirectionsCarIcon /> },
-            { text: 'Vendor Management', icon: <BusinessIcon /> },
-            { text: 'Customer Management', icon: <PersonIcon /> },
-          ].map(({ text, icon }, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {icon}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
+            { text: 'Dashboard', icon: <DashboardIcon />, to: '/' },
+            { text: 'Vehicle Management', icon: <DirectionsCarIcon />, to: '/vehicle-management' },
+            { text: 'Vendor Management', icon: <BusinessIcon />, to: '/vendor-management' },
+            { text: 'Customer Management', icon: <PersonIcon />, to: '/customer-management' },
+          ].map(({ text, icon, to }, index) => (
+            <ListItemButton key={text} disablePadding sx={{ display: 'block' }} component={Link} to={to}>
+              <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
+                {icon}
+              </ListItemIcon>
+              <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
           ))}
         </List>
       </Drawer>
-    </Box>
-  );
+    </Box>
+  );
 }
-
-
