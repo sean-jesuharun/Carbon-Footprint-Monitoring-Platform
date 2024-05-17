@@ -8,7 +8,8 @@ const CarbonEmissionEvaluationForm = () => {
     vehicle: '',
     shipmentProductCatalog: [{
       vendor: '',
-      product: ''
+      product: '',
+      quantity: '' // Add quantity field
     }]
   });
 
@@ -33,7 +34,7 @@ const CarbonEmissionEvaluationForm = () => {
   const handleAddProduct = () => {
     setFormData({
       ...formData,
-      shipmentProductCatalog: [...formData.shipmentProductCatalog, { vendor: '', product: '' }]
+      shipmentProductCatalog: [...formData.shipmentProductCatalog, { vendor: '', product: '', quantity: '' }] // Include quantity field
     });
   };
 
@@ -54,7 +55,7 @@ const CarbonEmissionEvaluationForm = () => {
       carbonEmissionJobName: '',
       customer: '',
       vehicle: '',
-      shipmentProductCatalog: [{ vendor: '', product: '' }]
+      shipmentProductCatalog: [{ vendor: '', product: '', quantity: '' }] // Reset quantity field
     });
   };
   
@@ -125,6 +126,15 @@ const CarbonEmissionEvaluationForm = () => {
                   <MenuItem value="Product2">Product2</MenuItem>
                   <MenuItem value="Product3">Product3</MenuItem>
                 </Select>
+                <Typography variant="subtitle1" gutterBottom>Quantity:</Typography>
+                <TextField
+                  type="number"
+                  name="quantity"
+                  value={product.quantity}
+                  onChange={(e) => handleProductInputChange(index, e)}
+                  fullWidth
+                  required
+                />
                 <Button type="button" onClick={() => handleRemoveProduct(index)}>Remove</Button>
               </div>
             ))}
