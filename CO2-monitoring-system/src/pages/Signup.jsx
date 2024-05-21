@@ -1,10 +1,8 @@
 import React from 'react'
 import './LoginSignup.css'
-import Backgound_img from '../Assests/BG.jpg'
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button'; 
 import TextField from '@mui/material/TextField'; 
-import { colors } from '@mui/material';
 
 const Signup = () => {
   return (
@@ -34,7 +32,7 @@ const Signup = () => {
         <Button variant="contained">Sign Up</Button>
         </div>
       </div>
-      <div className="text1">Already a member ? <Link to="/" className='loginText'>Login</Link> Here</div>
+      {/* <div className="text1">Already a member ? <Link to="/" className='loginText'>Login</Link> Here</div> */}
     </div>
     </div>
   )
