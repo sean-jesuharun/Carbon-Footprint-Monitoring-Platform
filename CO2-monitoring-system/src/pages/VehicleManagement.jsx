@@ -1,14 +1,13 @@
 import React from 'react'
 import MiniDrawer from '../MiniDrawer'
-import MLInputForm from '../MLInputForm'
+import VehicleManagementForm from '../VehicleManagementForm'
 
 function VehicleManagement() {
   return (
     <div>
-        <br></br>
-        <h1>Vehicle Management</h1>
+        <br></br>        
         <MiniDrawer/>
-        <MLInputForm/>
+        <VehicleManagementForm/>
 
     </div>
   )
