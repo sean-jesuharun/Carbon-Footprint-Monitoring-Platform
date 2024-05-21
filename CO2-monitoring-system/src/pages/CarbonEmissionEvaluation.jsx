@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Grid, Card, CardContent, TextField, Select, MenuItem, Button, Typography } from '@mui/material';
+import MiniDrawer from '../MiniDrawer';
+
 
 const CarbonEmissionEvaluationForm = () => {
   const [formData, setFormData] = useState({
@@ -61,7 +63,10 @@ const CarbonEmissionEvaluationForm = () => {
   
   return (
     <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '20px' }}>
+      <MiniDrawer/>
       <form onSubmit={handleSubmit}>
+        <br />
+        <br />
         <Typography variant='h2' marginTop={1} marginBottom={3} color='#78909c'>Carbon Emission Evaluation Form</Typography>
         <Card style={{ width: '70%',  margin: '0 auto' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
