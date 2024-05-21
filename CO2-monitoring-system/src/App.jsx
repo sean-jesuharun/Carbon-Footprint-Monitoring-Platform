@@ -9,12 +9,16 @@ import VehicleManagemnet from './pages/VehicleManagement';
 import VendorManagement from './pages/VendorManagement';
 import CustomerManagement from './pages/CustomerManagement';
 import CarbonEmissionEvaluation from './pages/CarbonEmissionEvaluation';
+import Login from './pages/Login';
+import Singup from './pages/Signup';
 
 function App() {
   return (
     <BrowserRouter>
       <div className="App" style={{ backgroundColor: '#eceff1' }}>
         <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Singup />} />
           <Route path="/" element={<Dashboard />} />
           <Route path="/ml-input-form" element={<MLInputForm />} />
           <Route path="/vender-input-form" element={<VenderInputFrom />} />
