@@ -9,8 +9,6 @@ import VehicleManagemnet from './pages/VehicleManagement';
 import VendorManagement from './pages/VendorManagement';
 import CustomerManagement from './pages/CustomerManagement';
 import CarbonEmissionEvaluation from './pages/CarbonEmissionEvaluation';
-// import Login from './pages/Login';
-// import Signup from './pages/Signup';
 
 function App() {
   return (
