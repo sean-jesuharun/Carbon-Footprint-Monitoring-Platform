@@ -6,6 +6,7 @@ import com.cfms.transportationcfms.dto.TransportationResDTO;
 import com.cfms.transportationcfms.entity.Transportation;
 import com.cfms.transportationcfms.entity.TransportationInventory;
 import org.modelmapper.ModelMapper;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
