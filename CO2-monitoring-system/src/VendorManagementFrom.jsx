@@ -4,37 +4,68 @@ import MiniDrawer from './MiniDrawer';
 
 const VendorManagementForm = () => {
   const [formData, setFormData] = useState({
-    vendorId: '',
     vendorName: '',
     vendorLocation: '',
     distanceFromWarehouse: '',
     products: [''] // List of products
   });
 
+  const [errors, setErrors] = useState({
+    vendorName: '',
+    vendorLocation: '',
+    distanceFromWarehouse: '',
+    products: ['']
+  });
+
+  const validateField = (name, value) => {
+    let error = '';
+    const lettersAndSpaces = /^[A-Za-z\s]*$/;
+    if ((name === 'vendorName' || name === 'vendorLocation') && !lettersAndSpaces.test(value)) {
+      error = 'This field should only contain letters and spaces';
+    }
+    if (name === 'distanceFromWarehouse') {
+      if (isNaN(value) || value <= 0) {
+        error = 'Distance should be a positive number greater than 0';
+      }
+    }
+    return error;
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    // Validate fields
-    if (name === 'vendorId' && value < 0) return; // Vendor Id should not accept negative values
-    if (name === 'vendorName' && /\d/.test(value)) return; // Vendor Name should not accept numbers
-    if (name === 'vendorLocation' && /\d/.test(value)) return; // Vendor Location should not accept negative values
-    if (name === 'distanceFromWarehouse' && (value < 0 || isNaN(value))) return; // Distance should not accept negative values or strings
+    const error = validateField(name, value);
 
     setFormData({
       ...formData,
       [name]: value
     });
+    setErrors({
+      ...errors,
+      [name]: error
+    });
   };
 
   const handleProductChange = (index, e) => {
     const { value } = e.target;
-    // Products should not accept numbers
-    if (/\d/.test(value)) return;
+    let error = '';
+    const lettersAndSpaces = /^[A-Za-z\s]*$/;
+    if (!lettersAndSpaces.test(value)) {
+      error = 'Product name should only contain letters and spaces';
+    }
+
     const updatedProducts = [...formData.products];
     updatedProducts[index] = value;
+
+    const updatedProductErrors = [...errors.products];
+    updatedProductErrors[index] = error;
+
     setFormData({
       ...formData,
       products: updatedProducts
+    });
+    setErrors({
+      ...errors,
+      products: updatedProductErrors
     });
   };
 
@@ -43,28 +74,61 @@ const VendorManagementForm = () => {
       ...formData,
       products: [...formData.products, '']
     });
+    setErrors({
+      ...errors,
+      products: [...errors.products, '']
+    });
   };
 
   const handleRemoveProduct = (index) => {
     const updatedProducts = [...formData.products];
     updatedProducts.splice(index, 1);
+    const updatedProductErrors = [...errors.products];
+    updatedProductErrors.splice(index, 1);
+
     setFormData({
       ...formData,
       products: updatedProducts
+    });
+    setErrors({
+      ...errors,
+      products: updatedProductErrors
     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData); // Log form data to console
-    // Reset the form
-    setFormData({
-      vendorId: '',
-      vendorName: '',
-      vendorLocation: '',
-      distanceFromWarehouse: '',
-      products: ['']
-    });
+
+    let formIsValid = true;
+    const newErrors = {
+      vendorName: validateField('vendorName', formData.vendorName),
+      vendorLocation: validateField('vendorLocation', formData.vendorLocation),
+      distanceFromWarehouse: validateField('distanceFromWarehouse', formData.distanceFromWarehouse),
+      products: formData.products.map(product => validateField('product', product))
+    };
+
+    if (newErrors.vendorName || newErrors.vendorLocation || newErrors.distanceFromWarehouse || newErrors.products.some(err => err)) {
+      formIsValid = false;
+    }
+
+    setErrors(newErrors);
+
+    if (formIsValid) {
+      console.log(formData); // Log form data to console
+      // Reset the form
+      setFormData({
+        vendorName: '',
+        vendorLocation: '',
+        distanceFromWarehouse: '',
+        products: ['']
+      });
+      setErrors({
+        vendorName: '',
+        vendorLocation: '',
+        distanceFromWarehouse: '',
+        products: ['']
+      });
+    }
   };
 
   return (
@@ -76,16 +140,6 @@ const VendorManagementForm = () => {
         <Typography variant='h2' marginTop={1} marginBottom={3} color='#78909c'>Vendor Management Form</Typography>
         <Card style={{ width: '70%', margin: '0 auto' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="subtitle1" gutterBottom>Vendor Id:</Typography>
-            <TextField
-              type="number"
-              name="vendorId"
-              value={formData.vendorId}
-              onChange={handleInputChange}
-              fullWidth
-              required
-              inputProps={{ min: 0 }} // Ensure input does not accept negative values
-            />
             <Typography variant="subtitle1" gutterBottom>Vendor Name:</Typography>
             <TextField
               type="text"
@@ -94,7 +148,8 @@ const VendorManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
-              inputProps={{ pattern: "[^0-9]*" }} // Ensure input does not accept numbers
+              error={!!errors.vendorName}
+              helperText={errors.vendorName}
             />
             <Typography variant="subtitle1" gutterBottom>Vendor Location:</Typography>
             <TextField
@@ -104,7 +159,8 @@ const VendorManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
-              inputProps={{ pattern: "[^0-9]*" }} // Ensure input does not accept numbers
+              error={!!errors.vendorLocation}
+              helperText={errors.vendorLocation}
             />
             <Typography variant="subtitle1" gutterBottom>Distance from Sysco warehouse (km):</Typography>
             <TextField
@@ -114,7 +170,9 @@ const VendorManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
-              inputProps={{ min: 0 }} // Ensure input does not accept negative values or strings
+              error={!!errors.distanceFromWarehouse}
+              helperText={errors.distanceFromWarehouse}
+              inputProps={{ min: 1 }} // Ensure input does not accept 0 or negative values
             />
             <hr />
             <Typography variant="h5" style={{ marginBottom: '1rem' }}>Products</Typography>
@@ -128,7 +186,8 @@ const VendorManagementForm = () => {
                   fullWidth
                   required
                   placeholder={`Product ${index + 1}`}
-                  inputProps={{ pattern: "[^0-9]*" }} // Ensure input does not accept numbers
+                  error={!!errors.products[index]}
+                  helperText={errors.products[index]}
                 />
                 <Button type="button" onClick={() => handleRemoveProduct(index)}>Remove</Button>
               </div>

@@ -4,7 +4,12 @@ import MiniDrawer from './MiniDrawer';
 
 const CustomerManagementForm = () => {
   const [formData, setFormData] = useState({
-    customerId: '',
+    customerName: '',
+    customerLocation: '',
+    distanceFromWarehouse: ''
+  });
+
+  const [errors, setErrors] = useState({
     customerName: '',
     customerLocation: '',
     distanceFromWarehouse: ''
@@ -18,16 +23,49 @@ const CustomerManagementForm = () => {
     });
   };
 
+  const validateForm = () => {
+    const nameRegex = /^[a-zA-Z\s]*$/;
+    const locationRegex = /^[a-zA-Z\s]*$/;
+    const distanceRegex = /^[0-9]*\.?[0-9]+$/;
+
+    let valid = true;
+    let newErrors = { customerName: '', customerLocation: '', distanceFromWarehouse: '' };
+
+    if (!nameRegex.test(formData.customerName)) {
+      newErrors.customerName = 'Customer Name should only contain letters and spaces.';
+      valid = false;
+    }
+
+    if (!locationRegex.test(formData.customerLocation)) {
+      newErrors.customerLocation = 'Customer Location should only contain letters and spaces.';
+      valid = false;
+    }
+
+    if (!distanceRegex.test(formData.distanceFromWarehouse) || parseFloat(formData.distanceFromWarehouse) <= 0) {
+      newErrors.distanceFromWarehouse = 'Distance should be a positive number.';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData); // Log form data to console
-    // Reset the form
-    setFormData({
-      customerId: '',
-      customerName: '',
-      customerLocation: '',
-      distanceFromWarehouse: ''
-    });
+    if (validateForm()) {
+      console.log(formData); // Log form data to console
+      // Reset the form
+      setFormData({
+        customerName: '',
+        customerLocation: '',
+        distanceFromWarehouse: ''
+      });
+      setErrors({
+        customerName: '',
+        customerLocation: '',
+        distanceFromWarehouse: ''
+      });
+    }
   };
 
   return (
@@ -39,15 +77,6 @@ const CustomerManagementForm = () => {
         <Typography variant='h2' marginTop={1} marginBottom={3} color='#78909c'>Customer Management Form</Typography>
         <Card style={{ width: '70%', margin: '0 auto' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="subtitle1" gutterBottom>Customer Id:</Typography>
-            <TextField
-              type="number"
-              name="customerId"
-              value={formData.customerId}
-              onChange={handleInputChange}
-              fullWidth
-              required
-            />
             <Typography variant="subtitle1" gutterBottom>Customer Name:</Typography>
             <TextField
               type="text"
@@ -56,6 +85,8 @@ const CustomerManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
+              error={!!errors.customerName}
+              helperText={errors.customerName}
             />
             <Typography variant="subtitle1" gutterBottom>Customer Location:</Typography>
             <TextField
@@ -65,6 +96,8 @@ const CustomerManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
+              error={!!errors.customerLocation}
+              helperText={errors.customerLocation}
             />
             <Typography variant="subtitle1" gutterBottom>Distance from Sysco warehouse (km):</Typography>
             <TextField
@@ -74,6 +107,8 @@ const CustomerManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
+              error={!!errors.distanceFromWarehouse}
+              helperText={errors.distanceFromWarehouse}
             />
           </CardContent>
         </Card>

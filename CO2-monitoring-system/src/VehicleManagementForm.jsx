@@ -4,7 +4,6 @@ import MiniDrawer from './MiniDrawer';
 
 const VehicleManagementForm = () => {
   const [formData, setFormData] = useState({
-    vehicleId: '',
     vehicleModel: '',
     engineSize: '',
     numberOfCylinders: '',
@@ -27,7 +26,6 @@ const VehicleManagementForm = () => {
     console.log(formData); // Log form data to console
     // Reset the form
     setFormData({
-      vehicleId: '',
       vehicleModel: '',
       engineSize: '',
       numberOfCylinders: '',
@@ -47,15 +45,6 @@ const VehicleManagementForm = () => {
         <Typography variant='h2' marginTop={1} marginBottom={3} color='#78909c'>Vehicle Management Form</Typography>
         <Card style={{ width: '70%', margin: '0 auto' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="subtitle1" gutterBottom>Vehicle Id:</Typography>
-            <TextField
-              type="number"
-              name="vehicleId"
-              value={formData.vehicleId}
-              onChange={handleInputChange}
-              fullWidth
-              required
-            />
             <Typography variant="subtitle1" gutterBottom>Vehicle Model:</Typography>
             <TextField
               type="text"
