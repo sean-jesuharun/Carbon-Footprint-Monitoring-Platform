@@ -25,6 +25,9 @@ const CarbonEmissionEvaluationForm = () => {
 
   const handleProductInputChange = (index, e) => {
     const { name, value } = e.target;
+    if(name === 'quantity' && value < 0){
+      return; //Do not accept the state if the value is negative
+    }
     const updatedProducts = [...formData.shipmentProductCatalog];
     updatedProducts[index][name] = value;
     setFormData({
@@ -139,6 +142,7 @@ const CarbonEmissionEvaluationForm = () => {
                   onChange={(e) => handleProductInputChange(index, e)}
                   fullWidth
                   required
+                  inputProps={{ min: 0}} //Ensure input doesnt accept negative values
                 />
                 <Button type="button" onClick={() => handleRemoveProduct(index)}>Remove</Button>
               </div>

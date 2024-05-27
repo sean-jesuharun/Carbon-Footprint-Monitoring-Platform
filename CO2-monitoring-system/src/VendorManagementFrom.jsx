@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Card, CardContent, TextField, Button, Typography } from '@mui/material';
+import { Card, CardContent, TextField, Button, Typography } from '@mui/material';
 import MiniDrawer from './MiniDrawer';
 
 const VendorManagementForm = () => {
@@ -13,6 +13,13 @@ const VendorManagementForm = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    // Validate fields
+    if (name === 'vendorId' && value < 0) return; // Vendor Id should not accept negative values
+    if (name === 'vendorName' && /\d/.test(value)) return; // Vendor Name should not accept numbers
+    if (name === 'vendorLocation' && /\d/.test(value)) return; // Vendor Location should not accept negative values
+    if (name === 'distanceFromWarehouse' && (value < 0 || isNaN(value))) return; // Distance should not accept negative values or strings
+
     setFormData({
       ...formData,
       [name]: value
@@ -21,6 +28,8 @@ const VendorManagementForm = () => {
 
   const handleProductChange = (index, e) => {
     const { value } = e.target;
+    // Products should not accept numbers
+    if (/\d/.test(value)) return;
     const updatedProducts = [...formData.products];
     updatedProducts[index] = value;
     setFormData({
@@ -75,6 +84,7 @@ const VendorManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
+              inputProps={{ min: 0 }} // Ensure input does not accept negative values
             />
             <Typography variant="subtitle1" gutterBottom>Vendor Name:</Typography>
             <TextField
@@ -84,6 +94,7 @@ const VendorManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
+              inputProps={{ pattern: "[^0-9]*" }} // Ensure input does not accept numbers
             />
             <Typography variant="subtitle1" gutterBottom>Vendor Location:</Typography>
             <TextField
@@ -93,6 +104,7 @@ const VendorManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
+              inputProps={{ pattern: "[^0-9]*" }} // Ensure input does not accept numbers
             />
             <Typography variant="subtitle1" gutterBottom>Distance from Sysco warehouse (km):</Typography>
             <TextField
@@ -102,6 +114,7 @@ const VendorManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
+              inputProps={{ min: 0 }} // Ensure input does not accept negative values or strings
             />
             <hr />
             <Typography variant="h5" style={{ marginBottom: '1rem' }}>Products</Typography>
@@ -115,6 +128,7 @@ const VendorManagementForm = () => {
                   fullWidth
                   required
                   placeholder={`Product ${index + 1}`}
+                  inputProps={{ pattern: "[^0-9]*" }} // Ensure input does not accept numbers
                 />
                 <Button type="button" onClick={() => handleRemoveProduct(index)}>Remove</Button>
               </div>
