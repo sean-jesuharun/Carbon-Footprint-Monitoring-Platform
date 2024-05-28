@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Grid, Card, CardContent, TextField, Select, MenuItem, Button, Typography } from '@mui/material';
 import MiniDrawer from './MiniDrawer';
+import axios from 'axios';
 
 const VehicleManagementForm = () => {
   const [formData, setFormData] = useState({
-    vehicleModel: '',
+    model: '',
     engineSize: '',
-    numberOfCylinders: '',
+    cylinders: '',
     vehicleType: '',
     transmission: '',
     capacity: '',
@@ -21,19 +22,32 @@ const VehicleManagementForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData); // Log form data to console
-    // Reset the form
-    setFormData({
-      vehicleModel: '',
-      engineSize: '',
-      numberOfCylinders: '',
-      vehicleType: '',
-      transmission: '',
-      capacity: '',
-      fuelType: '',
-    });
+
+    // Log form data to console
+    console.log(formData);
+
+    // Send a POST request to the backend API
+    const url = 'http://localhost:8040/vehicles'; 
+    const requestData = { ...formData };
+
+    try {
+      const response = await axios.post(url, requestData);
+      console.log('Data submitted successfully:', response.data);
+      // Reset the form
+      setFormData({
+        model: '',
+        engineSize: '',
+        cylinders: '',
+        vehicleType: '',
+        transmission: '',
+        capacity: '',
+        fuelType: '',
+      });
+    } catch (error) {
+      console.error('Error submitting data:', error);
+    }
   };
 
   return (
@@ -48,8 +62,8 @@ const VehicleManagementForm = () => {
             <Typography variant="subtitle1" gutterBottom>Vehicle Model:</Typography>
             <TextField
               type="text"
-              name="vehicleModel"
-              value={formData.vehicleModel}
+              name="model"
+              value={formData.model}
               onChange={handleInputChange}
               fullWidth
               required
@@ -66,8 +80,8 @@ const VehicleManagementForm = () => {
             <Typography variant="subtitle1" gutterBottom>Number of Cylinders:</Typography>
             <TextField
               type="number"
-              name="numberOfCylinders"
-              value={formData.numberOfCylinders}
+              name="cylinders"
+              value={formData.cylinders}
               onChange={handleInputChange}
               fullWidth
               required
@@ -107,10 +121,10 @@ const VehicleManagementForm = () => {
               fullWidth
               required
             >
-              <MenuItem value="Petrol">Petrol</MenuItem>
-              <MenuItem value="Diesel">Diesel</MenuItem>
-              <MenuItem value="Electric">Electric</MenuItem>
-              <MenuItem value="Hybrid">Hybrid</MenuItem>
+              <MenuItem value="X">Regular Gasoline</MenuItem>
+              <MenuItem value="D">Diesel</MenuItem>
+              <MenuItem value="E">Ethanol</MenuItem>
+              <MenuItem value="Z">Premium Gasoline</MenuItem>
             </Select>
           </CardContent>
         </Card>

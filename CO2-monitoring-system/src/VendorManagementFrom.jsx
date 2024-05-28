@@ -1,30 +1,32 @@
 import React, { useState } from 'react';
-import { Card, CardContent, TextField, Button, Typography } from '@mui/material';
+import { Card, CardContent, TextField, Button, Typography, MenuItem } from '@mui/material';
 import MiniDrawer from './MiniDrawer';
+import axios from 'axios';
 
 const VendorManagementForm = () => {
   const [formData, setFormData] = useState({
     vendorName: '',
-    vendorLocation: '',
+    location: '',
     distanceFromWarehouse: '',
-    products: [''] // List of products
+    vendorProducts: []
   });
 
   const [errors, setErrors] = useState({
     vendorName: '',
-    vendorLocation: '',
-    distanceFromWarehouse: '',
-    products: ['']
+    location: '',
+    distanceFromWarehouse: ''
   });
 
   const validateField = (name, value) => {
     let error = '';
     const lettersAndSpaces = /^[A-Za-z\s]*$/;
-    if ((name === 'vendorName' || name === 'vendorLocation') && !lettersAndSpaces.test(value)) {
+
+    if ((name === 'vendorName' || name === 'location') && !lettersAndSpaces.test(value)) {
       error = 'This field should only contain letters and spaces';
     }
     if (name === 'distanceFromWarehouse') {
-      if (isNaN(value) || value <= 0) {
+      const distance = parseFloat(value);
+      if (isNaN(distance) || distance <= 0) {
         error = 'Distance should be a positive number greater than 0';
       }
     }
@@ -45,89 +47,64 @@ const VendorManagementForm = () => {
     });
   };
 
-  const handleProductChange = (index, e) => {
-    const { value } = e.target;
-    let error = '';
-    const lettersAndSpaces = /^[A-Za-z\s]*$/;
-    if (!lettersAndSpaces.test(value)) {
-      error = 'Product name should only contain letters and spaces';
-    }
-
-    const updatedProducts = [...formData.products];
-    updatedProducts[index] = value;
-
-    const updatedProductErrors = [...errors.products];
-    updatedProductErrors[index] = error;
-
+  const handleProductChange = (index, field, value) => {
+    const updatedProducts = [...formData.vendorProducts];
+    updatedProducts[index][field] = value;
     setFormData({
       ...formData,
-      products: updatedProducts
-    });
-    setErrors({
-      ...errors,
-      products: updatedProductErrors
+      vendorProducts: updatedProducts
     });
   };
 
-  const handleAddProduct = () => {
+  const addProduct = () => {
     setFormData({
       ...formData,
-      products: [...formData.products, '']
-    });
-    setErrors({
-      ...errors,
-      products: [...errors.products, '']
+      vendorProducts: [
+        ...formData.vendorProducts,
+        {
+          productName: '',
+          productionMatrix: {
+            region: '',
+            animalSpecies: '',
+            productionSystem: '',
+            commodity: ''
+          }
+        }
+      ]
     });
   };
 
-  const handleRemoveProduct = (index) => {
-    const updatedProducts = [...formData.products];
+  const removeProduct = (index) => {
+    const updatedProducts = [...formData.vendorProducts];
     updatedProducts.splice(index, 1);
-    const updatedProductErrors = [...errors.products];
-    updatedProductErrors.splice(index, 1);
-
     setFormData({
       ...formData,
-      products: updatedProducts
-    });
-    setErrors({
-      ...errors,
-      products: updatedProductErrors
+      vendorProducts: updatedProducts
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    let formIsValid = true;
-    const newErrors = {
-      vendorName: validateField('vendorName', formData.vendorName),
-      vendorLocation: validateField('vendorLocation', formData.vendorLocation),
-      distanceFromWarehouse: validateField('distanceFromWarehouse', formData.distanceFromWarehouse),
-      products: formData.products.map(product => validateField('product', product))
-    };
+    // Log form data to console
+    console.log(formData);
 
-    if (newErrors.vendorName || newErrors.vendorLocation || newErrors.distanceFromWarehouse || newErrors.products.some(err => err)) {
-      formIsValid = false;
-    }
+    // Send a POST request to the backend API
+    const url = 'http://localhost:8060/vendors'; 
+    const requestData = { ...formData };
 
-    setErrors(newErrors);
-
-    if (formIsValid) {
-      console.log(formData); // Log form data to console
-      // Reset the form
+    try {
+      const response = await axios.post(url, requestData);
+      console.log('Data submitted successfully:', response.data);
+     // Reset the form
       setFormData({
         vendorName: '',
-        vendorLocation: '',
+        location: '',
         distanceFromWarehouse: '',
-        products: ['']
+        vendorProducts: []
       });
-      setErrors({
-        vendorName: '',
-        vendorLocation: '',
-        distanceFromWarehouse: '',
-        products: ['']
-      });
+    } catch (error) {
+      console.error('Error submitting data:', error);
     }
   };
 
@@ -154,15 +131,15 @@ const VendorManagementForm = () => {
             <Typography variant="subtitle1" gutterBottom>Vendor Location:</Typography>
             <TextField
               type="text"
-              name="vendorLocation"
-              value={formData.vendorLocation}
+              name="location"
+              value={formData.location}
               onChange={handleInputChange}
               fullWidth
               required
-              error={!!errors.vendorLocation}
-              helperText={errors.vendorLocation}
+              error={!!errors.location}
+              helperText={errors.location}
             />
-            <Typography variant="subtitle1" gutterBottom>Distance from Sysco warehouse (km):</Typography>
+            <Typography variant="subtitle1" gutterBottom>Distance From Warehouse (km):</Typography>
             <TextField
               type="number"
               name="distanceFromWarehouse"
@@ -172,27 +149,36 @@ const VendorManagementForm = () => {
               required
               error={!!errors.distanceFromWarehouse}
               helperText={errors.distanceFromWarehouse}
-              inputProps={{ min: 1 }} // Ensure input does not accept 0 or negative values
+              inputProps={{ step: "0.01", min: "0.01" }} // Ensure input accepts decimal values
             />
-            <hr />
-            <Typography variant="h5" style={{ marginBottom: '1rem' }}>Products</Typography>
-            {formData.products.map((product, index) => (
-              <div key={index}>
+            <Typography variant="subtitle1" gutterBottom>Vendor Products:</Typography>
+            {formData.vendorProducts.map((product, index) => (
+              <div key={index} style={{ marginBottom: '10px' }}>
                 <TextField
                   type="text"
-                  name="product"
-                  value={product}
-                  onChange={(e) => handleProductChange(index, e)}
+                  label={`Product Name ${index + 1}`}
+                  value={product.productName}
+                  onChange={(e) => handleProductChange(index, 'productName', e.target.value)}
                   fullWidth
                   required
-                  placeholder={`Product ${index + 1}`}
-                  error={!!errors.products[index]}
-                  helperText={errors.products[index]}
                 />
-                <Button type="button" onClick={() => handleRemoveProduct(index)}>Remove</Button>
+                <div style={{ display: 'flex', marginTop: '5px' }}>
+                  <TextField
+                    select
+                    label="Region"
+                    value={product.productionMatrix.region}
+                    onChange={(e) => handleProductChange(index, 'region', e.target.value)}
+                    style={{ marginRight: '10px', width: '150px' }}
+                  >
+                    <MenuItem value="Global">Global</MenuItem>
+                    {/* Add other region options */}
+                  </TextField>
+                  {/* Repeat similar select fields for other production matrix attributes */}
+                </div>
+                <Button onClick={() => removeProduct(index)} variant="outlined" color="secondary" style={{ marginTop: '10px' }}>Remove Product</Button>
               </div>
             ))}
-            <Button type="button" onClick={handleAddProduct}>Add Product</Button>
+            <Button onClick={addProduct} variant="outlined" style={{ marginTop: '10px' }}>Add Product</Button>
           </CardContent>
         </Card>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5px' }}>

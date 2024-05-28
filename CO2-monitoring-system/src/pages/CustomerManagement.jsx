@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { Card, CardContent, TextField, Button, Typography } from '@mui/material';
 import MiniDrawer from '../MiniDrawer';
+import axios from 'axios';
 
 const CustomerManagementForm = () => {
   const [formData, setFormData] = useState({
     customerName: '',
-    customerLocation: '',
+    location: '',
     distanceFromWarehouse: ''
   });
 
   const [errors, setErrors] = useState({
     customerName: '',
-    customerLocation: '',
+    location: '',
     distanceFromWarehouse: ''
   });
 
@@ -19,11 +20,12 @@ const CustomerManagementForm = () => {
     let error = '';
     const lettersAndSpaces = /^[A-Za-z\s]*$/;
 
-    if ((name === 'customerName' || name === 'customerLocation') && !lettersAndSpaces.test(value)) {
+    if ((name === 'customerName' || name === 'location') && !lettersAndSpaces.test(value)) {
       error = 'This field should only contain letters and spaces';
     }
     if (name === 'distanceFromWarehouse') {
-      if (isNaN(value) || value <= 0) {
+      const distance = parseFloat(value);
+      if (isNaN(distance) || distance <= 0) {
         error = 'Distance should be a positive number greater than 0';
       }
     }
@@ -44,35 +46,59 @@ const CustomerManagementForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+
+  //   let formIsValid = true;
+  //   const newErrors = {
+  //     customerName: validateField('customerName', formData.customerName),
+  //     location: validateField('location', formData.location),
+  //     distanceFromWarehouse: validateField('distanceFromWarehouse', formData.distanceFromWarehouse)
+  //   };
+
+  //   if (newErrors.customerName || newErrors.location || newErrors.distanceFromWarehouse) {
+  //     formIsValid = false;
+  //   }
+
+  //   setErrors(newErrors);
+
+  //   if (formIsValid) {
+  //     console.log(formData); // Log form data to console
+  //     // Reset the form
+  //     setFormData({
+  //       customerName: '',
+  //       location: '',
+  //       distanceFromWarehouse: ''
+  //     });
+  //     setErrors({
+  //       customerName: '',
+  //       location: '',
+  //       distanceFromWarehouse: ''
+  //     });
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    let formIsValid = true;
-    const newErrors = {
-      customerName: validateField('customerName', formData.customerName),
-      customerLocation: validateField('customerLocation', formData.customerLocation),
-      distanceFromWarehouse: validateField('distanceFromWarehouse', formData.distanceFromWarehouse)
-    };
+    // Log form data to console
+    console.log(formData);
 
-    if (newErrors.customerName || newErrors.customerLocation || newErrors.distanceFromWarehouse) {
-      formIsValid = false;
-    }
+    // Send a POST request to the backend API
+    const url = 'http://localhost:8060/customers'; 
+    const requestData = { ...formData };
 
-    setErrors(newErrors);
-
-    if (formIsValid) {
-      console.log(formData); // Log form data to console
-      // Reset the form
+    try {
+      const response = await axios.post(url, requestData);
+      console.log('Data submitted successfully:', response.data);
+     // Reset the form
       setFormData({
         customerName: '',
-        customerLocation: '',
+        location: '',
         distanceFromWarehouse: ''
       });
-      setErrors({
-        customerName: '',
-        customerLocation: '',
-        distanceFromWarehouse: ''
-      });
+    } catch (error) {
+      console.error('Error submitting data:', error);
     }
   };
 
@@ -99,15 +125,15 @@ const CustomerManagementForm = () => {
             <Typography variant="subtitle1" gutterBottom>Customer Location:</Typography>
             <TextField
               type="text"
-              name="customerLocation"
-              value={formData.customerLocation}
+              name="location"
+              value={formData.location}
               onChange={handleInputChange}
               fullWidth
               required
-              error={!!errors.customerLocation}
-              helperText={errors.customerLocation}
+              error={!!errors.location}
+              helperText={errors.location}
             />
-            <Typography variant="subtitle1" gutterBottom>Distance from Sysco warehouse (km):</Typography>
+            <Typography variant="subtitle1" gutterBottom>Distance From Warehouse (km):</Typography>
             <TextField
               type="number"
               name="distanceFromWarehouse"
@@ -117,7 +143,7 @@ const CustomerManagementForm = () => {
               required
               error={!!errors.distanceFromWarehouse}
               helperText={errors.distanceFromWarehouse}
-              inputProps={{ min: 1 }} // Ensure input does not accept 0 or negative values
+              inputProps={{ step: "0.01", min: "0.01" }} // Ensure input accepts decimal values
             />
           </CardContent>
         </Card>
