@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Login from './pages/Login';
+import Singup from './pages/Signup';
 import MLInputForm from './MLInputForm';
 import VenderInputFrom from './VenderInputForm';
 import MiniDrawer from './MiniDrawer';
@@ -9,8 +11,8 @@ import VehicleManagemnet from './pages/VehicleManagement';
 import VendorManagement from './pages/VendorManagement';
 import CustomerManagement from './pages/CustomerManagement';
 import CarbonEmissionEvaluation from './pages/CarbonEmissionEvaluation';
-import Login from './pages/Login';
-import Singup from './pages/Signup';
+import VendorSupply from './pages/VendorSupply';
+
 
 function App() {
   return (
@@ -35,6 +37,7 @@ function App() {
             path="/carbon-emission-evaluation"
             element={<CarbonEmissionEvaluation />}
           />
+          <Route path="/vendor-supply" element={<VendorSupply />} />
         </Routes>
       </div>
     </BrowserRouter>
