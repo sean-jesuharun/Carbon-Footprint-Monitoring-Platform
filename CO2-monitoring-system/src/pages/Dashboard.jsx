@@ -3,6 +3,7 @@ import { Link, useNavigate} from 'react-router-dom'
 
 
 import MiniDrawer from '../MiniDrawer'
+import DashboardTable from '../tables/DashBoardTable'
 import { Button } from '@mui/material'
 
 function Dashboard() {
@@ -10,8 +11,10 @@ function Dashboard() {
   return (
     <div>
         <br></br>
-        <h1>Dashboard</h1>
+        
         <MiniDrawer/>
+        <h1>Dash Board</h1>
+        <DashboardTable/>
         <Button onClick={()=>Navigate("/carbon-emission-evaluation")}>
             Do a new calculation
         </Button>

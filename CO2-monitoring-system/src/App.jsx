@@ -14,6 +14,7 @@ import CarbonEmissionEvaluation from './pages/CarbonEmissionEvaluation';
 import VendorSupply from './pages/VendorSupply';
 
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -38,6 +39,7 @@ function App() {
             element={<CarbonEmissionEvaluation />}
           />
           <Route path="/vendor-supply" element={<VendorSupply />} />
+          
         </Routes>
       </div>
     </BrowserRouter>

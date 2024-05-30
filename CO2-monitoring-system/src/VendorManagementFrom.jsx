@@ -220,7 +220,7 @@ const VendorManagementForm = () => {
                     <MenuItem value="Industrial systems">Industrial systems</MenuItem>
                     <MenuItem value="Layers">Layers</MenuItem>
                     <MenuItem value="Broilers">Broilers</MenuItem>
-                    {/* Add other production system options */}
+                    
                   </TextField>
                   <TextField
                     select
@@ -233,7 +233,7 @@ const VendorManagementForm = () => {
                     <MenuItem value="Milk">Milk</MenuItem>
                     <MenuItem value="Meat">Meat</MenuItem>
                     <MenuItem value="Eggs">Eggs</MenuItem>
-                    {/* Add other commodity options */}
+                    
                   </TextField>
                 </div>
                 <Button onClick={() => removeProduct(index)} variant="outlined" color="secondary" style={{ marginTop: '10px' }}>Remove Product</Button>
