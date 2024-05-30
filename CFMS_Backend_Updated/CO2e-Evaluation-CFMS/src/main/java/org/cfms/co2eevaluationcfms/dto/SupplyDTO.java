@@ -8,11 +8,8 @@ import java.util.List;
 public class SupplyDTO {
 
     private Long vendorId;
-
     private Long vehicleId;
-
-    private Double totalFuelConsumption;
-
-    private List<ProductDTO> products;
+    private Double fuelConsumption;
+    private List<SupplyItemDTO> supplyItems;
 
 }

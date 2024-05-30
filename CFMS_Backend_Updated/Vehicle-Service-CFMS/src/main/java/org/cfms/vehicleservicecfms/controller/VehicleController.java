@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("vehicles")
+@CrossOrigin
 public class VehicleController {
 
     private VehicleServiceImple vehicleServiceImple;
@@ -22,7 +23,6 @@ public class VehicleController {
     public List<VehicleDTO> getVehicles(){
         return vehicleServiceImple.getVehicles();
     }
-
 
     @PostMapping
     public VehicleDTO createVehicle(@RequestBody VehicleDTO vehicleDTO){

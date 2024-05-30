@@ -1,10 +1,10 @@
 package org.cfms.co2eevaluationcfms.service.implementation;
 
 import jakarta.transaction.Transactional;
-import org.cfms.co2eevaluationcfms.dto.ProductDTO;
+import org.cfms.co2eevaluationcfms.dto.SupplyItemDTO;
 import org.cfms.co2eevaluationcfms.dto.SupplyDTO;
-import org.cfms.co2eevaluationcfms.dto.vehicle.VehicleDTO;
-import org.cfms.co2eevaluationcfms.dto.vendor.VendorDTO;
+import org.cfms.co2eevaluationcfms.dto.VehicleDTO;
+import org.cfms.co2eevaluationcfms.dto.VendorDTO;
 import org.cfms.co2eevaluationcfms.entity.VendorSupply;
 import org.cfms.co2eevaluationcfms.repository.VendorSupplyRepository;
 import org.cfms.co2eevaluationcfms.service.SupplyService;
@@ -41,28 +41,28 @@ public class SupplyServiceImple implements SupplyService {
         // Retrieve Vehicle
         VehicleDTO vehicleDTO = vehicleServiceClient.getVehicleById(supplyDTO.getVehicleId());
 
-        // Calculating fuelConsumption in (L/100km)
-        double fuelConsumption = (supplyDTO.getTotalFuelConsumption()/vendorDTO.getDistanceFromWarehouse()) * 100;
+        // Calculating fuel_consumption in (L/100km)
+        double fuel_consumption_L_per_100km = (supplyDTO.getFuelConsumption()/vendorDTO.getDistanceFromWarehouse()) * 100;
 
         // Predicting Total Inbound Transportation Emission.
-        Integer predictedTransportationCo2eEmission = transportationEmissionServiceClient.predictTransportationEmission(vehicleDTO.getModel(), vehicleDTO.getEngineSize(), vehicleDTO.getCylinders(), fuelConsumption, vehicleDTO.getVehicleType(), vehicleDTO.getFuelType());
+        Integer predictedInboundTransportationCo2eEmission = transportationEmissionServiceClient.predictTransportationEmission(vehicleDTO.getModel(), vehicleDTO.getEngineSize(), vehicleDTO.getCylinders(), fuel_consumption_L_per_100km, vehicleDTO.getVehicleType(), vehicleDTO.getFuelType());
 
         // Datetime of the Transportation.
         OffsetDateTime dateTime = OffsetDateTime.now();
 
         // Finding the Total Quantity of Products Being involved in the Transportation.
-        int totalQuantity = supplyDTO.getProducts().stream()
-                .mapToInt(ProductDTO::getQuantity)
+        int totalQuantity = supplyDTO.getSupplyItems().stream()
+                .mapToInt(SupplyItemDTO::getQuantity)
                 .sum();
 
-        for (ProductDTO productDTO: supplyDTO.getProducts()) {
+        for (SupplyItemDTO supplyItemDTO : supplyDTO.getSupplyItems()) {
 
             VendorSupply vendorSupply = VendorSupply.builder()
                     .vendorId(supplyDTO.getVendorId())
-                    .productName(productDTO.getProductName().toUpperCase())
+                    .productName(supplyItemDTO.getProductName().toUpperCase())
                     .date(dateTime)
-                    .quantity(productDTO.getQuantity())
-                    .InboundCo2eEmission(((double)productDTO.getQuantity()/totalQuantity) * predictedTransportationCo2eEmission)
+                    .quantity(supplyItemDTO.getQuantity())
+                    .InboundCo2eEmission(((double) supplyItemDTO.getQuantity()/totalQuantity) * predictedInboundTransportationCo2eEmission)
                     .build();
 
             vendorSupplyRepository.save(vendorSupply);

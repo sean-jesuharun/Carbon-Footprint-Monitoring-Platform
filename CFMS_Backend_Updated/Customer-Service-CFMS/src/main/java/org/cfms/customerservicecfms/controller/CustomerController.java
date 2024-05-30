@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("customers")
+@CrossOrigin
 public class CustomerController {
 
     private CustomerServiceImple customerServiceImple;
@@ -22,7 +23,6 @@ public class CustomerController {
     public List<CustomerDTO> getCustomers() {
         return customerServiceImple.getCustomers();
     }
-
 
     @PostMapping
     public CustomerDTO createCustomer(@RequestBody CustomerDTO customerDTO) {
