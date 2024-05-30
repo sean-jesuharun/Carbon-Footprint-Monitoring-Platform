@@ -49,7 +49,15 @@ const VendorManagementForm = () => {
 
   const handleProductChange = (index, field, value) => {
     const updatedProducts = [...formData.vendorProducts];
-    updatedProducts[index][field] = value;
+    const updatedProduct = { ...updatedProducts[index] };
+
+    if (field in updatedProduct.productionMatrix) {
+      updatedProduct.productionMatrix[field] = value;
+    } else {
+      updatedProduct[field] = value;
+    }
+
+    updatedProducts[index] = updatedProduct;
     setFormData({
       ...formData,
       vendorProducts: updatedProducts
@@ -96,7 +104,7 @@ const VendorManagementForm = () => {
     try {
       const response = await axios.post(url, requestData);
       console.log('Data submitted successfully:', response.data);
-     // Reset the form
+      // Reset the form
       setFormData({
         vendorName: '',
         location: '',
@@ -115,7 +123,7 @@ const VendorManagementForm = () => {
         <br />
         <br />
         <Typography variant='h2' marginTop={1} marginBottom={3} color='#78909c'>Vendor Management Form</Typography>
-        <Card style={{ width: '70%', margin: '0 auto' }}>
+        <Card style={{ width: '100%', margin: '0 auto' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
             <Typography variant="subtitle1" gutterBottom>Vendor Name:</Typography>
             <TextField
@@ -171,9 +179,62 @@ const VendorManagementForm = () => {
                     style={{ marginRight: '10px', width: '150px' }}
                   >
                     <MenuItem value="Global">Global</MenuItem>
-                    {/* Add other region options */}
+                    <MenuItem value="East Asia and Southeast Asia">East Asia and Southeast Asia</MenuItem>
+                    <MenuItem value="Eastern Europe">Eastern Europe</MenuItem>
+                    <MenuItem value="Latin America and the Caribbean">Latin America and the Caribbean</MenuItem>
+                    <MenuItem value="Near East and North Africa">Near East and North Africa</MenuItem>
+                    <MenuItem value="North America">North America</MenuItem>
+                    <MenuItem value="Oceania">Oceania</MenuItem>
+                    <MenuItem value="Russian Federation">Russian Federation</MenuItem>
+                    <MenuItem value="South Asia">South Asia</MenuItem>
+                    <MenuItem value="Sub-Saharan Africa">Sub-Saharan Africa</MenuItem>
+                    <MenuItem value="Western Europe">Western Europe</MenuItem>
                   </TextField>
-                  {/* Repeat similar select fields for other production matrix attributes */}
+                  <TextField
+                    select
+                    label="Animal Species"
+                    value={product.productionMatrix.animalSpecies}
+                    onChange={(e) => handleProductChange(index, 'animalSpecies', e.target.value)}
+                    style={{ marginRight: '10px', width: '150px' }}
+                  >
+                    <MenuItem value="Cattle">Cattle</MenuItem>
+                    <MenuItem value="Buffaloes">Buffaloes</MenuItem>
+                    <MenuItem value="Sheep">Sheep</MenuItem>
+                    <MenuItem value="Goats">Goats</MenuItem>
+                    <MenuItem value="Pigs">Pigs</MenuItem>
+                    <MenuItem value="Chicken">Chicken</MenuItem>
+                  </TextField>
+                  <TextField
+                    select
+                    label="Production System"
+                    value={product.productionMatrix.productionSystem}
+                    onChange={(e) => handleProductChange(index, 'productionSystem', e.target.value)}
+                    style={{ marginRight: '10px', width: '150px' }}
+                  >
+                    <MenuItem value="Aggregated">Aggregated</MenuItem>
+                    <MenuItem value="Grassland systems">Grassland systems</MenuItem>
+                    <MenuItem value="Mixed systems">Mixed systems</MenuItem>
+                    <MenuItem value="Feedlots">Feedlots</MenuItem>
+                    <MenuItem value="Backyard systems">Backyard systems</MenuItem>
+                    <MenuItem value="Intermediate systems">Intermediate systems</MenuItem>
+                    <MenuItem value="Industrial systems">Industrial systems</MenuItem>
+                    <MenuItem value="Layers">Layers</MenuItem>
+                    <MenuItem value="Broilers">Broilers</MenuItem>
+                    {/* Add other production system options */}
+                  </TextField>
+                  <TextField
+                    select
+                    label="Commodity"
+                    value={product.productionMatrix.commodity}
+                    onChange={(e) => handleProductChange(index, 'commodity', e.target.value)}
+                    style={{ width: '150px' }}
+                  >
+                    <MenuItem value="Aggregated">Aggregated</MenuItem>
+                    <MenuItem value="Milk">Milk</MenuItem>
+                    <MenuItem value="Meat">Meat</MenuItem>
+                    <MenuItem value="Eggs">Eggs</MenuItem>
+                    {/* Add other commodity options */}
+                  </TextField>
                 </div>
                 <Button onClick={() => removeProduct(index)} variant="outlined" color="secondary" style={{ marginTop: '10px' }}>Remove Product</Button>
               </div>
