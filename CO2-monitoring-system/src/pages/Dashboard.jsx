@@ -15,7 +15,10 @@ function Dashboard() {
         <MiniDrawer/>
         <h1>Dash Board</h1>
         <DashboardTable/>
-        <Button onClick={()=>Navigate("/carbon-emission-evaluation")}>
+        <Button
+        variant='contained'
+        onClick={()=>Navigate("/carbon-emission-evaluation")}
+        style={{marginTop: '10px'}}>
             Do a new calculation
         </Button>
     </div>

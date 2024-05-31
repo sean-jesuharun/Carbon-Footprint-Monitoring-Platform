@@ -6,12 +6,16 @@ import MLInputForm from './MLInputForm';
 import VenderInputFrom from './VenderInputForm';
 import MiniDrawer from './MiniDrawer';
 import CarbonEmissionEvaluationFrom from './CorbonEmissionEvaluationForm';
+import CustomerManagementForm from './CustomerManagementFrom';
+import VehicleManagementForm from './VehicleManagementForm';
+import VendorManagementForm from './VendorManagementFrom';
 import Dashboard from './pages/Dashboard';
 import VehicleManagemnet from './pages/VehicleManagement';
 import VendorManagement from './pages/VendorManagement';
 import CustomerManagement from './pages/CustomerManagement';
 import CarbonEmissionEvaluation from './pages/CarbonEmissionEvaluation';
 import VendorSupply from './pages/VendorSupply';
+
 
 
 
@@ -25,6 +29,10 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/ml-input-form" element={<MLInputForm />} />
           <Route path="/vender-input-form" element={<VenderInputFrom />} />
+          <Route path="/vehicle-management-form" element={<VehicleManagementForm />} />
+          <Route path="/customer-management-form" element={<CustomerManagementForm />} />
+          <Route path="/vendor-management-form" element={<VendorManagementForm />} />
+
           <Route path="/mini-drawer" element={<MiniDrawer />} />
           <Route
             path="/carbon-emission-evaluation-form"
@@ -39,6 +47,7 @@ function App() {
             element={<CarbonEmissionEvaluation />}
           />
           <Route path="/vendor-supply" element={<VendorSupply />} />
+          
           
         </Routes>
       </div>

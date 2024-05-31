@@ -17,7 +17,9 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import PersonIcon from '@mui/icons-material/Person';
 import BusinessIcon from '@mui/icons-material/Business';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+
 
 const drawerWidth = 250;
 
@@ -134,6 +136,7 @@ export default function MiniDrawer() {
             { text: 'Vehicle Management', icon: <DirectionsCarIcon />, to: '/vehicle-management' },
             { text: 'Vendor Management', icon: <BusinessIcon />, to: '/vendor-management' },
             { text: 'Customer Management', icon: <PersonIcon />, to: '/customer-management' },
+            { text: 'Vendor Supply Management', icon: <LocalShippingIcon/>, to: '/vendor-supply'}
           ].map(({ text, icon, to }, index) => (
             <ListItemButton key={text} disablePadding sx={{ display: 'block' }} component={Link} to={to}>
               <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
