@@ -1,4 +1,4 @@
-package org.cfms.co2eevaluationcfms.dto.vendor;
+package org.cfms.co2eevaluationcfms.dto;
 
 import lombok.Data;
 import lombok.ToString;

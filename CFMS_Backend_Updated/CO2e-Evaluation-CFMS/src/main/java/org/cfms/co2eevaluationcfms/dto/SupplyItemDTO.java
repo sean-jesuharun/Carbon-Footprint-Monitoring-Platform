@@ -3,7 +3,7 @@ package org.cfms.co2eevaluationcfms.dto;
 import lombok.Data;
 
 @Data
-public class ProductDTO {
+public class SupplyItemDTO {
 
     private String productName;
 

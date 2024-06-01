@@ -1,7 +1,6 @@
 package org.cfms.co2eevaluationcfms.service.implementation;
 
-import org.cfms.co2eevaluationcfms.dto.vehicle.VehicleDTO;
-import org.cfms.co2eevaluationcfms.dto.vendor.VendorDTO;
+import org.cfms.co2eevaluationcfms.dto.VehicleDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;

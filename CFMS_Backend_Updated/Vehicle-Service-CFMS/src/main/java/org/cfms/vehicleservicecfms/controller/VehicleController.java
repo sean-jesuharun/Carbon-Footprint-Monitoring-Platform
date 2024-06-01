@@ -24,7 +24,6 @@ public class VehicleController {
         return vehicleServiceImple.getVehicles();
     }
 
-
     @PostMapping
     public VehicleDTO createVehicle(@RequestBody VehicleDTO vehicleDTO){
         return vehicleServiceImple.createVehicle(vehicleDTO);

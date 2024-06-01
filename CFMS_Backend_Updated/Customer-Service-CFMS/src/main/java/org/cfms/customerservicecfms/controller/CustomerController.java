@@ -24,7 +24,6 @@ public class CustomerController {
         return customerServiceImple.getCustomers();
     }
 
-
     @PostMapping
     public CustomerDTO createCustomer(@RequestBody CustomerDTO customerDTO) {
         return customerServiceImple.createCustomer(customerDTO);
