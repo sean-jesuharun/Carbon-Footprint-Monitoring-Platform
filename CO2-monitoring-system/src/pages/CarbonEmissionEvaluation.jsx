@@ -1,21 +1,81 @@
-import React, { useState } from 'react';
-import { Grid, Card, CardContent, TextField, Select, MenuItem, Button, Typography } from '@mui/material';
-
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import MiniDrawer from '../MiniDrawer';
+import axios from 'axios';
 
-const CarbonEmissionEvaluationForm = () => {
+const DeliveryForm = () => {
   const [formData, setFormData] = useState({
-    carbonEmissionJobName: '',
-    customer: '',
-    vehicle: '',
-    shipmentProductCatalog: [{
-      vendor: '',
-      product: '',
-      quantity: '' // Add quantity field
-    }]
+    jobName: '',
+    customerId: '',
+    vehicleId: '',
+    fuelConsumption: '',
+    deliveryItems: [{ vendorId: '', productName: '', quantity: '' }]
   });
 
-  const handleMainInputChange = (e) => {
+  const [customers, setCustomers] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
+  const [vendors, setVendors] = useState([]);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    // Fetch customers from backend
+    const fetchCustomers = async () => {
+      try {
+        const response = await axios.get('http://localhost:8060/customers');
+        setCustomers(response.data);
+      } catch (error) {
+        console.error('Error fetching customers:', error);
+      }
+    };
+    fetchCustomers();
+  }, []);
+
+  useEffect(() => {
+    // Fetch vehicles from backend
+    const fetchVehicles = async () => {
+      try {
+        const response = await axios.get('http://localhost:8040/vehicles');
+        setVehicles(response.data);
+      } catch (error) {
+        console.error('Error fetching vehicles:', error);
+      }
+    };
+    fetchVehicles();
+  }, []);
+
+  useEffect(() => {
+    // Fetch vendors from backend
+    const fetchVendors = async () => {
+      try {
+        const response = await axios.get('http://localhost:8050/vendors');
+        setVendors(response.data);
+      } catch (error) {
+        console.error('Error fetching vendors:', error);
+      }
+    };
+    fetchVendors();
+  }, []);
+
+  useEffect(() => {
+    // Fetch products for selected vendor
+    const fetchProducts = async () => {
+      if (formData.deliveryItems.some(item => item.vendorId)) {
+        try {
+          const vendorIds = formData.deliveryItems.map(item => item.vendorId);
+          const productsResponse = await Promise.all(vendorIds.map(vendorId => axios.get(`http://localhost:8050/vendors/${vendorId}`)));
+          const allProducts = productsResponse.map(response => response.data.vendorProducts).flat();
+          setProducts(allProducts);
+        } catch (error) {
+          console.error('Error fetching products:', error);
+        }
+      } else {
+        setProducts([]);
+      }
+    };
+    fetchProducts();
+  }, [formData.deliveryItems]);
+
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -23,131 +83,154 @@ const CarbonEmissionEvaluationForm = () => {
     });
   };
 
-  const handleProductInputChange = (index, e) => {
+  const handleDeliveryItemChange = (index, e) => {
     const { name, value } = e.target;
-    if(name === 'quantity' && value < 0){
-      return; //Do not accept the state if the value is negative
-    }
-    const updatedProducts = [...formData.shipmentProductCatalog];
-    updatedProducts[index][name] = value;
+
+    const updatedDeliveryItems = [...formData.deliveryItems];
+    updatedDeliveryItems[index][name] = value;
+
     setFormData({
       ...formData,
-      shipmentProductCatalog: updatedProducts
+      deliveryItems: updatedDeliveryItems
     });
   };
 
-  const handleAddProduct = () => {
+  const handleAddDeliveryItem = () => {
     setFormData({
       ...formData,
-      shipmentProductCatalog: [...formData.shipmentProductCatalog, { vendor: '', product: '', quantity: '' }] // Include quantity field
+      deliveryItems: [...formData.deliveryItems, { vendorId: '', productName: '', quantity: '' }]
     });
   };
 
-  const handleRemoveProduct = (index) => {
-    const updatedProducts = [...formData.shipmentProductCatalog];
-    updatedProducts.splice(index, 1);
+  const handleRemoveDeliveryItem = (index) => {
+    const updatedDeliveryItems = [...formData.deliveryItems];
+    updatedDeliveryItems.splice(index, 1);
+
     setFormData({
       ...formData,
-      shipmentProductCatalog: updatedProducts
+      deliveryItems: updatedDeliveryItems
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData); // Log form data to console
-    // Reset the form
-    setFormData({
-      carbonEmissionJobName: '',
-      customer: '',
-      vehicle: '',
-      shipmentProductCatalog: [{ vendor: '', product: '', quantity: '' }] // Reset quantity field
-    });
+    console.log('Form Data:', formData);
+    try {
+      // Send form data to backend API
+      await axios.post('http://localhost:8070/evaluations', formData);
+      console.log('Form data submitted successfully');
+      // Reset the form
+      setFormData({
+        jobName: '',
+        customerId: '',
+        vehicleId: '',
+        fuelConsumption: '',
+        deliveryItems: [{ vendorId: '', productName: '', quantity: '' }]
+      });
+    } catch (error) {
+      console.error('Error submitting form data:', error);
+    }
   };
-  
+
   return (
     <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '20px' }}>
-      <MiniDrawer/>
+      <MiniDrawer />
       <form onSubmit={handleSubmit}>
         <br />
         <br />
-        <Typography variant='h2' marginTop={1} marginBottom={3} color='#78909c'>Carbon Emission Evaluation Form</Typography>
-        <Card style={{ width: '70%',  margin: '0 auto' }}>
+        <Typography variant='h2' marginTop={1} marginBottom={3} color='#78909c'>Delivery Form</Typography>
+        <Card style={{ width: '70%', margin: '0 auto' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="subtitle1" gutterBottom>Carbon Emission Job Name:</Typography>
             <TextField
-              type="text"
-              name="carbonEmissionJobName"
-              value={formData.carbonEmissionJobName}
-              onChange={handleMainInputChange}
+              label="Job Name"
+              name="jobName"
+              value={formData.jobName}
+              onChange={handleInputChange}
               fullWidth
               required
             />
-            <Typography variant="subtitle1" gutterBottom>Customer:</Typography>
-            <Select
-              name="customer"
-              value={formData.customer}
-              onChange={handleMainInputChange}
+            <FormControl fullWidth required>
+              <InputLabel>Customer Name</InputLabel>
+              <Select
+                name="customerId"
+                value={formData.customerId}
+                onChange={handleInputChange}
+              >
+                {customers.map((customer) => (
+                  <MenuItem key={customer.id} value={customer.id}>
+                    {customer.customerName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth required>
+              <InputLabel>Vehicle ID</InputLabel>
+              <Select
+                name="vehicleId"
+                value={formData.vehicleId}
+                onChange={handleInputChange}
+              >
+                {vehicles.map((vehicle) => (
+                  <MenuItem key={vehicle.id} value={vehicle.id}>
+                    {vehicle.id} - {vehicle.model}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Typography variant="subtitle1" gutterBottom>Fuel Consumption (liters):</Typography>
+            <TextField
+              type="number"
+              name="fuelConsumption"
+              value={formData.fuelConsumption}
+              onChange={handleInputChange}
               fullWidth
               required
-            >
-              <MenuItem value="Customer1">Customer1</MenuItem>
-              <MenuItem value="Customer2">Customer2</MenuItem>
-              <MenuItem value="Customer3">Customer3</MenuItem>
-            </Select>
-            <Typography variant="subtitle1" gutterBottom>Vehicle:</Typography>
-            <Select
-              name="vehicle"
-              value={formData.vehicle}
-              onChange={handleMainInputChange}
-              fullWidth
-              required
-            >
-              <MenuItem value="Vehicle1">Vehicle1</MenuItem>
-              <MenuItem value="Vehicle2">Vehicle2</MenuItem>
-              <MenuItem value="Vehicle3">Vehicle3</MenuItem>
-            </Select>
+            />
             <hr />
-            <Typography variant="h5" style={{ marginBottom: '1rem' }}>Shipment Product Catalog</Typography>
-            {formData.shipmentProductCatalog.map((product, index) => (
-              <div key={index}>
-                <Typography variant="subtitle1" gutterBottom>Vendor:</Typography>
-                <Select
-                  name="vendor"
-                  value={product.vendor}
-                  onChange={(e) => handleProductInputChange(index, e)}
-                  fullWidth
-                  required
-                >
-                  <MenuItem value="Vendor1">Vendor1</MenuItem>
-                  <MenuItem value="Vendor2">Vendor2</MenuItem>
-                  <MenuItem value="Vendor3">Vendor3</MenuItem>
-                </Select>
-                <Typography variant="subtitle1" gutterBottom>Product:</Typography>
-                <Select
-                  name="product"
-                  value={product.product}
-                  onChange={(e) => handleProductInputChange(index, e)}
-                  fullWidth
-                  required
-                >
-                  <MenuItem value="Product1">Product1</MenuItem>
-                  <MenuItem value="Product2">Product2</MenuItem>
-                  <MenuItem value="Product3">Product3</MenuItem>
-                </Select>
-                <Typography variant="subtitle1" gutterBottom>Quantity:</Typography>
+            <Typography variant="h5" style={{ marginBottom: '1rem' }}>Delivery Items</Typography>
+            {formData.deliveryItems.map((deliveryItem, index) => (
+              <div key={index} style={{ marginBottom: '1rem' }}>
+                <FormControl fullWidth required style={{ marginBottom: '0.5rem' }}>
+                  <InputLabel>Vendor Name</InputLabel>
+                  <Select
+                    name="vendorId"
+                    value={deliveryItem.vendorId}
+                    onChange={(e) => handleDeliveryItemChange(index, e)}
+                  >
+                    {vendors.map((vendor) => (
+                      <MenuItem key={vendor.id} value={vendor.id}>
+                        {vendor.vendorName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth required style={{ marginBottom: '0.5rem' }}>
+                  <InputLabel>Product Name</InputLabel>
+                  <Select
+                    name="productName"
+                    value={deliveryItem.productName}
+                    onChange={(e) => handleDeliveryItemChange(index, e)}
+                  >
+                    {products.map((product) => (
+                      <MenuItem key={product.productionMatrix.id} value={product.productName}>
+                        {product.productName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
                 <TextField
                   type="number"
                   name="quantity"
-                  value={product.quantity}
-                  onChange={(e) => handleProductInputChange(index, e)}
+                  value={deliveryItem.quantity}
+                  onChange={(e) => handleDeliveryItemChange(index, e)}
                   fullWidth
                   required
-                  inputProps={{ min: 0}} //Ensure input doesnt accept negative values
+                  placeholder={`Quantity ${index + 1}`}
                 />
-                <Button type="button" onClick={() => handleRemoveProduct(index)}>Remove</Button>
+                <Button type="button" onClick={() => handleRemoveDeliveryItem(index)}>Remove</Button>
               </div>
             ))}
-            <Button type="button" onClick={handleAddProduct}>Add Product</Button>
+            <Button type="button" onClick={handleAddDeliveryItem}>Add Item</Button>
           </CardContent>
         </Card>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5px' }}>
@@ -158,4 +241,4 @@ const CarbonEmissionEvaluationForm = () => {
   );
 };
 
-export default CarbonEmissionEvaluationForm;
+export default DeliveryForm;
