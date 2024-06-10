@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardContent, TextField, Button, Typography, MenuItem } from '@mui/material';
-import MiniDrawer from './MiniDrawer';
+import MiniDrawer from '../MiniDrawer';
 import axios from 'axios';
 
 const VendorManagementForm = () => {

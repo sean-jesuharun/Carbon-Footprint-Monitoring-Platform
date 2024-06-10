@@ -1,20 +1,25 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 import Login from './pages/Login';
 import Singup from './pages/Signup';
-import MLInputForm from './MLInputForm';
-import VenderInputFrom from './VenderInputForm';
+
+
 import MiniDrawer from './MiniDrawer';
-import CarbonEmissionEvaluationFrom from './CorbonEmissionEvaluationForm';
-import CustomerManagementForm from './CustomerManagementFrom';
-import VehicleManagementForm from './VehicleManagementForm';
-import VendorManagementForm from './VendorManagementFrom';
+
+import CarbonEmissionEvaluationForm from './forms/CarbonEmissionEvaluationFrom.jsx';
+import CustomerManagementForm from './forms/CustomerManagementFrom';
+import VehicleManagementForm from './forms/VehicleManagementForm';
+import VendorManagementForm from './forms/VendorManagementFrom';
+import VendorSupplyForm from './forms/VendorSupplyForm.jsx';
+
 import Dashboard from './pages/Dashboard';
 import VehicleManagemnet from './pages/VehicleManagement';
 import VendorManagement from './pages/VendorManagement';
 import CustomerManagement from './pages/CustomerManagement';
-import CarbonEmissionEvaluation from './pages/CarbonEmissionEvaluation';
-import VendorSupply from './pages/VendorSupply';
+import VendorSupplyManagement from './pages/VendorSupplyManagement.jsx'
+
+
 
 
 
@@ -27,26 +32,23 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Singup />} />
           <Route path="/" element={<Dashboard />} />
-          <Route path="/ml-input-form" element={<MLInputForm />} />
-          <Route path="/vender-input-form" element={<VenderInputFrom />} />
+          
+          
           <Route path="/vehicle-management-form" element={<VehicleManagementForm />} />
           <Route path="/customer-management-form" element={<CustomerManagementForm />} />
           <Route path="/vendor-management-form" element={<VendorManagementForm />} />
+          <Route path="/vendor-supply-form" element={<VendorSupplyForm />} />
+          <Route path="/carbon-emission-evaluation-form" element={<CarbonEmissionEvaluationForm />} />
 
           <Route path="/mini-drawer" element={<MiniDrawer />} />
-          <Route
-            path="/carbon-emission-evaluation-form"
-            element={<CarbonEmissionEvaluationFrom />}
-          />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/vehicle-management" element={<VehicleManagemnet />} />
           <Route path="/vendor-management" element={<VendorManagement />} />
           <Route path="/customer-management" element={<CustomerManagement />} />
-          <Route
-            path="/carbon-emission-evaluation"
-            element={<CarbonEmissionEvaluation />}
-          />
-          <Route path="/vendor-supply" element={<VendorSupply />} />
+          <Route path="/vendor-supply-management" element={<VendorSupplyManagement />} />
+
+          
+          
           
           
         </Routes>

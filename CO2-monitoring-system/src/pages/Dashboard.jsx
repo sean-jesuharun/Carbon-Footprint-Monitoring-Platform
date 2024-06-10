@@ -17,7 +17,7 @@ function Dashboard() {
         <DashboardTable/>
         <Button
         variant='contained'
-        onClick={()=>Navigate("/carbon-emission-evaluation")}
+        onClick={()=>Navigate("/carbon-emission-evaluation-form")}
         style={{marginTop: '10px'}}>
             Do a new calculation
         </Button>

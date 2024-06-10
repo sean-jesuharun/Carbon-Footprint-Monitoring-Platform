@@ -130,7 +130,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, TextField, Button, Typography } from '@mui/material';
-import MiniDrawer from './MiniDrawer';
+import MiniDrawer from '../MiniDrawer';
 import axios from 'axios';
 
 const CustomerManagementForm = () => {

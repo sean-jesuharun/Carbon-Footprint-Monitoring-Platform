@@ -136,7 +136,7 @@ export default function MiniDrawer() {
             { text: 'Vehicle Management', icon: <DirectionsCarIcon />, to: '/vehicle-management' },
             { text: 'Vendor Management', icon: <BusinessIcon />, to: '/vendor-management' },
             { text: 'Customer Management', icon: <PersonIcon />, to: '/customer-management' },
-            { text: 'Vendor Supply Management', icon: <LocalShippingIcon/>, to: '/vendor-supply'}
+            { text: 'Vendor Supply Management', icon: <LocalShippingIcon/>, to: '/vendor-supply-management'}
           ].map(({ text, icon, to }, index) => (
             <ListItemButton key={text} disablePadding sx={{ display: 'block' }} component={Link} to={to}>
               <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>

@@ -1,9 +1,0 @@
-.form-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh; /* Set the height to fill the entire viewport */
-}
-
-/* Additional styling for the form elements can be added here */

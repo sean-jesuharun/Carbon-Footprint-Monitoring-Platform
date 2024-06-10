@@ -93,8 +93,6 @@ const handleDelete = (id) => {
         checkboxSelection
       />
     </div>
-    </Paper>
-    
-    
+    </Paper>    
   );
 }
