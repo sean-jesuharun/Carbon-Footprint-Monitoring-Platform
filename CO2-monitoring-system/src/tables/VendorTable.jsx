@@ -3,8 +3,9 @@ import { DataGrid } from '@mui/x-data-grid';
 import { IconButton } from '@mui/material';
 import { Delete, Edit, Visibility } from '@mui/icons-material'; // Import icons for actions
 import {Paper}from '@mui/material';
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
 import { styled } from '@mui/system';
+import axios from 'axios';
 
 
 // Create a styled component for the column headers
@@ -15,11 +16,29 @@ const StyledColumnHeader = styled('div')(({ theme, darkMode }) => ({
 
 
 export default function Vendortable({ darkMode }) {
+
+  const [rows, setRows] = useState([]);
+  
+  useEffect(() => {
+    // Fetch data from API
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:8050/vendors');
+        setRows(response.data);
+        console.log(response.data)
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const [columns] = useState([
-    { field: 'Vendor_name', headerName: 'Vendor_name', width: 200,headerAlign: 'center', align: 'center' },
-    { field: 'Vendor_location', headerName: 'Vendor_location', width: 150,headerAlign: 'center', align: 'center' },
-    { field: 'Distance_from_Sysco', headerName: 'Distance_from_Sysco', width: 130,headerAlign: 'center', align: 'center' },
-    { field: 'Products_Details', headerName: 'Products_Details', width: 180,headerAlign: 'center', align: 'center' },
+    { field: 'vendorName', headerName: 'Vendor_name', width: 200,headerAlign: 'center', align: 'center' },
+    { field: 'location', headerName: 'Vendor_location', width: 150,headerAlign: 'center', align: 'center' },
+    { field: 'distanceFromWarehouse', headerName: 'Distance_from_Sysco', width: 130,headerAlign: 'center', align: 'center' },
+    { field: 'vendorProducts', headerName: 'Products_Details', width: 180,headerAlign: 'center', align: 'center' },
 
     {
       field: 'actions',
@@ -39,19 +58,19 @@ export default function Vendortable({ darkMode }) {
 
   
 
-  const rows = [
-    { id: 1, Vendor_name: 'Kamal', Vendor_location: 'ABC123', Distance_from_Sysco: 'Premier Gasoline', Products_Details: '10.25'},
-    //Need to change
-    { id: 2, Carbon_Emission_Job_Name: 'Vimal', Customer: 'XYZ456', Vehicle: 'Ethanol',  Products_Details: '8.75' },
-    { id: 3, Carbon_Emission_Job_Name: '2024-04-27', Customer: 'DEF789', Vehicle: 'Regular Gasoline',  Products_Details: '14.25' },
-    { id: 4, Carbon_Emission_Job_Name: '2024-04-26', Customer: 'GHI012', Vehicle: 'Diesel',  Products_Details: '11.36'},
-    { id: 5, Carbon_Emission_Job_Name: '2024-04-25', Customer: 'JKL345', Vehicle: 'Premier Gasoline',  Products_Details: '9.26' },
-    { id: 6, Carbon_Emission_Job_Name: '2024-04-24', Customer: 'MNO678', Vehicle: 'Regular Gasoline',  Products_Details: '10.56'},
-    { id: 7, Carbon_Emission_Job_Name: '2024-04-23', Customer: 'PQR901', Vehicle: 'Diesel',  Products_Details: '55.78' },
-    { id: 8, Carbon_Emission_Job_Name: '2024-04-22', Customer: 'STU234', Vehicle: 'Permier Gasoline',  Products_Details: '7.25' },
-    { id: 9, Carbon_Emission_Job_Name: '2024-04-21', Customer: 'VWX567', Vehicle: 'Ethanol',  Products_Details: '125.1'},
-    { id: 10, Carbon_Emission_Job_Name: '2024-04-20', Customer: 'YZA890', Vehicle: 'Diesel',  Products_Details: '17.8'},
-  ];
+  // const rows = [
+  //   { id: 1, Vendor_name: 'Kamal', Vendor_location: 'ABC123', Distance_from_Sysco: 'Premier Gasoline', Products_Details: '10.25'},
+  //   //Need to change
+  //   { id: 2, Carbon_Emission_Job_Name: 'Vimal', Customer: 'XYZ456', Vehicle: 'Ethanol',  Products_Details: '8.75' },
+  //   { id: 3, Carbon_Emission_Job_Name: '2024-04-27', Customer: 'DEF789', Vehicle: 'Regular Gasoline',  Products_Details: '14.25' },
+  //   { id: 4, Carbon_Emission_Job_Name: '2024-04-26', Customer: 'GHI012', Vehicle: 'Diesel',  Products_Details: '11.36'},
+  //   { id: 5, Carbon_Emission_Job_Name: '2024-04-25', Customer: 'JKL345', Vehicle: 'Premier Gasoline',  Products_Details: '9.26' },
+  //   { id: 6, Carbon_Emission_Job_Name: '2024-04-24', Customer: 'MNO678', Vehicle: 'Regular Gasoline',  Products_Details: '10.56'},
+  //   { id: 7, Carbon_Emission_Job_Name: '2024-04-23', Customer: 'PQR901', Vehicle: 'Diesel',  Products_Details: '55.78' },
+  //   { id: 8, Carbon_Emission_Job_Name: '2024-04-22', Customer: 'STU234', Vehicle: 'Permier Gasoline',  Products_Details: '7.25' },
+  //   { id: 9, Carbon_Emission_Job_Name: '2024-04-21', Customer: 'VWX567', Vehicle: 'Ethanol',  Products_Details: '125.1'},
+  //   { id: 10, Carbon_Emission_Job_Name: '2024-04-20', Customer: 'YZA890', Vehicle: 'Diesel',  Products_Details: '17.8'},
+  // ];
   
 
 const getRowClassName = (params) => 'custom-row';
@@ -76,23 +95,21 @@ const handleDelete = (id) => {
     
     <Paper elevation={5} style={{ backgroundColor: darkMode ? 'black' : '#fff'}}>
     <div style={{  height: 600, width: '100%',marginTop: '10px' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns.map((column) => ({
-          ...column,
-          headerClassName: () => <StyledColumnHeader darkMode={darkMode}>{column.headerName}</StyledColumnHeader>,
-        }))}
-        style={{ color: darkMode ? 'green' : '#000' }}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 10 },
-          },
-        }}
-        getRowClassName={getRowClassName}
-        pageSizeOptions={[ 5,10]}
-        checkboxSelection
-      />
+    <DataGrid
+          rows={rows}
+          columns={columns}
+          style={{ color: darkMode ? 'green' : '#000' }}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 10 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+          checkboxSelection
+        />
     </div>
-    </Paper>    
+    </Paper>
+    
+    
   );
 }
