@@ -1,143 +1,116 @@
-import React, { useState } from 'react';
-import { Card, CardContent, TextField, Button, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import MiniDrawer from '../MiniDrawer';
+import axios from 'axios';
 
 const VendorSupplyForm = () => {
   const [formData, setFormData] = useState({
-    vendorName: '',
-    supplyDate: '',
-    products: [{ productName: '', quantity: '' }]
+    vendorId: '',
+    vehicleId: '',
+    fuelConsumption: '',
+    supplyItems: [{ productName: '', quantity: '' }]
   });
 
-  const [errors, setErrors] = useState({
-    vendorName: '',
-    supplyDate: '',
-    products: [{ productName: '', quantity: '' }]
-  });
+  const [vendors, setVendors] = useState([]);
+  const [supplyItems, setSupplyItems] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
 
-  const validateField = (name, value, index = null) => {
-    let error = '';
-    const lettersAndSpaces = /^[A-Za-z\s]*$/;
-
-    if (name === 'vendorName' && !lettersAndSpaces.test(value)) {
-      error = 'This field should only contain letters and spaces';
-    }
-    if (name === 'supplyDate') {
-      const date = new Date(value);
-      if (isNaN(date.getTime())) {
-        error = 'Please enter a valid date';
+  useEffect(() => {
+    // Fetch vendors from backend
+    const fetchVendors = async () => {
+      try {
+        const response = await axios.get('http://localhost:8050/vendors');
+        setVendors(response.data);
+      } catch (error) {
+        console.error('Error fetching vendors:', error);
       }
-    }
-    if (name === 'productName' && !lettersAndSpaces.test(value)) {
-      error = 'Product name should only contain letters and spaces';
-    }
-    if (name === 'quantity') {
-      if (isNaN(value) || value <= 0) {
-        error = 'Quantity should be a positive number';
-      }
-    }
+    };
+    fetchVendors();
+  }, []);
 
-    return error;
-  };
+  useEffect(() => {
+    // Fetch vehicles from backend
+    const fetchVehicles = async () => {
+      try {
+        const response = await axios.get('http://localhost:8040/vehicles');
+        setVehicles(response.data);
+      } catch (error) {
+        console.error('Error fetching vehicles:', error);
+      }
+    };
+    fetchVehicles();
+  }, []);
+
+  useEffect(() => {
+    // Fetch supply items for selected vendor
+    const fetchSupplyItems = async () => {
+      if (formData.vendorId) {
+        try {
+          const response = await axios.get(`http://localhost:8050/vendors/${formData.vendorId}`);
+          setSupplyItems(response.data.vendorProducts);
+        } catch (error) {
+          console.error('Error fetching supply items:', error);
+        }
+      } else {
+        setSupplyItems([]);
+      }
+    };
+    fetchSupplyItems();
+  }, [formData.vendorId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    const error = validateField(name, value);
-
     setFormData({
       ...formData,
       [name]: value
     });
-    setErrors({
-      ...errors,
-      [name]: error
-    });
   };
 
-  const handleProductChange = (index, e) => {
+  const handleSupplyItemChange = (index, e) => {
     const { name, value } = e.target;
-    const error = validateField(name, value);
 
-    const updatedProducts = [...formData.products];
-    updatedProducts[index][name] = value;
-
-    const updatedProductErrors = [...errors.products];
-    updatedProductErrors[index][name] = error;
+    const updatedSupplyItems = [...formData.supplyItems];
+    updatedSupplyItems[index][name] = value;
 
     setFormData({
       ...formData,
-      products: updatedProducts
-    });
-    setErrors({
-      ...errors,
-      products: updatedProductErrors
+      supplyItems: updatedSupplyItems
     });
   };
 
-  const handleAddProduct = () => {
+  const handleAddSupplyItem = () => {
     setFormData({
       ...formData,
-      products: [...formData.products, { productName: '', quantity: '' }]
-    });
-    setErrors({
-      ...errors,
-      products: [...errors.products, { productName: '', quantity: '' }]
+      supplyItems: [...formData.supplyItems, { productName: '', quantity: '' }]
     });
   };
 
-  const handleRemoveProduct = (index) => {
-    const updatedProducts = [...formData.products];
-    updatedProducts.splice(index, 1);
-
-    const updatedProductErrors = [...errors.products];
-    updatedProductErrors.splice(index, 1);
+  const handleRemoveSupplyItem = (index) => {
+    const updatedSupplyItems = [...formData.supplyItems];
+    updatedSupplyItems.splice(index, 1);
 
     setFormData({
       ...formData,
-      products: updatedProducts
-    });
-    setErrors({
-      ...errors,
-      products: updatedProductErrors
+      supplyItems: updatedSupplyItems
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    let formIsValid = true;
-    const newErrors = {
-      vendorName: validateField('vendorName', formData.vendorName),
-      supplyDate: validateField('supplyDate', formData.supplyDate),
-      products: formData.products.map((product, index) => ({
-        productName: validateField('productName', product.productName, index),
-        quantity: validateField('quantity', product.quantity, index)
-      }))
-    };
-
-    if (
-      newErrors.vendorName ||
-      newErrors.supplyDate ||
-      newErrors.products.some(productError => productError.productName || productError.quantity)
-    ) {
-      formIsValid = false;
-    }
-
-    setErrors(newErrors);
-
-    if (formIsValid) {
-      console.log(formData); // Log form data to console
+    console.log('Form Data:', formData);
+    try {
+      // Send form data to backend API
+      await axios.post('http://localhost:8070/supplies', formData);
+      console.log('Form data submitted successfully');
       // Reset the form
       setFormData({
-        vendorName: '',
-        supplyDate: '',
-        products: [{ productName: '', quantity: '' }]
+        vendorId: '',
+        vehicleId: '',
+        fuelConsumption: '',
+        supplyItems: [{ productName: '', quantity: '' }]
       });
-      setErrors({
-        vendorName: '',
-        supplyDate: '',
-        products: [{ productName: '', quantity: '' }]
-      });
+    } catch (error) {
+      console.error('Error submitting form data:', error);
     }
   };
 
@@ -150,62 +123,77 @@ const VendorSupplyForm = () => {
         <Typography variant='h2' marginTop={1} marginBottom={3} color='#78909c'>Vendor Supply Form</Typography>
         <Card style={{ width: '70%', margin: '0 auto' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="subtitle1" gutterBottom>Vendor Name:</Typography>
+            <FormControl fullWidth required>
+              <InputLabel>Vendor Name</InputLabel>
+              <Select
+                name="vendorId"
+                value={formData.vendorId}
+                onChange={handleInputChange}
+              >
+                {vendors.map((vendor) => (
+                  <MenuItem key={vendor.id} value={vendor.id}>
+                    {vendor.vendorName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth required>
+              <InputLabel>Vehicle ID</InputLabel>
+              <Select
+                name="vehicleId"
+                value={formData.vehicleId}
+                onChange={handleInputChange}
+              >
+                {vehicles.map((vehicle) => (
+                  <MenuItem key={vehicle.id} value={vehicle.id}>
+                    {vehicle.id} - {vehicle.model}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Typography variant="subtitle1" gutterBottom>Fuel Consumption (liters):</Typography>
             <TextField
-              type="text"
-              name="vendorName"
-              value={formData.vendorName}
+              type="number"
+              name="fuelConsumption"
+              value={formData.fuelConsumption}
               onChange={handleInputChange}
               fullWidth
               required
-              error={!!errors.vendorName}
-              helperText={errors.vendorName}
-            />
-            <Typography variant="subtitle1" gutterBottom>Supply Date:</Typography>
-            <TextField
-              type="date"
-              name="supplyDate"
-              value={formData.supplyDate}
-              onChange={handleInputChange}
-              fullWidth
-              required
-              error={!!errors.supplyDate}
-              helperText={errors.supplyDate}
               InputLabelProps={{
                 shrink: true,
               }}
             />
             <hr />
-            <Typography variant="h5" style={{ marginBottom: '1rem' }}>Supplied Products</Typography>
-            {formData.products.map((product, index) => (
+            <Typography variant="h5" style={{ marginBottom: '1rem' }}>Supplied Items</Typography>
+            {formData.supplyItems.map((supplyItem, index) => (
               <div key={index} style={{ marginBottom: '1rem' }}>
-                <TextField
-                  type="text"
-                  name="productName"
-                  value={product.productName}
-                  onChange={(e) => handleProductChange(index, e)}
-                  fullWidth
-                  required
-                  placeholder={`Product Name ${index + 1}`}
-                  error={!!errors.products[index]?.productName}
-                  helperText={errors.products[index]?.productName}
-                  style={{ marginBottom: '0.5rem' }}
-                />
+                <FormControl fullWidth required style={{ marginBottom: '0.5rem' }}>
+                  <InputLabel>Product Name</InputLabel>
+                  <Select
+                    name="productName"
+                    value={supplyItem.productName}
+                    onChange={(e) => handleSupplyItemChange(index, e)}
+                  >
+                    {supplyItems.map((item) => (
+                      <MenuItem key={item.productionMatrix.id} value={item.productName}>
+                        {item.productName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
                 <TextField
                   type="number"
                   name="quantity"
-                  value={product.quantity}
-                  onChange={(e) => handleProductChange(index, e)}
+                  value={supplyItem.quantity}
+                  onChange={(e) => handleSupplyItemChange(index, e)}
                   fullWidth
                   required
                   placeholder={`Quantity ${index + 1}`}
-                  error={!!errors.products[index]?.quantity}
-                  helperText={errors.products[index]?.quantity}
                 />
-                <Button type="button" onClick={() => handleRemoveProduct(index)}>Remove</Button>
+                <Button type="button" onClick={() => handleRemoveSupplyItem(index)}>Remove</Button>
               </div>
             ))}
-            <Button type="button" onClick={handleAddProduct}>Add Product</Button>
+            <Button type="button" onClick={handleAddSupplyItem}>Add Item</Button>
           </CardContent>
         </Card>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5px' }}>

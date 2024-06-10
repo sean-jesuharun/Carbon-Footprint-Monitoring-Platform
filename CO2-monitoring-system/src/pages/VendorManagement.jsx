@@ -25,7 +25,7 @@ function VendorManagement() {
         onClick={handleButtonClick}
         style={{marginTop: '10px'}}
         >
-          Add a new customer
+          Add a new vendor
         </Button>
     </div>
   )

@@ -98,7 +98,7 @@ const VendorManagementForm = () => {
     console.log(formData);
 
     // Send a POST request to the backend API
-    const url = 'http://localhost:8060/vendors'; 
+    const url = 'http://localhost:8050/vendors'; 
     const requestData = { ...formData };
 
     try {
@@ -112,7 +112,8 @@ const VendorManagementForm = () => {
         vendorProducts: []
       });
     } catch (error) {
-      console.error('Error submitting data:', error);
+    
+      
     }
   };
 
