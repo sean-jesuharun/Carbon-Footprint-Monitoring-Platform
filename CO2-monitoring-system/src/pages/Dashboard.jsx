@@ -13,7 +13,7 @@ function Dashboard() {
         <br></br>
         
         <MiniDrawer/>
-        <h1>Dash Board</h1>
+        <h1>Carbon Footprint Evaluation Jobs</h1>
         <DashboardTable/>
         <Button
         variant='contained'

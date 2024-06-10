@@ -1,9 +1,12 @@
 package org.cfms.co2eevaluationcfms.controller;
 
-import org.cfms.co2eevaluationcfms.dto.SupplyDTO;
+import org.cfms.co2eevaluationcfms.dto.SupplyReqDTO;
+import org.cfms.co2eevaluationcfms.dto.SupplyResDTO;
 import org.cfms.co2eevaluationcfms.service.implementation.SupplyServiceImple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("supplies")
@@ -17,9 +20,14 @@ public class SupplyController {
         this.supplyServiceImple = supplyServiceImple;
     }
 
+    @GetMapping
+    public List<SupplyResDTO> getSupplies() {
+        return supplyServiceImple.getSupplies();
+    }
+
     @PostMapping
-    public SupplyDTO createSupply(@RequestBody SupplyDTO supplyDTO) {
-        return supplyServiceImple.createSupply(supplyDTO);
+    public SupplyReqDTO createSupply(@RequestBody SupplyReqDTO supplyReqDTO) {
+        return supplyServiceImple.createSupply(supplyReqDTO);
     }
 
 }

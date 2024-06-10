@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class SupplyDTO {
+public class SupplyReqDTO {
 
     private Long vendorId;
     private Long vehicleId;

@@ -14,7 +14,6 @@ const StyledColumnHeader = styled('div')(({ theme, darkMode }) => ({
 }));
 
 
-
 export default function VendorSupplytable({ darkMode }) {
 
   const [rows, setRows] = useState([]);
@@ -23,7 +22,7 @@ export default function VendorSupplytable({ darkMode }) {
     // Fetch data from API
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8050/vendors');
+        const response = await axios.get('http://localhost:8070/supplies');
         setRows(response.data);
         console.log(response.data)
       } catch (error) {
@@ -35,9 +34,10 @@ export default function VendorSupplytable({ darkMode }) {
   }, []);
 
   const [columns] = useState([
-    { field: 'vendorName', headerName: 'Vendor_name', width: 200,headerAlign: 'center', align: 'center' },
-    { field: 'supplyDate', headerName: 'Vendor_location', width: 150,headerAlign: 'center', align: 'center' },
-    { field: 'products', headerName: 'Distance_from_Sysco', width: 130,headerAlign: 'center', align: 'center' },
+    { field: 'vendorId', headerName: 'Vendor Id', width: 150,headerAlign: 'center', align: 'center' },
+    { field: 'date', headerName: 'Date', width: 200,headerAlign: 'center', align: 'center' },
+    { field: 'productName', headerName: 'Product', width: 130,headerAlign: 'center', align: 'center' },
+    { field: 'quantity', headerName: 'Quantity', width: 130,headerAlign: 'center', align: 'center' },
     
     {
       field: 'actions',
@@ -54,9 +54,6 @@ export default function VendorSupplytable({ darkMode }) {
     
   },
   ]);
-
-  
-const getRowClassName = (params) => 'custom-row';
 
 const handleView = (id) => {
   // Handle view action

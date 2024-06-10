@@ -35,9 +35,9 @@ export default function Customertable({ darkMode }) {
   }, []);
 
   const [columns] = useState([
-    { field: 'customerName', headerName: 'Customer_name', width: 200,headerAlign: 'center', align: 'center' },
-    { field: 'location', headerName: 'Customer_location', width: 150,headerAlign: 'center', align: 'center' },
-    { field: 'distanceFromWarehouse', headerName: 'Distance_from_Sysco', width:250,headerAlign: 'center', align: 'center' },
+    { field: 'customerName', headerName: 'Name', width: 200,headerAlign: 'center', align: 'center' },
+    { field: 'location', headerName: 'Location', width: 150,headerAlign: 'center', align: 'center' },
+    { field: 'distanceFromWarehouse', headerName: 'Distance From Warehouse', width:250,headerAlign: 'center', align: 'center' },
 
 
     {

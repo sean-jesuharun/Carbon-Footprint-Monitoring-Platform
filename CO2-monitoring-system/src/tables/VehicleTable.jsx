@@ -29,12 +29,12 @@ export default function Vehicletable({ darkMode }) {
   }, []);
 
   const columns = [
-    { field: 'model', headerName: 'Vehicle_model', width: 200, headerAlign: 'center', align: 'center' },
-    { field: 'engineSize', headerName: 'Engine_size', width: 150, headerAlign: 'center', align: 'center' },
-    { field: 'cylinders', headerName: 'Number_of_cylinders', width: 130, headerAlign: 'center', align: 'center' },
-    { field: 'vehicleType', headerName: 'Vehicle_type', width: 180, headerAlign: 'center', align: 'center' },
+    { field: 'model', headerName: 'Model', width: 200, headerAlign: 'center', align: 'center' },
+    { field: 'engineSize', headerName: 'Engine Size', width: 150, headerAlign: 'center', align: 'center' },
+    { field: 'cylinders', headerName: 'No of Cylinders', width: 130, headerAlign: 'center', align: 'center' },
+    { field: 'vehicleType', headerName: 'Vehicle Type', width: 180, headerAlign: 'center', align: 'center' },
     { field: 'transmission', headerName: 'Transmission', width: 180, headerAlign: 'center', align: 'center' },
-    { field: 'fuelType', headerName: 'Fuel_type', width: 180, headerAlign: 'center', align: 'center' },
+    { field: 'fuelType', headerName: 'Fuel Type', width: 180, headerAlign: 'center', align: 'center' },
     {
       field: 'actions',
       headerName: 'Actions',

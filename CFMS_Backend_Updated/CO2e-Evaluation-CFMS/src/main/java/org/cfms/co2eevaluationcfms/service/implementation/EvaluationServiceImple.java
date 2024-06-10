@@ -82,7 +82,6 @@ public class EvaluationServiceImple implements EvaluationService {
                 .mapToInt(DeliveryItemDTO::getQuantity)
                 .sum();
 
-
         Evaluation evaluation = Evaluation.builder()
                 .jobName(evaluationReqDTO.getJobName())
                 .customerId(evaluationReqDTO.getCustomerId())
@@ -114,10 +113,6 @@ public class EvaluationServiceImple implements EvaluationService {
                     .filter(supply -> deliveryItemDTO.getQuantity() < supply.getQuantity())
                     .findFirst()
                     .orElseThrow(() -> new NoSuchElementException("No VendorSupply found to satisfy the quantity " + deliveryItemDTO.getQuantity() + " of " + deliveryItemDTO.getProductName() + " from " + vendorDTO.getVendorName()));
-
-            System.out.println();
-            System.out.println(vendorSupply);
-            System.out.println();
 
             Result result = Result.builder()
                     .evaluation(evaluation)
