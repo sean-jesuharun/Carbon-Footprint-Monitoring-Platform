@@ -15,7 +15,7 @@ const DeliveryForm = () => {
   const [customers, setCustomers] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [vendors, setVendors] = useState([]);
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState({});
 
   useEffect(() => {
     // Fetch customers from backend
@@ -57,22 +57,25 @@ const DeliveryForm = () => {
   }, []);
 
   useEffect(() => {
-    // Fetch products for selected vendor
-    const fetchProducts = async () => {
-      if (formData.deliveryItems.some(item => item.vendorId)) {
-        try {
-          const vendorIds = formData.deliveryItems.map(item => item.vendorId);
-          const productsResponse = await Promise.all(vendorIds.map(vendorId => axios.get(`http://localhost:8050/vendors/${vendorId}`)));
-          const allProducts = productsResponse.map(response => response.data.vendorProducts).flat();
-          setProducts(allProducts);
-        } catch (error) {
-          console.error('Error fetching products:', error);
+    // Fetch products for each vendor when its vendorId changes
+    const fetchProductsForVendors = async () => {
+      const productsMap = {};
+
+      for (const item of formData.deliveryItems) {
+        if (item.vendorId && !productsMap[item.vendorId]) {
+          try {
+            const response = await axios.get(`http://localhost:8050/vendors/${item.vendorId}`);
+            productsMap[item.vendorId] = response.data.vendorProducts;
+          } catch (error) {
+            console.error(`Error fetching products for vendor ${item.vendorId}:`, error);
+          }
         }
-      } else {
-        setProducts([]);
       }
+
+      setProducts(productsMap);
     };
-    fetchProducts();
+
+    fetchProductsForVendors();
   }, [formData.deliveryItems]);
 
   const handleInputChange = (e) => {
@@ -211,8 +214,8 @@ const DeliveryForm = () => {
                     value={deliveryItem.productName}
                     onChange={(e) => handleDeliveryItemChange(index, e)}
                   >
-                    {products.map((product) => (
-                      <MenuItem key={product.productionMatrix.id} value={product.productName}>
+                    {(products[deliveryItem.vendorId] || []).map((product) => (
+                      <MenuItem key={product.id} value={product.productName}>
                         {product.productName}
                       </MenuItem>
                     ))}
