@@ -3,6 +3,7 @@ package org.cfms.vehicleservicecfms.service.implemetation;
 import jakarta.transaction.Transactional;
 import org.cfms.vehicleservicecfms.dto.VehicleDTO;
 import org.cfms.vehicleservicecfms.entity.Vehicle;
+import org.cfms.vehicleservicecfms.exception.VehicleNotFoundException;
 import org.cfms.vehicleservicecfms.repository.VehicleRepository;
 import org.cfms.vehicleservicecfms.service.VehicleService;
 import org.modelmapper.ModelMapper;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class VehicleServiceImple implements VehicleService {
@@ -33,7 +33,6 @@ public class VehicleServiceImple implements VehicleService {
 
     }
 
-
     @Transactional
     public VehicleDTO createVehicle(VehicleDTO vehicleDTO) {
 
@@ -52,12 +51,11 @@ public class VehicleServiceImple implements VehicleService {
 
     }
 
-
     public VehicleDTO getVehicleById(Long vehicleId) {
 
         return vehicleRepository.findById(vehicleId)
                 .map(vehicle -> modelMapper.map(vehicle, VehicleDTO.class))
-                .orElseThrow(() -> new NoSuchElementException("Vehicle not found with Id : " + vehicleId));
+                .orElseThrow(() -> new VehicleNotFoundException("Vehicle not found with Id : " + vehicleId));
 
     }
 }
