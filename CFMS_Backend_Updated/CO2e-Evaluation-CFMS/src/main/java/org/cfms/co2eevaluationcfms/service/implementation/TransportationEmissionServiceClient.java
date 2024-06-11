@@ -18,8 +18,7 @@ public class TransportationEmissionServiceClient {
 
     @Autowired
     public TransportationEmissionServiceClient(WebClient.Builder webClientBuilderSample) {
-//        this.webClient = webClientBuilder.baseUrl("https://cfms-model.el.r.appspot.com").build();
-        this.webClient = webClientBuilderSample.baseUrl("http://127.0.0.1:5000").build();
+        this.webClient = webClientBuilderSample.baseUrl("https://transportation-model-2.el.r.appspot.com").build();
     }
 
     // Predicting Transportation Emission.
