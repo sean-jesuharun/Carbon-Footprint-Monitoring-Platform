@@ -58,4 +58,31 @@ public class VehicleServiceImple implements VehicleService {
                 .orElseThrow(() -> new VehicleNotFoundException("Vehicle not found with Id : " + vehicleId));
 
     }
+
+    @Transactional
+    public VehicleDTO updateVehicleById(Long vehicleId, VehicleDTO vehicleDTO) {
+
+        return vehicleRepository.findById(vehicleId)
+                .map(vehicle -> {
+
+                    vehicle.setModel(vehicleDTO.getModel());
+                    vehicle.setEngineSize(vehicleDTO.getEngineSize());
+                    vehicle.setCylinders(vehicleDTO.getCylinders());
+                    vehicle.setFuelType(vehicleDTO.getFuelType());
+                    vehicle.setVehicleType(vehicleDTO.getVehicleType());
+                    vehicle.setTransmission(vehicleDTO.getTransmission());
+
+                    return modelMapper.map(vehicle, VehicleDTO.class);
+
+                })
+                .orElseThrow(() -> new VehicleNotFoundException("Vehicle not found with Id : " + vehicleId));
+
+    }
+
+
+    public void deleteVehicleById(Long vehicleId) {
+
+        vehicleRepository.deleteById(vehicleId);
+
+    }
 }

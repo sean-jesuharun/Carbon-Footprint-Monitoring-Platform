@@ -13,6 +13,10 @@ public abstract class AbstractController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    public ResponseEntity<HttpStatus> handleSuccessfulNoContentResponse(){
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     protected ResponseEntity<Object> handleClientErrorNotFoundResponse(Object response) {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
