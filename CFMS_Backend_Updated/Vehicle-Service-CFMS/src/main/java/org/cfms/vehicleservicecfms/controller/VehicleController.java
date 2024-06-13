@@ -36,4 +36,6 @@ public class VehicleController extends AbstractController {
         return handleSuccessfulOkResponse(vehicleServiceImple.getVehicleById(vehicleId));
     }
 
+
+
 }

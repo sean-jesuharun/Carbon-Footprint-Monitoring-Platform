@@ -3,7 +3,7 @@ import MiniDrawer from '../MiniDrawer'
 import CustomerTable from '../tables/CustomerTable'
 import { Button } from '@mui/material'
 import { useNavigate} from 'react-router-dom'
-
+import Box from '@mui/material/Box';
 
 
 
@@ -18,16 +18,24 @@ function CustomerManagement() {
         <br></br>        
         <MiniDrawer/>
         <h1>Customer Management</h1>
-        <CustomerTable/>
         <br />
+        <Box display="flex" justifyContent="flex-end" padding="16px">
         <Button
-        variant="contained"
-        color="primary"
+        variant='contained'
+        sx={{ 
+          padding: '10px 20px', 
+          color: '#fff', 
+          backgroundColor: '#1b263b',
+          '&:hover': {
+            backgroundColor: '#778da9',
+          },}}
         onClick={handleButtonClick}
-        style={{marginTop: '10px'}}
-        >
+        style={{marginTop: '10px'}}>
           Add a new customer
-        </Button>
+          </Button>
+        </Box>
+        <CustomerTable/>
+
     </div>
   )
 }

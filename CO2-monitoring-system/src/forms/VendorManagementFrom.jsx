@@ -244,7 +244,15 @@ const VendorManagementForm = () => {
           </CardContent>
         </Card>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5px' }}>
-          <Button type="submit" variant='contained' color='primary' style={{ width: '200px' }}>Submit</Button>
+          <Button type="submit" variant='contained' 
+          sx={{ 
+            padding: '10px 20px', 
+            color: '#fff', 
+            backgroundColor: '#1b263b',
+            '&:hover': {
+              backgroundColor: '#778da9',
+            },
+          }}>Submit</Button>
         </div>
       </form>
     </div>
