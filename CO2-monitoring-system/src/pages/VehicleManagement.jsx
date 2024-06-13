@@ -3,6 +3,7 @@ import MiniDrawer from '../MiniDrawer'
 import VehicleTable from '../tables/VehicleTable'
 import { Button } from '@mui/material'
 import { useNavigate} from 'react-router-dom'
+import Box from '@mui/material/Box';
 
 
 
@@ -18,16 +19,25 @@ function VehicleManagement() {
         <br></br>        
         <MiniDrawer/>
         <h1>Vehicle Management</h1>
-        <VehicleTable/>
+        
         <br />
+        <Box display="flex" justifyContent="flex-end" padding="16px">
         <Button
-        variant="contained"
-        color="primary"
+        variant='contained'
+        sx={{ 
+          padding: '10px 20px', 
+          color: '#fff', 
+          backgroundColor: '#1b263b',
+          '&:hover': {
+            backgroundColor: '#778da9',
+          },}}
         onClick={handleButtonClick}
-        style={{marginTop: '10px'}}
-        >
+        style={{marginTop: '10px'}}>
           Add a new vehicle
-        </Button>
+          </Button>
+        </Box>
+
+        <VehicleTable/>
     </div>
   )
 }
