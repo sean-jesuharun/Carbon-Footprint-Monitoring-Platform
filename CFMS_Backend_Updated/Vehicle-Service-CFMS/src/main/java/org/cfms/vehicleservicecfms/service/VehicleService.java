@@ -10,4 +10,8 @@ public interface VehicleService {
     VehicleDTO createVehicle(VehicleDTO vehicleDTO);
 
     VehicleDTO getVehicleById(Long vehicleId);
+
+    VehicleDTO updateVehicleById(Long vehicleId, VehicleDTO vehicleDTO);
+
+    void deleteVehicleById(Long vehicleId);
 }
