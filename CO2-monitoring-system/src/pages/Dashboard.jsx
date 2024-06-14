@@ -4,6 +4,7 @@ import MiniDrawer from '../MiniDrawer'
 import DashboardTable from '../tables/DashBoardTable'
 import { Button ,Typography } from '@mui/material'
 import Box from '@mui/material/Box';
+import Navbar from '../Navbar'
 
 function Dashboard() {
   const Navigate = useNavigate();

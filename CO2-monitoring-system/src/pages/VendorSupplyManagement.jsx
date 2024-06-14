@@ -4,6 +4,7 @@ import VendorSupplyTable from '../tables/VendorSupplyTable'
 import { Button,Typography } from '@mui/material'
 import { useNavigate} from 'react-router-dom'
 import Box from '@mui/material/Box';
+import Navbar from '../Navbar'
 
 
 
