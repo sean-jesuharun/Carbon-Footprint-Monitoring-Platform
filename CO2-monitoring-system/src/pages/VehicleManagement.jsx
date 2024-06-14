@@ -1,7 +1,7 @@
 import React from 'react'
 import MiniDrawer from '../MiniDrawer'
 import VehicleTable from '../tables/VehicleTable'
-import { Button } from '@mui/material'
+import { Button ,Typography} from '@mui/material'
 import { useNavigate} from 'react-router-dom'
 import Box from '@mui/material/Box';
 
@@ -15,12 +15,11 @@ function VehicleManagement() {
     navigate('/vehicle-management-form');
   }
   return (
-    <div>
-        <br></br>        
+    <div>       
         <MiniDrawer/>
-        <h1>Vehicle Management</h1>
-        
-        <br />
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Typography variant='h2' marginTop={10} marginBottom={-3} color='#78909c'>Vehicle Management</Typography>
+        </Box>       
         <Box display="flex" justifyContent="flex-end" padding="16px">
         <Button
         variant='contained'

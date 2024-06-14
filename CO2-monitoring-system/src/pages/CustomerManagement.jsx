@@ -1,7 +1,7 @@
 import React from 'react'
 import MiniDrawer from '../MiniDrawer'
 import CustomerTable from '../tables/CustomerTable'
-import { Button } from '@mui/material'
+import { Button,Typography } from '@mui/material'
 import { useNavigate} from 'react-router-dom'
 import Box from '@mui/material/Box';
 
@@ -14,11 +14,11 @@ function CustomerManagement() {
     navigate('/customer-management-form');
   }
   return (
-    <div>
-        <br></br>        
+    <div>        
         <MiniDrawer/>
-        <h1>Customer Management</h1>
-        <br />
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Typography variant='h2' marginTop={10} marginBottom={-3} color='#78909c'>Customer Management</Typography>
+        </Box>
         <Box display="flex" justifyContent="flex-end" padding="16px">
         <Button
         variant='contained'

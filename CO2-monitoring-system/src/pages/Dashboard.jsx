@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, useNavigate} from 'react-router-dom'
 import MiniDrawer from '../MiniDrawer'
 import DashboardTable from '../tables/DashBoardTable'
-import { Button } from '@mui/material'
+import { Button ,Typography } from '@mui/material'
 import Box from '@mui/material/Box';
 
 function Dashboard() {
@@ -10,11 +10,10 @@ function Dashboard() {
   const label1="NEW CARBON EMISSION";
   return (
     <div>
-        <br></br>
-        
         <MiniDrawer/>
-        <h1>Carbon Footprint Evaluation Jobs</h1>
-        
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Typography variant='h2' marginTop={10} marginBottom={-3} color='#78909c'>Carbon Footprint Evaluation Jobs</Typography>
+        </Box>
         <Box display="flex" justifyContent="flex-end" padding="16px">
         <Button
         variant='contained'

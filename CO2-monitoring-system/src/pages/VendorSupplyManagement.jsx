@@ -1,7 +1,7 @@
 import React from 'react'
 import MiniDrawer from '../MiniDrawer'
 import VendorSupplyTable from '../tables/VendorSupplyTable'
-import { Button } from '@mui/material'
+import { Button,Typography } from '@mui/material'
 import { useNavigate} from 'react-router-dom'
 import Box from '@mui/material/Box';
 
@@ -14,11 +14,11 @@ function VendorSupplyManagement() {
     navigate('/vendor-supply-form');
   }
   return (
-    <div>
-        <br></br>        
+    <div>      
         <MiniDrawer/>
-        <h1>Vendor Supply Management</h1>
-        <br />
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Typography variant='h2' marginTop={10} marginBottom={-3} color='#78909c'>Vendor Supply Management</Typography>
+        </Box>
         <Box display="flex" justifyContent="flex-end" padding="16px">
         <Button
         variant='contained'
