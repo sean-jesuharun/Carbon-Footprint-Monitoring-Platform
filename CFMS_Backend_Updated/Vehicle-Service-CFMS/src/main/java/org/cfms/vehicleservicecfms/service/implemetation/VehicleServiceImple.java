@@ -8,6 +8,8 @@ import org.cfms.vehicleservicecfms.repository.VehicleRepository;
 import org.cfms.vehicleservicecfms.service.VehicleService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,11 +27,10 @@ public class VehicleServiceImple implements VehicleService {
         this.modelMapper = modelMapper;
     }
 
-    public List<VehicleDTO> getVehicles() {
+    public Page<VehicleDTO> getVehicles(Pageable pageable) {
 
-        return vehicleRepository.findAll().stream()
-                .map(vehicle -> modelMapper.map(vehicle, VehicleDTO.class))
-                .toList();
+        return vehicleRepository.findAll(pageable)
+                .map(vehicle -> modelMapper.map(vehicle, VehicleDTO.class));
 
     }
 

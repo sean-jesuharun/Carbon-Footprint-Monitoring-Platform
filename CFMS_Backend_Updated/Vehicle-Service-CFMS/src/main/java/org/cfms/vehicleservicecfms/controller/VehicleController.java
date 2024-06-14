@@ -4,11 +4,10 @@ import jakarta.validation.Valid;
 import org.cfms.vehicleservicecfms.dto.VehicleDTO;
 import org.cfms.vehicleservicecfms.service.implemetation.VehicleServiceImple;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("vehicles")
@@ -23,8 +22,10 @@ public class VehicleController extends AbstractController {
     }
 
     @GetMapping
-    public List<VehicleDTO> getVehicles(){
-        return vehicleServiceImple.getVehicles();
+    public ResponseEntity<Object> getVehicles(
+            @RequestParam("pageNo") Integer pageNo,
+            @RequestParam("pageSize") Integer pageSize){
+        return handleSuccessfulOkResponse(vehicleServiceImple.getVehicles(PageRequest.of(pageNo, pageSize)));
     }
 
     @PostMapping
