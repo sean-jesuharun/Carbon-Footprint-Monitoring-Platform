@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, TextField, Button, Typography, MenuItem } from '@mui/material';
 import MiniDrawer from '../MiniDrawer';
 import axios from 'axios';
+import Navbar from '../Navbar';
 
 const VendorManagementForm = () => {
   const [formData, setFormData] = useState({
@@ -119,7 +120,8 @@ const VendorManagementForm = () => {
 
   return (
     <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '20px' }}>
-      <MiniDrawer />
+      {/* <MiniDrawer /> */}
+      <Navbar/>
       <form onSubmit={handleSubmit}>
         <br />
         <br />

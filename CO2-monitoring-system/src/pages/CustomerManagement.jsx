@@ -16,7 +16,8 @@ function CustomerManagement() {
   }
   return (
     <div>        
-        <MiniDrawer/>
+        {/* <MiniDrawer/> */}
+        <Navbar/>
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           <Typography variant='h2' marginTop={10} marginBottom={-3} color='#78909c'>Customer Management</Typography>
         </Box>
