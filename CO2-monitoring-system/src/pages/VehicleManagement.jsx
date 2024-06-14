@@ -4,6 +4,7 @@ import VehicleTable from '../tables/VehicleTable'
 import { Button } from '@mui/material'
 import { useNavigate} from 'react-router-dom'
 import Box from '@mui/material/Box';
+import Navbar from '../Navbar'
 
 
 
@@ -17,7 +18,8 @@ function VehicleManagement() {
   return (
     <div>
         <br></br>        
-        <MiniDrawer/>
+        {/* <MiniDrawer/> */}
+        <Navbar/>
         <h1>Vehicle Management</h1>
         
         <br />
