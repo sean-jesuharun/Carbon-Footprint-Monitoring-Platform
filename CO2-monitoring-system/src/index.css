@@ -6,7 +6,7 @@
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   
-  //background-color: #242424;
+  background-color: #242424;
   height: 100vh;
   background-image: url('../src/assets/BG.jpg');
   background-size: cover;
@@ -16,6 +16,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
 }
 
 a {
@@ -27,10 +28,23 @@ a:hover {
   color: #535bf2;
 }
 
-body {
+
+html, body, #root {
   margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: top;
+  /* Allow body to grow beyond viewport height */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 h1 {

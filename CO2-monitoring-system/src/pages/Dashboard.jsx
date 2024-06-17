@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link, useNavigate} from 'react-router-dom'
-import MiniDrawer from '../MiniDrawer'
 import DashboardTable from '../tables/DashBoardTable'
 import { Button ,Typography } from '@mui/material'
 import Box from '@mui/material/Box';
@@ -11,7 +10,6 @@ function Dashboard() {
   const label1="NEW CARBON EMISSION";
   return (
     <div>
-        {/* <MiniDrawer/> */}
         <Navbar/>
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           <Typography variant='h2' marginTop={10} marginBottom={-3} color='#78909c'>Carbon Footprint Evaluation Jobs</Typography>
