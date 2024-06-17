@@ -9,3 +9,7 @@ export const signup = (username, password, email) => {
 export const login = (username, password) => {
     return axios.post(`${API_URL}/login`, { username, password });
 };
+
+export const verifyEmail = (username, code) => {
+    return axios.post(`${API_URL}/verify-email`, { username, code });
+};

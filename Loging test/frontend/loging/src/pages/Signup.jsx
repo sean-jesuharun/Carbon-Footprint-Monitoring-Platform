@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { signup } from '../Api';
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -13,6 +15,8 @@ const Signup = () => {
             const response = await signup(username, password, email);
             setMessage('Signup successful!');
             console.log('Signup successful:', response.data);
+            navigate('/verify-email', { state: { username } });
+
         } catch (error) {
             setMessage('Signup error: ' + error.response.data.error);
             console.error('Signup error:', error.response.data.error);
