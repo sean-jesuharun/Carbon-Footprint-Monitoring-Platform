@@ -27,10 +27,11 @@ public class VehicleServiceImple implements VehicleService {
         this.modelMapper = modelMapper;
     }
 
-    public Page<VehicleDTO> getVehicles(Pageable pageable) {
+    public List<VehicleDTO> getVehicles() {
 
-        return vehicleRepository.findAll(pageable)
-                .map(vehicle -> modelMapper.map(vehicle, VehicleDTO.class));
+        return vehicleRepository.findAll().stream()
+                .map(vehicle -> modelMapper.map(vehicle, VehicleDTO.class))
+                .toList();
 
     }
 
