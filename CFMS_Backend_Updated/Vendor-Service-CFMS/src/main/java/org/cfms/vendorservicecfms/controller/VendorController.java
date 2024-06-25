@@ -34,4 +34,9 @@ public class VendorController {
         return vendorServiceImple.getVendorById(vendorId);
     }
 
+    @DeleteMapping("{vendorId}")
+    public void deleteVendorById(@PathVariable("vendorId") Long vendorId) {
+        vendorServiceImple.deleteVendorById(vendorId);
+    }
+
 }

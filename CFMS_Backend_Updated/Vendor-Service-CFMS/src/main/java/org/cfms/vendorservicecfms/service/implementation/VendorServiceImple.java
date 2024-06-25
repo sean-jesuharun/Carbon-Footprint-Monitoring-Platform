@@ -70,4 +70,9 @@ public class VendorServiceImple implements VendorService {
 
     }
 
+    public void deleteVendorById(Long vendorId) {
+
+        vendorRepository.deleteById(vendorId);
+
+    }
 }
