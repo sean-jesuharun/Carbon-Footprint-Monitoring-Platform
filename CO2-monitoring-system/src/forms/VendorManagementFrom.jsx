@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent, TextField, Button, Typography, MenuItem } from '@mui/material';
-import MiniDrawer from '../MiniDrawer';
+import { Card, CardContent, TextField, Button, Typography, MenuItem, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import Navbar from '../Navbar';
 
@@ -17,6 +16,9 @@ const VendorManagementForm = () => {
     location: '',
     distanceFromWarehouse: ''
   });
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
+  const [snackbarMessage, setSnackbarMessage] = useState(''); // Snackbar message state
 
   const validateField = (name, value) => {
     let error = '';
@@ -95,16 +97,19 @@ const VendorManagementForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Log form data to console
     console.log(formData);
 
-    // Send a POST request to the backend API
     const url = 'http://localhost:8050/vendors'; 
     const requestData = { ...formData };
 
     try {
       const response = await axios.post(url, requestData);
       console.log('Data submitted successfully:', response.data);
+
+      // Show success snackbar
+      setSnackbarMessage('Vendor details submitted successfully!');
+      setSnackbarOpen(true);
+
       // Reset the form
       setFormData({
         vendorName: '',
@@ -113,15 +118,17 @@ const VendorManagementForm = () => {
         vendorProducts: []
       });
     } catch (error) {
-    
-      
+      console.error('Error submitting data:', error);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
     <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '20px' }}>
-      {/* <MiniDrawer /> */}
-      <Navbar/>
+      <Navbar />
       <form onSubmit={handleSubmit}>
         <br />
         <br />
@@ -223,7 +230,6 @@ const VendorManagementForm = () => {
                     <MenuItem value="Industrial systems">Industrial systems</MenuItem>
                     <MenuItem value="Layers">Layers</MenuItem>
                     <MenuItem value="Broilers">Broilers</MenuItem>
-                    
                   </TextField>
                   <TextField
                     select
@@ -236,7 +242,6 @@ const VendorManagementForm = () => {
                     <MenuItem value="Milk">Milk</MenuItem>
                     <MenuItem value="Meat">Meat</MenuItem>
                     <MenuItem value="Eggs">Eggs</MenuItem>
-                    
                   </TextField>
                 </div>
                 <Button onClick={() => removeProduct(index)} variant="outlined" color="secondary" style={{ marginTop: '10px' }}>Remove Product</Button>
@@ -257,6 +262,18 @@ const VendorManagementForm = () => {
           }}>Submit</Button>
         </div>
       </form>
+
+      {/* Snackbar for Success Message */}
+      <Snackbar 
+        open={snackbarOpen} 
+        autoHideDuration={6000} 
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // Changed position to top center
+      >
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
