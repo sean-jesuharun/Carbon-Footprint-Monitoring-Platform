@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent, TextField, Button, Typography } from '@mui/material';
+import { Card, CardContent, TextField, Button, Typography, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import Navbar from '../Navbar';
 import { styled } from '@mui/system';
@@ -25,6 +25,9 @@ const CustomerManagementForm = () => {
     location: '',
     distanceFromWarehouse: ''
   });
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
+  const [snackbarMessage, setSnackbarMessage] = useState(''); // Snackbar message state
 
   const validateField = (name, value) => {
     let error = '';
@@ -59,25 +62,33 @@ const CustomerManagementForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Log form data to console
     console.log(formData);
 
-    // Send a POST request to the backend API
     const url = 'http://localhost:8060/customers'; 
     const requestData = { ...formData };
 
     try {
       const response = await axios.post(url, requestData);
       console.log('Data submitted successfully:', response.data);
-     // Reset the form
+
+      // Show success snackbar
+      setSnackbarMessage('Customer details submitted successfully!');
+      setSnackbarOpen(true);
+
+      // Reset the form
       setFormData({
         customerName: '',
         location: '',
         distanceFromWarehouse: ''
       });
+
     } catch (error) {
       console.error('Error submitting data:', error);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -132,17 +143,32 @@ const CustomerManagementForm = () => {
           </CardContent>
         </GlassCard>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5px' }}>
-          <Button type="submit" variant='contained' 
-          sx={{ 
-            padding: '10px 20px', 
-            color: '#fff', 
-            backgroundColor: '#1b263b',
-            '&:hover': {
-              backgroundColor: '#778da9',
-            },
-          }}>Submit</Button>
+          <Button 
+            type="submit" 
+            variant='contained' 
+            sx={{ 
+              padding: '10px 20px', 
+              color: '#fff', 
+              backgroundColor: '#1b263b',
+              '&:hover': {
+                backgroundColor: '#778da9',
+              },
+            }}
+          >
+            Submit
+          </Button>
         </div>
       </form>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
