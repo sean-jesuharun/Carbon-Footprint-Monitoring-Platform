@@ -2,6 +2,17 @@ import React, { useState } from 'react';
 import { Card, CardContent, TextField, Button, Typography, MenuItem, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import Navbar from '../Navbar';
+import { styled } from '@mui/system';
+
+
+const GlassCard = styled(Card)(({ theme }) => ({
+  background: 'rgba(255, 255, 255, 0.5)',
+  backdropFilter: 'blur(20px)',
+  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.2)',
+  borderRadius: '10px',
+  padding: '20px',
+  color: '#edf6f9',
+}));
 
 const VendorManagementForm = () => {
   const [formData, setFormData] = useState({
@@ -127,13 +138,14 @@ const VendorManagementForm = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '20px' }}>
-      <Navbar />
+    <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '20px', backgroundImage: 'linear-gradient(135deg, #1b263b,#caf0f8)' }}>
+      
+      <Navbar/>
       <form onSubmit={handleSubmit}>
         <br />
         <br />
-        <Typography variant='h2' marginTop={1} marginBottom={3} color='#78909c'>Vendor Management Form</Typography>
-        <Card style={{ width: '100%', margin: '0 auto' }}>
+        <Typography variant='h2' color='#caf0f8' fontWeight={1000} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>Vendor Management Form</Typography>
+        <GlassCard style={{ width: '70%', margin: '2rem auto' ,color:'#1b263b' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
             <Typography variant="subtitle1" gutterBottom>Vendor Name:</Typography>
             <TextField
@@ -247,9 +259,9 @@ const VendorManagementForm = () => {
                 <Button onClick={() => removeProduct(index)} variant="outlined" color="secondary" style={{ marginTop: '10px' }}>Remove Product</Button>
               </div>
             ))}
-            <Button onClick={addProduct} variant="outlined" style={{ marginTop: '10px' }}>Add Product</Button>
+            <Button onClick={addProduct} variant="outlined" style={{ marginTop: '10px',backgroundColor:'#1b263b',color:'#fff' }}>Add Product</Button>
           </CardContent>
-        </Card>
+        </GlassCard>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5px' }}>
           <Button type="submit" variant='contained' 
           sx={{ 

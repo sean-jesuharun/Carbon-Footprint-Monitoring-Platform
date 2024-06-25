@@ -51,6 +51,14 @@ const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
   color: '#fff',
 }));
 
+const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
+  color: '#fff',
+}));
+
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
+  color: '#fff',
+}));
+
 export default function Vendortable({ darkMode, drawerOpen }) {
   const [rows, setRows] = useState([]);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
