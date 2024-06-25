@@ -249,12 +249,12 @@ export default function Vehicletable({ darkMode,drawerOpen }) {
           />
         </DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseEditDialog} sx={{ color: '#caf0f8' }}>Cancel</Button>
-          <Button onClick={handleEditSubmit} variant="contained" color="primary">Save</Button>
+          <Button onClick={handleCloseEditDialog} sx={{ color: '#caf0f8', '&:hover': { backgroundColor: '#778da9', } }}>Cancel</Button>
+          <Button onClick={handleEditSubmit} variant="contained" sx={{ color: '#fff', backgroundColor: '#1b263b', '&:hover': { backgroundColor: '#778da9', } }}>Save</Button>
         </StyledDialogActions>
       </StyledDialog>
 
-      <StyledDialog open={viewDialogOpen} onClose={handleCloseViewDialog}>
+      {/* <StyledDialog open={viewDialogOpen} onClose={handleCloseViewDialog}>
         <DialogTitle sx={{ textAlign: 'center', color: '#caf0f8', fontWeight: 'bold' }}>View Vehicle</DialogTitle>
         <DialogContent>
           <StyledTextField
@@ -321,7 +321,23 @@ export default function Vehicletable({ darkMode,drawerOpen }) {
         <StyledDialogActions>
           <Button onClick={handleCloseViewDialog} sx={{ color: '#caf0f8' }}>Close</Button>
         </StyledDialogActions>
-      </StyledDialog>
+      </StyledDialog> */}
+
+        <StyledDialog open={viewDialogOpen} onClose={handleCloseViewDialog} classes={{ paper: 'dialogPaper' }}>
+                <DialogTitle className="dialogTitle">View Vehicle</DialogTitle>
+                <DialogContent className="dialogContent">
+                  <p><strong>Model :</strong> {viewRow.model}</p>
+                  <p><strong>Engine Size :</strong> {viewRow.engineSize}</p>
+                  <p><strong>No Of Cylinders :</strong> {viewRow.cylinders}</p>
+                  <p><strong>Vehicle Type :</strong>{viewRow.vehicleType}</p>
+                  <p><strong>Transmission :</strong>{viewRow.transmission}</p>
+                  <p><strong>Fuel Type :</strong>{viewRow.fuelType}</p>
+
+                </DialogContent>
+                <StyledDialogActions className="dialogActions">
+                  <Button onClick={handleCloseViewDialog} className="buttonCancel">Close</Button>
+                </StyledDialogActions>
+              </StyledDialog>
     </Paper>
   );
 }
