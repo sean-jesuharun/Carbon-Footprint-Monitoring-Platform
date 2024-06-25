@@ -43,7 +43,7 @@ public class Vendor {
     @Column(name = "distance_from_warehouse", nullable = false)
     private Double distanceFromWarehouse;
 
-    @OneToMany(mappedBy = "vendor")
+    @OneToMany(mappedBy = "vendor", cascade = CascadeType.REMOVE)
     private List<VendorProduct> vendorProducts;
 
 }

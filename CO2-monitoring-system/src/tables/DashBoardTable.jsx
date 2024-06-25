@@ -12,7 +12,7 @@ const StyledColumnHeader = styled('div')(({ theme, darkMode }) => ({
   color: darkMode ? 'red' : '#fff',
 }));
 
-export default function Dashboard({ darkMode }) {
+export default function Dashboard({ darkMode,drawerOpen }) {
   const [rows, setRows] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedResults, setSelectedResults] = useState([]);
@@ -40,13 +40,14 @@ export default function Dashboard({ darkMode }) {
   }, []);
 
   const columns = [
-    { field: 'jobName', headerName: 'Job Name', width: 200, headerAlign: 'center', align: 'center' },
-    { field: 'customerId', headerName: 'Customer id', width: 150, headerAlign: 'center', align: 'center' },
-    { field: 'vehicleId', headerName: 'Vehicle id', width: 130, headerAlign: 'center', align: 'center' },
+    { field: 'jobName', headerName: 'Job Name', width: 200, flex:1,headerAlign: 'center', align: 'center' },
+    { field: 'customerId', headerName: 'Customer id', width: 150,flex:1, headerAlign: 'center', align: 'center' },
+    { field: 'vehicleId', headerName: 'Vehicle id', width: 130, flex:1,headerAlign: 'center', align: 'center' },
     {
       field: 'results',
       headerName: 'Result',
       width: 200,
+      flex:1,
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => (
@@ -96,7 +97,7 @@ export default function Dashboard({ darkMode }) {
   };
 
   return (
-    <Paper elevation={5} style={{ backgroundColor: darkMode ? 'black' : '#fff' }}>
+    <Paper elevation={5} style={{ padding:'0.5rem',marginLeft: drawerOpen ? 300 : 80, backgroundColor: '#caf0f8',transition: 'margin-left 0.3s',marginRight:'1rem' }}>
       <div style={{ height: 600, width: '100%', marginTop: '10px' }}>
         <DataGrid
           rows={rows}
@@ -112,7 +113,7 @@ export default function Dashboard({ darkMode }) {
           }}
           getRowClassName={() => 'custom-row'}
           pageSizeOptions={[5, 10]}
-          checkboxSelection
+          
         />
       </div>
       <Dialog open={open} onClose={handleClose}>
