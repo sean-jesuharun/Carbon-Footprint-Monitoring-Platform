@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { styled, alpha,useTheme } from '@mui/material/styles';
+import { styled, alpha, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -24,7 +24,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import BusinessIcon from '@mui/icons-material/Business';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Link } from 'react-router-dom';
-
+import CustomerTable from './tables/CustomerTable';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -112,7 +112,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const drawerWidth = 300;
+const drawerWidth = 280;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -121,7 +121,7 @@ const openedMixin = (theme) => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: 'hidden',
-  backgroundColor:"#1b263b"
+  backgroundColor: "#1b263b"
 });
 
 const closedMixin = (theme) => ({
@@ -134,7 +134,7 @@ const closedMixin = (theme) => ({
   [theme.breakpoints.up('sm')]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
-  backgroundColor:'#1b263b'
+  backgroundColor: '#1b263b'
 });
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -162,25 +162,25 @@ const AppBar = styled(MuiAppBar, {
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
-  
+
 }));
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme, open }) => ({
-      width: drawerWidth,
-      flexShrink: 0,
-      whiteSpace: 'nowrap',
-      boxSizing: 'border-box',
-      ...(open && {
-        ...openedMixin(theme),
-        '& .MuiDrawer-paper': openedMixin(theme),
-      }),
-      ...(!open && {
-        ...closedMixin(theme),
-        '& .MuiDrawer-paper': closedMixin(theme),
-      }),
+  ({ theme, open }) => ({
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+    boxSizing: 'border-box',
+    ...(open && {
+      ...openedMixin(theme),
+      '& .MuiDrawer-paper': openedMixin(theme),
     }),
-  );
+    ...(!open && {
+      ...closedMixin(theme),
+      '& .MuiDrawer-paper': closedMixin(theme),
+    }),
+  }),
+);
 
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -208,10 +208,13 @@ export default function Navbar() {
     setOpen(false);
   };
 
+ 
+
+  
   return (
-    <Box sx={{ display:'flex' }}>
-     <CssBaseline />
-      <AppBar position="fixed"  sx={{ backgroundColor: '#1b263b' }} open={open}>
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar position="fixed" sx={{ backgroundColor: '#1b263b' }} open={open}>
         <Toolbar>
           <IconButton
             aria-label="open drawer"
@@ -219,7 +222,7 @@ export default function Navbar() {
             edge="start"
             sx={{
               marginRight: 5,
-              color:'#caf0f8',
+              color: '#caf0f8',
               ...(open && { display: 'none' }),
             }}
           >
@@ -230,7 +233,7 @@ export default function Navbar() {
             noWrap
             color="#caf0f8"
             component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
+            sx={{ display: { xs: 'none', sm: 'block' } ,fontWeight:1000}}
           >
             CFMS
           </Typography>
@@ -241,12 +244,15 @@ export default function Navbar() {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
+              
             />
           </Search>
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <MaterialUISwitch />
+          <MaterialUISwitch 
+          
+          />
           <IconButton
             size="large"
             edge="end"
@@ -276,26 +282,26 @@ export default function Navbar() {
 
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <IconButton onClick={handleDrawerClose} sx={{color:'#caf0f8'}}>
-            <MenuIcon/>
+          <IconButton onClick={handleDrawerClose} sx={{ color: '#caf0f8' }}>
+            <MenuIcon />
           </IconButton>
         </DrawerHeader>
 
-        <List sx={{color:"#caf0f8"}}>
+        <List sx={{ color: "#caf0f8" }}>
           {[
             { text: 'Dashboard', icon: <DashboardIcon />, to: '/' },
             { text: 'Vehicle Management', icon: <DirectionsCarIcon />, to: '/vehicle-management' },
             { text: 'Vendor Management', icon: <BusinessIcon />, to: '/vendor-management' },
             { text: 'Customer Management', icon: <PersonIcon />, to: '/customer-management' },
-            { text: 'Vendor Supply Management', icon: <LocalShippingIcon/>, to: '/vendor-supply-management'}
+            { text: 'Vendor Supply Management', icon: <LocalShippingIcon />, to: '/vendor-supply-management' }
           ].map(({ text, icon, to }) => (
-            <ListItemButton key={text} disablePadding  sx={{ justifyContent: open ? 'initial' : 'center', px: 2.5 }}
-            component={Link} to={to}>
-              <ListItemIcon sx={{ color:"#caf0f8" ,minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
+            <ListItemButton key={text} disablePadding sx={{ justifyContent: open ? 'initial' : 'center', px: 2.5 }}
+              component={Link} to={to}>
+              <ListItemIcon sx={{ color: "#caf0f8", minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
                 {icon}
               </ListItemIcon>
-              <ListItemText primary={text} 
-              sx={{ opacity: open ? 1 : 0 }} 
+              <ListItemText primary={text}
+                sx={{ opacity: open ? 1 : 0 }}
               />
             </ListItemButton>
           ))}

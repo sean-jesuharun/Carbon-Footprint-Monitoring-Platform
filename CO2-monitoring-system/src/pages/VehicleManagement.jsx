@@ -6,9 +6,6 @@ import { useNavigate} from 'react-router-dom'
 import Box from '@mui/material/Box';
 import Navbar from '../Navbar'
 
-
-
-
 function VehicleManagement() {
   const navigate = useNavigate();
 
@@ -16,24 +13,24 @@ function VehicleManagement() {
     navigate('/vehicle-management-form');
   }
   return (
-    <div>       
-        {/* <MiniDrawer/> */}
+    <div style={{ backgroundImage: 'linear-gradient(135deg, #1b263b,#caf0f8)', minHeight: '100vh' }}>       
+        
         <Navbar/>
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Typography variant='h2' marginTop={10} marginBottom={-3} color='#78909c'>Vehicle Management</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center',marginLeft:'4rem',marginTop:{xs: 10, sm: 10 } }}>
+          <Typography variant='h2' color='#caf0f8' fontWeight={1000} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>Vehicle Management</Typography>
         </Box>       
-        <Box display="flex" justifyContent="flex-end" padding="16px">
+        <Box display="flex" justifyContent="flex-end" padding="1.6rem">
         <Button
         variant='contained'
         sx={{ 
-          padding: '10px 20px', 
+          padding: '1rem 2rem', 
           color: '#fff', 
           backgroundColor: '#1b263b',
           '&:hover': {
             backgroundColor: '#778da9',
           },}}
         onClick={handleButtonClick}
-        style={{marginTop: '10px'}}>
+        style={{marginTop: '1rem'}}>
           Add a new vehicle
           </Button>
         </Box>

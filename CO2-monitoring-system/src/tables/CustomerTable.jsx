@@ -1,31 +1,72 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { IconButton } from '@mui/material';
-import { Delete, Edit, Visibility } from '@mui/icons-material'; // Import icons for actions
-import {Paper}from '@mui/material';
-import { useState,useEffect } from 'react';
-import { styled } from '@mui/system';
+import { Delete, Edit, Visibility } from '@mui/icons-material';
+import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, useMediaQuery, useTheme } from '@mui/material';
 import axios from 'axios';
+import { styled } from '@mui/system';
 
-
-
-// Create a styled component for the column headers
-const StyledColumnHeader = styled('div')(({ theme, darkMode }) => ({
-  color: darkMode ? 'red' : '#fff',
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiPaper-root': {
+    backgroundColor: '#1b263b',
+    color: '#f1faee',
+  },
 }));
 
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiInputBase-root': {
+    backgroundColor: '#ffffff',
+    color: 'black',
+  },
+  '& .MuiInputLabel-root': {
+    color: '#1b263b',
+    marginTop: '5px',
+    fontSize: '1.2rem',
+    fontWeight: 'bold',
+  },
+  '& .MuiInputBase-input': {
+    color: 'black',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'black',
+  },
+  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'black',
+  },
+}));
 
+const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
+  color: '#fff',
+}));
 
-export default function Customertable({ darkMode }) {
+const BlueIconButton = styled(IconButton)({
+  color: 'blue',
+});
+
+const GreenIconButton = styled(IconButton)({
+  color: 'green',
+});
+
+const RedIconButton = styled(IconButton)({
+  color: 'red',
+});
+
+export default function CustomerTable({ darkMode, drawerOpen }) {
   const [rows, setRows] = useState([]);
-  
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [currentRow, setCurrentRow] = useState({});
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [viewRow, setViewRow] = useState({});
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   useEffect(() => {
-    // Fetch data from API
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:8060/customers');
         setRows(response.data);
-        console.log(response.data)
+        console.log(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -34,81 +75,156 @@ export default function Customertable({ darkMode }) {
     fetchData();
   }, []);
 
-  const [columns] = useState([
-    { field: 'customerName', headerName: 'Name', width: 200,headerAlign: 'center', align: 'center' },
-    { field: 'location', headerName: 'Location', width: 150,headerAlign: 'center', align: 'center' },
-    { field: 'distanceFromWarehouse', headerName: 'Distance From Warehouse', width:250,headerAlign: 'center', align: 'center' },
-
-
+  const columns = [
+    { field: 'customerName', headerName: 'Name', flex: 1, minWidth: 80, headerAlign: 'center', align: 'center' },
+    { field: 'location', headerName: 'Location', flex: 1, minWidth: 80, headerAlign: 'center', align: 'center' },
+    { field: 'distanceFromWarehouse', headerName: 'Distance From Warehouse', flex: 1, minWidth: 80, headerAlign: 'center', align: 'center' },
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 120,
+      flex: 1,
+      minWidth: 100,
       headerAlign: 'center', align: 'center',
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
       renderCell: (params) => (
-        <div>
-            <IconButton onClick={() => handleView(params.id)}><Visibility /></IconButton>
-            <IconButton onClick={() => handleEdit(params.id)}><Edit /></IconButton>
-            <IconButton onClick={() => handleDelete(params.id)}><Delete /></IconButton>
+        <div >
+          <BlueIconButton onClick={() => handleView(params.id)} sx={{ padding: '5px' }}><Visibility /></BlueIconButton>
+          <GreenIconButton onClick={() => handleEdit(params.id)} sx={{ padding: '5px' }}><Edit /></GreenIconButton>
+          <RedIconButton onClick={() => handleDeleteConfirmation(params.id)} sx={{ padding: '5px' }}><Delete /></RedIconButton>
         </div>
-    ),
-    
-  },
-  ]);
+      ),
+    },
+  ];
 
-  
+  const handleView = (id) => {
+    const rowToView = rows.find((row) => row.id === id);
+    setViewRow(rowToView);
+    setViewDialogOpen(true);
+  };
 
-  // const rows = [
-  //   { id: 1, Customer_name: 'Kamal', Customer_location: 'ABC123', Distance_from_Sysco: 'Premier Gasoline'},
-  //   { id: 2, Carbon_Emission_Job_Name: 'Vimal', Customer: 'XYZ456', Vehicle: 'Ethanol',  Products_Details: '8.75' },
-  //   { id: 3, Carbon_Emission_Job_Name: '2024-04-27', Customer: 'DEF789', Vehicle: 'Regular Gasoline',  Products_Details: '14.25' },
-  //   { id: 4, Carbon_Emission_Job_Name: '2024-04-26', Customer: 'GHI012', Vehicle: 'Diesel',  Products_Details: '11.36'},
-  //   { id: 5, Carbon_Emission_Job_Name: '2024-04-25', Customer: 'JKL345', Vehicle: 'Premier Gasoline',  Products_Details: '9.26' },
-  //   { id: 6, Carbon_Emission_Job_Name: '2024-04-24', Customer: 'MNO678', Vehicle: 'Regular Gasoline',  Products_Details: '10.56'},
-  //   { id: 7, Carbon_Emission_Job_Name: '2024-04-23', Customer: 'PQR901', Vehicle: 'Diesel',  Products_Details: '55.78' },
-  //   { id: 8, Carbon_Emission_Job_Name: '2024-04-22', Customer: 'STU234', Vehicle: 'Permier Gasoline',  Products_Details: '7.25' },
-  //   { id: 9, Carbon_Emission_Job_Name: '2024-04-21', Customer: 'VWX567', Vehicle: 'Ethanol',  Products_Details: '125.1'},
-  //   { id: 10, Carbon_Emission_Job_Name: '2024-04-20', Customer: 'YZA890', Vehicle: 'Diesel',  Products_Details: '17.8'},
-  // ];
-  
+  const handleEdit = (id) => {
+    const rowToEdit = rows.find((row) => row.id === id);
+    setCurrentRow(rowToEdit);
+    setEditDialogOpen(true);
+  };
 
-const getRowClassName = (params) => 'custom-row';
+  const handleEditChange = (e) => {
+    setCurrentRow({ ...currentRow, [e.target.name]: e.target.value });
+  };
 
-const handleView = (id) => {
-  // Handle view action
-  console.log(`View clicked for row with id ${id}`);
-};
+  const handleEditSubmit = async () => {
+    try {
+      await axios.put(`http://localhost:8060/customers/${currentRow.id}`, currentRow);
+      setRows((prevRows) => prevRows.map((row) => (row.id === currentRow.id ? currentRow : row)));
+      setEditDialogOpen(false);
+      setCurrentRow({});
+    } catch (error) {
+      console.error('Error updating data:', error);
+    }
+  };
 
-const handleEdit = (id) => {
-  // Handle edit action
-  console.log(`Edit clicked for row with id ${id}`);
-};
+  const handleDeleteConfirmation = (id) => {
+    setDeleteConfirmation(true);
+    setDeleteId(id);
+  };
 
-const handleDelete = (id) => {
-  // Handle delete action
-  console.log(`Delete clicked for row with id ${id}`);
-};
- 
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:8060/customers/${deleteId}`);
+      setRows((prevRows) => prevRows.filter((row) => row.id !== deleteId));
+    } catch (error) {
+      console.error('Error deleting data:', error);
+    }
+    setDeleteConfirmation(false);
+    setDeleteId(null);
+  };
+
+  const handleCloseDeleteConfirmation = () => {
+    setDeleteConfirmation(false);
+    setDeleteId(null);
+  };
+
+  const handleCloseEditDialog = () => {
+    setEditDialogOpen(false);
+    setCurrentRow({});
+  };
+
+  const handleCloseViewDialog = () => {
+    setViewDialogOpen(false);
+    setViewRow({});
+  };
 
   return (
-    
-    <Paper elevation={5} style={{ backgroundColor: darkMode ? 'black' : '#fff'}}>
-    <div style={{  height: 600, width: '100%',marginTop: '10px' }}>
-    <DataGrid
+    <Paper elevation={5} style={{ padding: '0.5rem', marginLeft: drawerOpen ? 300 : 80, transition: 'margin-left 0.3s', marginRight: '1rem', backgroundColor: '#caf0f8' }}>
+      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px' }}>
+        <DataGrid
           rows={rows}
           columns={columns}
-          style={{ color: darkMode ? 'green' : '#000' }}
           initialState={{
             pagination: {
-              paginationModel: { page: 0, pageSize: 10 },
+              paginationModel: { page: 0, pageSize: isMobile ? 5 : 10 },
             },
           }}
           pageSizeOptions={[5, 10]}
-          checkboxSelection
         />
-    </div>
+      </div>
+
+      <StyledDialog open={deleteConfirmation} onClose={handleCloseDeleteConfirmation}>
+        <DialogTitle>Confirmation</DialogTitle>
+        <DialogContent>Are you sure you want to delete this row?</DialogContent>
+        <StyledDialogActions>
+          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#caf0f8', '&:hover': { backgroundColor: '#778da9' } }}>Cancel</Button>
+          <Button onClick={handleDelete} variant="contained" color="error">Delete</Button>
+        </StyledDialogActions>
+      </StyledDialog>
+
+      <StyledDialog open={editDialogOpen} onClose={handleCloseEditDialog}>
+        <DialogTitle>Edit Customer</DialogTitle>
+        <DialogContent>
+          <StyledTextField
+            margin="dense"
+            label="Customer Name"
+            name="customerName"
+            value={currentRow.customerName || ''}
+            onChange={handleEditChange}
+            fullWidth
+          />
+          <StyledTextField
+            margin="dense"
+            label="Location"
+            name="location"
+            value={currentRow.location || ''}
+            onChange={handleEditChange}
+            fullWidth
+          />
+          <StyledTextField
+            margin="dense"
+            label="Distance From Warehouse"
+            name="distanceFromWarehouse"
+            value={currentRow.distanceFromWarehouse || ''}
+            onChange={handleEditChange}
+            fullWidth
+          />
+        </DialogContent>
+        <StyledDialogActions>
+          <Button onClick={handleCloseEditDialog} sx={{ color: '#caf0f8', '&:hover': { backgroundColor: '#778da9' } }}>Cancel</Button>
+          <Button onClick={handleEditSubmit} variant="contained" sx={{ color: '#fff', backgroundColor: '#1b263b', '&:hover': { backgroundColor: '#778da9' } }}>Save</Button>
+        </StyledDialogActions>
+      </StyledDialog>
+
+      <StyledDialog open={viewDialogOpen} onClose={handleCloseViewDialog}>
+        <DialogTitle>View Customer</DialogTitle>
+        <DialogContent>
+          <p><strong>Customer Name:</strong> {viewRow.customerName}</p>
+          <p><strong>Location:</strong> {viewRow.location}</p>
+          <p><strong>Distance From Warehouse:</strong> {viewRow.distanceFromWarehouse}</p>
+        </DialogContent>
+        <StyledDialogActions>
+          <Button onClick={handleCloseViewDialog} sx={{ color: '#caf0f8' }}>Close</Button>
+        </StyledDialogActions>
+      </StyledDialog>
     </Paper>
-    
-    
   );
 }
