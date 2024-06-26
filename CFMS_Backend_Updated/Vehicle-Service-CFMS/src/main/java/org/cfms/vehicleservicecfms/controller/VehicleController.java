@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.cfms.vehicleservicecfms.dto.VehicleDTO;
 import org.cfms.vehicleservicecfms.service.implemetation.VehicleServiceImple;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +35,6 @@ public class VehicleController extends AbstractController {
         return handleSuccessfulOkResponse(vehicleServiceImple.getVehicleById(vehicleId));
     }
 
-
     @PutMapping("{vehicleId}")
     public ResponseEntity<Object> updateVehicleById(@PathVariable("vehicleId") Long vehicleId, @Valid @RequestBody VehicleDTO vehicleDTO){
         return handleSuccessfulOkResponse(vehicleServiceImple.updateVehicleById(vehicleId, vehicleDTO));
@@ -47,6 +45,4 @@ public class VehicleController extends AbstractController {
         vehicleServiceImple.deleteVehicleById(vehicleId);
         return handleSuccessfulNoContentResponse();
     }
-
-
 }
