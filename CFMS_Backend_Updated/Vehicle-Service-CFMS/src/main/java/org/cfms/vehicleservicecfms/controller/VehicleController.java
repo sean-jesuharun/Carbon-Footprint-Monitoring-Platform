@@ -21,13 +21,6 @@ public class VehicleController extends AbstractController {
         this.vehicleServiceImple = vehicleServiceImple;
     }
 
-//    @GetMapping
-//    public ResponseEntity<Object> getVehicles(
-//            @RequestParam("pageNo") Integer pageNo,
-//            @RequestParam("pageSize") Integer pageSize){
-//        return handleSuccessfulOkResponse(vehicleServiceImple.getVehicles(PageRequest.of(pageNo, pageSize)));
-//    }
-
     @GetMapping
     public ResponseEntity<Object> getVehicles(){
         return handleSuccessfulOkResponse(vehicleServiceImple.getVehicles());
