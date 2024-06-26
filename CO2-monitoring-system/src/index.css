@@ -1,4 +1,4 @@
-:root {
+/* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -37,7 +37,7 @@ html, body, #root {
   background-size: cover;
   background-position: top;
   /* Allow body to grow beyond viewport height */
-  overflow-x: hidden;
+  /* overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -88,5 +88,5 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically */
-}
+  /* align-items: center; /* Center content vertically */
+

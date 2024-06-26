@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import MiniDrawer from '../MiniDrawer';
+import { Grid,Card, CardContent, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import axios from 'axios';
 import Navbar from '../Navbar';
+import { styled } from '@mui/system';
 
+const GlassCard = styled(Card)(({ theme }) => ({
+  background: 'rgba(255, 255, 255, 0.5)',
+  backdropFilter: 'blur(20px)',
+  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.2)',
+  borderRadius: '10px',
+  padding: '20px',
+  color: '#edf6f9',
+}));
 
 const DeliveryForm = () => {
   const [formData, setFormData] = useState({
@@ -138,15 +146,18 @@ const DeliveryForm = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '20px' }}>
-      {/* <MiniDrawer /> */}
+    <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '20px' ,backgroundImage: 'linear-gradient(135deg, #1b263b,#caf0f8)' }}>
+    
       <Navbar/>
       <form onSubmit={handleSubmit}>
         <br />
         <br />
-        <Typography variant='h2' marginTop={1} marginBottom={3} color='#78909c'>Carbon Emission Evaluation Form</Typography>
-        <Card style={{ width: '70%', margin: '0 auto' }}>
+        <Typography variant='h2' color='#caf0f8' fontWeight={1000} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>Carbon Emission Evaluation Form</Typography>
+        <GlassCard style={{ width: '70%', margin: '2rem auto' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
+          <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+
             <TextField
               label="Job Name"
               name="jobName"
@@ -155,6 +166,11 @@ const DeliveryForm = () => {
               fullWidth
               required
             />
+
+           </Grid>
+
+           <Grid item xs={12} md={6}>
+
             <FormControl fullWidth required>
               <InputLabel>Customer Name</InputLabel>
               <Select
@@ -169,6 +185,10 @@ const DeliveryForm = () => {
                 ))}
               </Select>
             </FormControl>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+
             <FormControl fullWidth required>
               <InputLabel>Vehicle ID</InputLabel>
               <Select
@@ -183,7 +203,11 @@ const DeliveryForm = () => {
                 ))}
               </Select>
             </FormControl>
-            <Typography variant="subtitle1" gutterBottom>Fuel Consumption (liters):</Typography>
+
+            </Grid>
+            
+            <Grid item xs={12} md={6}>
+
             <TextField
               type="number"
               name="fuelConsumption"
@@ -191,11 +215,21 @@ const DeliveryForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
+              label="Fuel Consumption (liters)"
+
             />
+            </Grid>
             <hr />
-            <Typography variant="h5" style={{ marginBottom: '1rem' }}>Delivery Items</Typography>
+             
+            </Grid>
+
+
+            <Typography variant="h5" style={{ marginBottom: '1rem',color:'#1b263b' }}>Delivery Items</Typography>
             {formData.deliveryItems.map((deliveryItem, index) => (
               <div key={index} style={{ marginBottom: '1rem' }}>
+              <Grid container spacing={3}>
+              <Grid item xs={12} md={4}>
+
                 <FormControl fullWidth required style={{ marginBottom: '0.5rem' }}>
                   <InputLabel>Vendor Name</InputLabel>
                   <Select
@@ -210,6 +244,10 @@ const DeliveryForm = () => {
                     ))}
                   </Select>
                 </FormControl>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+
                 <FormControl fullWidth required style={{ marginBottom: '0.5rem' }}>
                   <InputLabel>Product Name</InputLabel>
                   <Select
@@ -224,6 +262,10 @@ const DeliveryForm = () => {
                     ))}
                   </Select>
                 </FormControl>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+
                 <TextField
                   type="number"
                   name="quantity"
@@ -233,12 +275,15 @@ const DeliveryForm = () => {
                   required
                   placeholder={`Quantity ${index + 1}`}
                 />
-                <Button type="button" onClick={() => handleRemoveDeliveryItem(index)}>Remove</Button>
+            </Grid>
+         </Grid>
+
+                <Button type="button" onClick={() => handleRemoveDeliveryItem(index)} style={{backgroundColor:'#1b263b',color:'#fff',margin:'0.5rem'}} >Remove</Button>
               </div>
             ))}
-            <Button type="button" onClick={handleAddDeliveryItem}>Add Item</Button>
+            <Button type="button" onClick={handleAddDeliveryItem} style={{backgroundColor:'#1b263b',color:'#fff'}}>Add Item</Button>
           </CardContent>
-        </Card>
+        </GlassCard>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5px' }}>
           <Button type="submit" variant='contained' 
           sx={{ 
