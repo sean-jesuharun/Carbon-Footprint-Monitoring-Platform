@@ -1,24 +1,35 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { verifyEmail } from '../Api'; // Import your verifyEmail API function
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { verifyEmail } from '../Api';
 
 const VerifyEmail = () => {
     const location = useLocation();
-    const { username } = location.state || { username: '' }; // Destructure state and provide default value
+    const navigate = useNavigate();
+    const { username } = location.state || {}; // Destructure state and provide default value
+
     const [code, setCode] = useState(''); // State for verification code
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false); // Loading state
-    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!username) {
+            setMessage('Error: Username is missing');
+        }
+    }, [username]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!username) {
+            setMessage('Error: Username is missing');
+            return;
+        }
+
         setIsLoading(true); // Set loading state
         setMessage(''); // Clear previous messages
-    
+
         try {
             const response = await verifyEmail(username, code); // Call verifyEmail API function with username and code
-    
+
             // Check if response contains message indicating success
             if (response && response.data && response.data.message === 'Email verification successful') {
                 setMessage('Verification successful!');
@@ -39,11 +50,6 @@ const VerifyEmail = () => {
             setIsLoading(false); // Clear loading state
         }
     };
-    
-
-    const handlePrintUsername = () => {
-        console.log('Username:', username);
-    };
 
     return (
         <div>
@@ -58,7 +64,7 @@ const VerifyEmail = () => {
                     placeholder="Verification Code"
                     required
                 />
-                <button type="submit" disabled={isLoading}>
+                <button type="submit" disabled={isLoading || !username}>
                     {isLoading ? 'Verifying...' : 'Verify'}
                 </button>
             </form>

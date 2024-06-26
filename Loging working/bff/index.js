@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const AWS = require('aws-sdk');
-const jwt = require('jsonwebtoken');
 const cors = require('cors');
 
 const app = express();
@@ -11,7 +10,6 @@ app.use(cors());
 // AWS Cognito configuration
 const cognito = new AWS.CognitoIdentityServiceProvider({ region: 'eu-north-1' });
 
-const userPoolId = 'eu-north-1_o0ylFua4N';
 const clientId = '3ls5ll0thrsndh6a7turjdqgch';
 
 // Signup Route
@@ -26,7 +24,6 @@ app.post('/signup', async (req, res) => {
                 Name: 'email',
                 Value: email,
             },
-            // Add additional attributes as needed
         ],
     };
     try {
@@ -36,7 +33,6 @@ app.post('/signup', async (req, res) => {
         res.status(400).json({ error: err.message });
     }
 });
-
 
 // Login Route
 app.post('/login', async (req, res) => {
@@ -49,10 +45,29 @@ app.post('/login', async (req, res) => {
             PASSWORD: password,
         },
     };
+
     try {
         const data = await cognito.initiateAuth(params).promise();
-        res.json(data.AuthenticationResult);
+
+
+
+// Extract Responce from Cognito response
+const { AuthenticationResult } = data;
+
+// Extract tokens from AuthenticationResult
+const { AccessToken,  RefreshToken , IdToken } = AuthenticationResult;
+
+
+// Return tokens to frontend
+res.json({
+    AccessToken,
+    RefreshToken,
+    IdToken
+    });
+
+
     } catch (err) {
+        console.error('Error during login:', err);
         res.status(400).json({ error: err.message });
     }
 });
@@ -67,14 +82,12 @@ app.post('/verify-email', async (req, res) => {
     };
     try {
         const data = await cognito.confirmSignUp(params).promise();
-        // Assuming 'data' from Cognito doesn't need to be sent back
         res.json({ message: 'Email verification successful' });
     } catch (err) {
         console.error('Error confirming verification code:', err);
         res.status(400).json({ error: 'Error confirming verification code', message: err.message });
     }
 });
-
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');

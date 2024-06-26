@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 import { login } from '../Api';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const response = await login(username, password);
             setMessage('Login successful!');
-            console.log('Login successful:', response.data);
-            // Handle storing tokens, redirecting, etc. here
+            navigate('/dashboard'); // Redirect to dashboard
         } catch (error) {
-            setMessage('Login error: ' + error.response.data.error);
-            console.error('Login error:', error.response.data.error);
+            setMessage('Login error: ' + (error.response?.data?.error || error.message));
+            console.error('Login error:', error.response?.data?.error || error.message);
         }
     };
 
@@ -40,6 +42,7 @@ const Login = () => {
                 <button type="submit">Log In</button>
             </form>
             {message && <p>{message}</p>}
+            <div className="text1">New member? <Link to="/" className='loginText'>Signup</Link> Here</div>
         </div>
     );
 };

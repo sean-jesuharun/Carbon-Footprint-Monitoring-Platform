@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { signup } from '../Api';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Signup = () => {
     const [username, setUsername] = useState('');
@@ -11,15 +12,22 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Basic client-side validation
+        if (!username || !password || !email) {
+            setMessage('All fields are required');
+            return;
+        }
+
         try {
             const response = await signup(username, password, email);
-            setMessage('Signup successful!');
+            setMessage('Signup successful! Please verify your email.');
             console.log('Signup successful:', response.data);
-            navigate('/verify-email', { state: { username } });
+            navigate('/verify-email', { state: { username } }); // Redirect to email verification page
 
         } catch (error) {
-            setMessage('Signup error: ' + error.response.data.error);
-            console.error('Signup error:', error.response.data.error);
+            setMessage('Signup error: ' + (error.response?.data?.error || 'Something went wrong'));
+            console.error('Signup error:', error.response?.data?.error || error.message);
         }
     };
 
@@ -51,6 +59,8 @@ const Signup = () => {
                 <button type="submit">Sign Up</button>
             </form>
             {message && <p>{message}</p>}
+
+            <div className="text1">Already a member ? <Link to="/login" className='loginText'>Login</Link> Here</div>
         </div>
     );
 };
