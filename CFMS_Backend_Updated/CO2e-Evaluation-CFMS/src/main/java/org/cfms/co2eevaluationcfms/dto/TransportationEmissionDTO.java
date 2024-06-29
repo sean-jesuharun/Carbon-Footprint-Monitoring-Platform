@@ -17,7 +17,6 @@ public class TransportationEmissionDTO {
 
     private double fuelConsumption;
 
-    //Category
     private String vehicleClass;
 
     private String fuelType;

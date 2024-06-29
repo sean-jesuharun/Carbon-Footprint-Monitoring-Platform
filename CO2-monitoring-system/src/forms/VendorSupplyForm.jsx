@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Card, CardContent, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import Navbar from '../Navbar';
 import { styled } from '@mui/system';
@@ -16,6 +16,9 @@ const VendorSupplyForm = () => {
   const [vendors, setVendors] = useState([]);
   const [supplyItems, setSupplyItems] = useState([]);
   const [vehicles, setVehicles] = useState([]);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
+  const [snackbarMessage, setSnackbarMessage] = useState(''); // Snackbar message state
 
   useEffect(() => {
     // Fetch vendors from backend
@@ -104,6 +107,11 @@ const VendorSupplyForm = () => {
       // Send form data to backend API
       await axios.post('http://localhost:8070/supplies', formData);
       console.log('Form data submitted successfully');
+      
+      // Show success snackbar
+      setSnackbarMessage('Supply details submitted successfully!');
+      setSnackbarOpen(true);
+
       // Reset the form
       setFormData({
         vendorId: '',
@@ -114,6 +122,10 @@ const VendorSupplyForm = () => {
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -212,6 +224,18 @@ const VendorSupplyForm = () => {
         }}>Submit</Button>
         </div>
       </form>
+
+      {/* Snackbar for Success Message */}
+      <Snackbar 
+        open={snackbarOpen} 
+        autoHideDuration={6000} 
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // Set to top center
+      >
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

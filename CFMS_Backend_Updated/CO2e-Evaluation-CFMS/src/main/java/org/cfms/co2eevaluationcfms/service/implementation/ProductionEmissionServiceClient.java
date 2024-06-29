@@ -24,7 +24,7 @@ public class ProductionEmissionServiceClient {
     }
 
     // Prediction Production Emission.
-    public double predictProductionEmission(String region, String animalType, String productionSystem, String commodity){
+    public Double predictProductionEmission(String region, String animalType, String productionSystem, String commodity){
 
         // (Note) Need to Change This Logic
         List<String> regionList = new ArrayList<>();

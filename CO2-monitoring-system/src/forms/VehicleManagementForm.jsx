@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Card, CardContent, TextField, Select, MenuItem, Button, Typography } from '@mui/material';
+import { Grid, Card, CardContent, TextField, Select, MenuItem, Button, Typography, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import Navbar from '../Navbar';
 import { styled } from '@mui/system';
@@ -17,6 +17,9 @@ const VehicleManagementForm = () => {
     fuelType: '',
   });
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
+  const [snackbarMessage, setSnackbarMessage] = useState(''); // Snackbar message state
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -28,16 +31,19 @@ const VehicleManagementForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Log form data to console
     console.log(formData);
 
-    // Send a POST request to the backend API
     const url = 'http://localhost:8040/vehicles'; 
     const requestData = { ...formData };
 
     try {
       const response = await axios.post(url, requestData);
       console.log('Data submitted successfully:', response.data);
+
+      // Show success snackbar
+      setSnackbarMessage('Vehicle details submitted successfully!');
+      setSnackbarOpen(true);
+
       // Reset the form
       setFormData({
         model: '',
@@ -48,9 +54,14 @@ const VehicleManagementForm = () => {
         capacity: '',
         fuelType: '',
       });
+
     } catch (error) {
       console.error('Error submitting data:', error);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -174,6 +185,16 @@ const VehicleManagementForm = () => {
         }}>Submit</Button>
         </div>
       </form>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
