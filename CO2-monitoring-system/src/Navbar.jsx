@@ -261,7 +261,7 @@ const handleLogout = () => {
 
         <List sx={{ backgroundColor: "#D1E6E4" }}>
           {[
-            { text: 'Dashboard', icon: <DashboardIcon />, to: '/' },
+            { text: 'Dashboard', icon: <DashboardIcon />, to: '/dashboard' },
             { text: 'Vehicle Management', icon: <DirectionsCarIcon />, to: '/vehicle-management' },
             { text: 'Vendor Management', icon: <BusinessIcon />, to: '/vendor-management' },
             { text: 'Customer Management', icon: <PersonIcon />, to: '/customer-management' },
