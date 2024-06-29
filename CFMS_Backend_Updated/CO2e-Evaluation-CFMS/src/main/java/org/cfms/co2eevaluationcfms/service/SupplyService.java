@@ -1,14 +1,14 @@
 package org.cfms.co2eevaluationcfms.service;
 
-import org.cfms.co2eevaluationcfms.dto.SupplyReqDTO;
-import org.cfms.co2eevaluationcfms.dto.SupplyResDTO;
+import org.cfms.co2eevaluationcfms.dto.SupplyDTO;
+import org.cfms.co2eevaluationcfms.dto.SupplyDetailDTO;
 
 import java.util.List;
 
 public interface SupplyService {
 
-    List<SupplyResDTO> getSupplies();
+    List<SupplyDetailDTO> getSupplies();
 
-    SupplyReqDTO createSupply(SupplyReqDTO supplyReqDTO);
+    SupplyDTO createSupply(SupplyDTO supplyDTO);
 
 }

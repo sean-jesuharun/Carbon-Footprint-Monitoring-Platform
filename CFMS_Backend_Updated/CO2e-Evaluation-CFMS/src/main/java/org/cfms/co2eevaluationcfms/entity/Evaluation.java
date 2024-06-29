@@ -45,7 +45,7 @@ public class Evaluation {
     @Column(name = "vehicle_id", nullable = false)
     private Long vehicleId;
 
-    @OneToMany(mappedBy = "evaluation")
+    @OneToMany(mappedBy = "evaluation", cascade = CascadeType.REMOVE)
     private List<Result> results;
 
 }

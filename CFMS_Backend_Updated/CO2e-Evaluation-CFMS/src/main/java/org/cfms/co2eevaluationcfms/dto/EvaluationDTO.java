@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class EvaluationResDTO {
+public class EvaluationDTO {
 
     private Long id;
     private String jobName;

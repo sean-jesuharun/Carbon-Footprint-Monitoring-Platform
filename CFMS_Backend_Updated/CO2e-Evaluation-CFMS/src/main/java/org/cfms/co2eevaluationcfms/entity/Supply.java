@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,20 +13,20 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "vendor_supply")
+@Table(name = "supply")
 @ToString
-public class VendorSupply {
+public class Supply {
 
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "vendorSupply_generator"
+            generator = "Supply_generator"
     )
     @GenericGenerator(
-            name = "vendorSupply_generator",
+            name = "Supply_generator",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
             parameters = {
-                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "vendor_supply_sequence"),
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "supply_sequence"),
                     @org.hibernate.annotations.Parameter(name = "initial_value", value = "1"),
                     @org.hibernate.annotations.Parameter(name = "increment_size", value = "4"),
                     @org.hibernate.annotations.Parameter(name = "optimizer", value = "pooled-lo")
@@ -38,19 +39,18 @@ public class VendorSupply {
     private Long vendorId;
 
     @Basic
-    @Column(name = "product_name", nullable = false)
-    private String productName;
+    @Column(name = "vehicle_id", nullable = false)
+    private Long vehicleId;
+
+    @Basic
+    @Column(name = "fuel_consumption_l", nullable = false)
+    private Double fuelConsumptionL;
 
     @Basic
     @Column(name = "date", nullable = false)
     private OffsetDateTime date;
 
-    @Basic
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
-
-    @Basic
-    @Column(name = "inbound_co2e_kg", nullable = false)
-    private Double inboundCO2eEmissionKg;
+    @OneToMany(mappedBy = "supply")
+    private List<SupplyItem> supplyItems;
 
 }

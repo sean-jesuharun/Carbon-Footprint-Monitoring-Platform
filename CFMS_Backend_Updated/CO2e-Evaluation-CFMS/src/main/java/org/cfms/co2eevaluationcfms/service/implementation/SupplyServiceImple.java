@@ -2,20 +2,26 @@ package org.cfms.co2eevaluationcfms.service.implementation;
 
 import jakarta.transaction.Transactional;
 import org.cfms.co2eevaluationcfms.dto.*;
-import org.cfms.co2eevaluationcfms.entity.VendorSupply;
-import org.cfms.co2eevaluationcfms.repository.VendorSupplyRepository;
+import org.cfms.co2eevaluationcfms.entity.Supply;
+import org.cfms.co2eevaluationcfms.entity.SupplyItem;
+import org.cfms.co2eevaluationcfms.entity.SupplyItemKey;
+import org.cfms.co2eevaluationcfms.repository.SupplyItemRepository;
+import org.cfms.co2eevaluationcfms.repository.SupplyRepository;
 import org.cfms.co2eevaluationcfms.service.SupplyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class SupplyServiceImple implements SupplyService {
 
-    private VendorSupplyRepository vendorSupplyRepository;
+    private SupplyRepository supplyRepository;
+
+    private SupplyItemRepository supplyItemRepository;
 
     private VendorServiceClient vendorServiceClient;
 
@@ -26,61 +32,74 @@ public class SupplyServiceImple implements SupplyService {
     private ModelMapper  modelMapper;
 
     @Autowired
-    public SupplyServiceImple(VendorSupplyRepository vendorSupplyRepository, VendorServiceClient vendorServiceClient, VehicleServiceClient vehicleServiceClient, TransportationEmissionServiceClient transportationEmissionServiceClient, ModelMapper modelMapper) {
-        this.vendorSupplyRepository = vendorSupplyRepository;
+    public SupplyServiceImple(SupplyRepository supplyRepository, SupplyItemRepository supplyItemRepository, VendorServiceClient vendorServiceClient, VehicleServiceClient vehicleServiceClient, TransportationEmissionServiceClient transportationEmissionServiceClient, ModelMapper modelMapper) {
+        this.supplyRepository = supplyRepository;
+        this.supplyItemRepository = supplyItemRepository;
         this.vendorServiceClient = vendorServiceClient;
         this.vehicleServiceClient = vehicleServiceClient;
         this.transportationEmissionServiceClient = transportationEmissionServiceClient;
         this.modelMapper = modelMapper;
     }
 
-    public List<SupplyResDTO> getSupplies() {
+    public List<SupplyDetailDTO> getSupplies() {
 
-        return vendorSupplyRepository.findAll().stream()
-                .map(vendorSupply -> modelMapper.map(vendorSupply, SupplyResDTO.class))
+        return supplyItemRepository.findAll().stream()
+                .map(supplyItem -> modelMapper.map(supplyItem, SupplyDetailDTO.class))
                 .toList();
 
     }
 
     @Transactional
-    public SupplyReqDTO createSupply(SupplyReqDTO supplyReqDTO) {
+    public SupplyDTO createSupply(SupplyDTO supplyDTO) {
 
-        VendorDTO vendorDTO = vendorServiceClient.getVendorById(supplyReqDTO.getVendorId());
-        VehicleDTO vehicleDTO = vehicleServiceClient.getVehicleById(supplyReqDTO.getVehicleId());
+        VendorDTO vendorDTO = vendorServiceClient.getVendorById(supplyDTO.getVendorId());
+        VehicleDTO vehicleDTO = vehicleServiceClient.getVehicleById(supplyDTO.getVehicleId());
 
         // Calculating fuel_consumption in (L/100km)
-        double fuelConsumptionLPer100Km = (supplyReqDTO.getFuelConsumption()/vendorDTO.getDistanceFromWarehouse()) * 100;
+        double fuelConsumptionLPer100Km = (supplyDTO.getFuelConsumption()/vendorDTO.getDistanceFromWarehouse()) * 100;
 
         // Predicting Total Inbound Transportation Emission (g/km).
         Integer predictedInboundTransportationCO2eEmissionGPerKm = transportationEmissionServiceClient.predictTransportationEmission(vehicleDTO.getModel(), vehicleDTO.getEngineSize(), vehicleDTO.getCylinders(), fuelConsumptionLPer100Km, vehicleDTO.getVehicleType(), vehicleDTO.getFuelType());
 
         // Total Inbound Transportation Emission (kg)
         // Finding emission for total distance and converting it to kg
-        double predictedInboundTransportationCO2eEmissionKg = (predictedInboundTransportationCO2eEmissionGPerKm * vendorDTO.getDistanceFromWarehouse()) / 1000;
+        Double predictedInboundTransportationCO2eEmissionKg = (predictedInboundTransportationCO2eEmissionGPerKm * vendorDTO.getDistanceFromWarehouse()) / 1000;
 
-        // Datetime of the Transportation.
-        OffsetDateTime dateTime = OffsetDateTime.now();
+        System.out.println(predictedInboundTransportationCO2eEmissionKg);
 
         // Finding the Total Quantity of Products Being involved in the Transportation.
-        int totalQuantity = supplyReqDTO.getSupplyItems().stream()
+        int totalQuantity = supplyDTO.getSupplyItems().stream()
                 .mapToInt(SupplyItemDTO::getQuantity)
                 .sum();
 
-        for (SupplyItemDTO supplyItemDTO : supplyReqDTO.getSupplyItems()) {
+        Supply supply = Supply.builder()
+                .vendorId(supplyDTO.getVendorId())
+                .vehicleId(supplyDTO.getVehicleId())
+                .fuelConsumptionL(supplyDTO.getFuelConsumption())
+                .date(OffsetDateTime.now())
+                .supplyItems(new ArrayList<>())
+                .build();
 
-            VendorSupply vendorSupply = VendorSupply.builder()
-                    .vendorId(supplyReqDTO.getVendorId())
-                    .productName(supplyItemDTO.getProductName().toUpperCase())
-                    .date(dateTime)
+        supplyRepository.save(supply);
+
+        for (SupplyItemDTO supplyItemDTO : supplyDTO.getSupplyItems()) {
+
+            SupplyItem supplyItem = SupplyItem.builder()
+                    .supplyItemKey(SupplyItemKey.builder()
+                            .supply(supply)
+                            .productName(supplyItemDTO.getProductName().toUpperCase())
+                            .build())
                     .quantity(supplyItemDTO.getQuantity())
-                    .inboundCO2eEmissionKg((supplyItemDTO.getQuantity()/totalQuantity) * predictedInboundTransportationCO2eEmissionKg)
+                    .inboundCO2eEmissionKg(((double)supplyItemDTO.getQuantity()/totalQuantity) * predictedInboundTransportationCO2eEmissionKg)
                     .build();
 
-            vendorSupplyRepository.save(vendorSupply);
+            supplyItemRepository.save(supplyItem);
+
+            supply.getSupplyItems().add(supplyItem);
 
         }
 
-        return supplyReqDTO;
+        return modelMapper.map(supply, SupplyDTO.class);
 
     }
 

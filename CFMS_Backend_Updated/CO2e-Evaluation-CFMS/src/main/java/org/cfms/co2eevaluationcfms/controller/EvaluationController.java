@@ -1,7 +1,7 @@
 package org.cfms.co2eevaluationcfms.controller;
 
-import org.cfms.co2eevaluationcfms.dto.EvaluationReqDTO;
-import org.cfms.co2eevaluationcfms.dto.EvaluationResDTO;
+import org.cfms.co2eevaluationcfms.dto.DeliveryDTO;
+import org.cfms.co2eevaluationcfms.dto.EvaluationDTO;
 import org.cfms.co2eevaluationcfms.service.implementation.EvaluationServiceImple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +21,12 @@ public class EvaluationController {
     }
 
     @GetMapping
-    public List<EvaluationResDTO> getEvaluations() {
+    public List<EvaluationDTO> getEvaluations() {
         return evaluationServiceImple.getEvaluations();
     }
 
     @PostMapping
-    public EvaluationResDTO addEvaluation(@RequestBody EvaluationReqDTO evaluationReqDTO) {
-        return evaluationServiceImple.addEvaluation(evaluationReqDTO);
+    public EvaluationDTO addEvaluation(@RequestBody DeliveryDTO deliveryDTO) {
+        return evaluationServiceImple.addEvaluation(deliveryDTO);
     }
 }

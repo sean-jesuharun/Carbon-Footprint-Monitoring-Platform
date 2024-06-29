@@ -1,13 +1,13 @@
 package org.cfms.co2eevaluationcfms.service;
 
-import org.cfms.co2eevaluationcfms.dto.EvaluationReqDTO;
-import org.cfms.co2eevaluationcfms.dto.EvaluationResDTO;
+import org.cfms.co2eevaluationcfms.dto.DeliveryDTO;
+import org.cfms.co2eevaluationcfms.dto.EvaluationDTO;
 
 import java.util.List;
 
 public interface EvaluationService {
 
-    List<EvaluationResDTO> getEvaluations();
+    List<EvaluationDTO> getEvaluations();
 
-    EvaluationResDTO addEvaluation(EvaluationReqDTO evaluationReqDTO);
+    EvaluationDTO addEvaluation(DeliveryDTO deliveryDTO);
 }

@@ -6,6 +6,5 @@ import lombok.Data;
 public class SupplyItemDTO {
 
     private String productName;
-
     private Integer quantity;
 }

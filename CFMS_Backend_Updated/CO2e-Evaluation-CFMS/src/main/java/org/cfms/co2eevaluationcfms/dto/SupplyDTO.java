@@ -5,12 +5,12 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class EvaluationReqDTO {
+public class SupplyDTO {
 
-    private String jobName;
-    private Long customerId;
+    private Long id;
+    private Long vendorId;
     private Long vehicleId;
     private Double fuelConsumption;
-    private List<DeliveryItemDTO> deliveryItems;
+    private List<SupplyItemDTO> supplyItems;
 
 }

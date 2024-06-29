@@ -1,20 +1,14 @@
 package org.cfms.co2eevaluationcfms.service.implementation;
 
 import jakarta.transaction.Transactional;
-import org.cfms.co2eevaluationcfms.dto.DeliveryItemDTO;
-import org.cfms.co2eevaluationcfms.dto.EvaluationReqDTO;
-import org.cfms.co2eevaluationcfms.dto.EvaluationResDTO;
-import org.cfms.co2eevaluationcfms.dto.CustomerDTO;
-import org.cfms.co2eevaluationcfms.dto.VehicleDTO;
-import org.cfms.co2eevaluationcfms.dto.ProductionMatrixDTO;
-import org.cfms.co2eevaluationcfms.dto.VendorDTO;
-import org.cfms.co2eevaluationcfms.dto.VendorProductDTO;
+import org.cfms.co2eevaluationcfms.dto.*;
 import org.cfms.co2eevaluationcfms.entity.Evaluation;
 import org.cfms.co2eevaluationcfms.entity.Result;
-import org.cfms.co2eevaluationcfms.entity.VendorSupply;
+import org.cfms.co2eevaluationcfms.entity.SupplyItem;
 import org.cfms.co2eevaluationcfms.repository.EvaluationRepository;
 import org.cfms.co2eevaluationcfms.repository.ResultRepository;
-import org.cfms.co2eevaluationcfms.repository.VendorSupplyRepository;
+import org.cfms.co2eevaluationcfms.repository.SupplyItemRepository;
+import org.cfms.co2eevaluationcfms.repository.SupplyRepository;
 import org.cfms.co2eevaluationcfms.service.EvaluationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +27,9 @@ public class EvaluationServiceImple implements EvaluationService {
 
     private CustomerServiceClient customerServiceClient;
 
-    private VendorSupplyRepository vendorSupplyRepository;
+    private SupplyRepository supplyRepository;
+
+    private SupplyItemRepository supplyItemRepository;
 
     private VehicleServiceClient vehicleServiceClient;
 
@@ -46,11 +42,12 @@ public class EvaluationServiceImple implements EvaluationService {
     private ModelMapper modelMapper;
 
     @Autowired
-    public EvaluationServiceImple(EvaluationRepository evaluationRepository, ResultRepository resultRepository, CustomerServiceClient customerServiceClient, VendorSupplyRepository vendorSupplyRepository, VehicleServiceClient vehicleServiceClient, VendorServiceClient vendorServiceClient, TransportationEmissionServiceClient transportationEmissionServiceClient, ProductionEmissionServiceClient productionEmissionServiceClient, ModelMapper modelMapper) {
+    public EvaluationServiceImple(EvaluationRepository evaluationRepository, ResultRepository resultRepository, CustomerServiceClient customerServiceClient, SupplyRepository supplyRepository, SupplyItemRepository supplyItemRepository, VehicleServiceClient vehicleServiceClient, VendorServiceClient vendorServiceClient, TransportationEmissionServiceClient transportationEmissionServiceClient, ProductionEmissionServiceClient productionEmissionServiceClient, ModelMapper modelMapper) {
         this.evaluationRepository = evaluationRepository;
         this.resultRepository = resultRepository;
         this.customerServiceClient = customerServiceClient;
-        this.vendorSupplyRepository = vendorSupplyRepository;
+        this.supplyRepository = supplyRepository;
+        this.supplyItemRepository = supplyItemRepository;
         this.vehicleServiceClient = vehicleServiceClient;
         this.vendorServiceClient = vendorServiceClient;
         this.transportationEmissionServiceClient = transportationEmissionServiceClient;
@@ -58,22 +55,22 @@ public class EvaluationServiceImple implements EvaluationService {
         this.modelMapper = modelMapper;
     }
 
-    public List<EvaluationResDTO> getEvaluations() {
+    public List<EvaluationDTO> getEvaluations() {
 
         return evaluationRepository.findAll().stream()
-                .map(evaluation -> modelMapper.map(evaluation, EvaluationResDTO.class))
+                .map(evaluation -> modelMapper.map(evaluation, EvaluationDTO.class))
                 .toList();
 
     }
 
     @Transactional
-    public EvaluationResDTO addEvaluation(EvaluationReqDTO evaluationReqDTO) {
+    public EvaluationDTO addEvaluation(DeliveryDTO deliveryDTO) {
 
-        CustomerDTO customerDTO = customerServiceClient.getCustomerById(evaluationReqDTO.getCustomerId());
-        VehicleDTO vehicleDTO = vehicleServiceClient.getVehicleById(evaluationReqDTO.getVehicleId());
+        CustomerDTO customerDTO = customerServiceClient.getCustomerById(deliveryDTO.getCustomerId());
+        VehicleDTO vehicleDTO = vehicleServiceClient.getVehicleById(deliveryDTO.getVehicleId());
 
         // Calculating fuel_consumption in (L/100km)
-        double fuelConsumptionLPer100Km = (evaluationReqDTO.getFuelConsumption()/customerDTO.getDistanceFromWarehouse()) * 100;
+        double fuelConsumptionLPer100Km = (deliveryDTO.getFuelConsumption()/customerDTO.getDistanceFromWarehouse()) * 100;
 
         // Predicting Total Outbound Transportation Emission (g/km).
         Integer predictedOutboundTransportationCO2eEmissionGPerKm = transportationEmissionServiceClient.predictTransportationEmission(vehicleDTO.getModel(), vehicleDTO.getEngineSize(), vehicleDTO.getCylinders(), fuelConsumptionLPer100Km, vehicleDTO.getVehicleType(), vehicleDTO.getFuelType());
@@ -83,20 +80,20 @@ public class EvaluationServiceImple implements EvaluationService {
         double predictedOutboundTransportationCO2eEmissionKg = (predictedOutboundTransportationCO2eEmissionGPerKm * customerDTO.getDistanceFromWarehouse()) / 1000;
 
         // Finding the Total Quantity of Products Being involved in Delivery (Outbound Transportation).
-        int totalQuantity = evaluationReqDTO.getDeliveryItems().stream()
+        int totalQuantity = deliveryDTO.getDeliveryItems().stream()
                 .mapToInt(DeliveryItemDTO::getQuantity)
                 .sum();
 
         Evaluation evaluation = Evaluation.builder()
-                .jobName(evaluationReqDTO.getJobName())
-                .customerId(evaluationReqDTO.getCustomerId())
-                .vehicleId(evaluationReqDTO.getVehicleId())
+                .jobName(deliveryDTO.getJobName())
+                .customerId(deliveryDTO.getCustomerId())
+                .vehicleId(deliveryDTO.getVehicleId())
                 .results(new ArrayList<>())
                 .build();
 
         evaluationRepository.save(evaluation);
 
-        for (DeliveryItemDTO deliveryItemDTO : evaluationReqDTO.getDeliveryItems()) {
+        for (DeliveryItemDTO deliveryItemDTO : deliveryDTO.getDeliveryItems()) {
 
             VendorDTO vendorDTO = vendorServiceClient.getVendorById(deliveryItemDTO.getVendorId());
 
@@ -110,10 +107,10 @@ public class EvaluationServiceImple implements EvaluationService {
             Double totalProductionCO2eEmission = calculateTotalProductionCO2eEmission(predictedProductionCO2eEmissionPerKg, deliveryItemDTO.getQuantity());
 
             // Retrieve VendorSupplies to get Inbound Emission
-            List<VendorSupply> vendorSupplies = vendorSupplyRepository.findByVendorIdAndProductNameOrderByDateAsc(deliveryItemDTO.getVendorId(), deliveryItemDTO.getProductName());
+            List<SupplyItem> vendorSupplies = supplyItemRepository.findByVendorIdAndProductNameOrderByDateAsc(deliveryItemDTO.getVendorId(), deliveryItemDTO.getProductName());
 
             // Select the First Supply which satisfy the customer quantity Req
-            VendorSupply vendorSupply = vendorSupplies.stream()
+            SupplyItem supplyItem = vendorSupplies.stream()
                     .filter(supply -> deliveryItemDTO.getQuantity() < supply.getQuantity())
                     .findFirst()
                     .orElseThrow(() -> new NoSuchElementException("No VendorSupply found to satisfy the quantity " + deliveryItemDTO.getQuantity() + " of " + deliveryItemDTO.getProductName() + " from " + vendorDTO.getVendorName()));
@@ -123,8 +120,8 @@ public class EvaluationServiceImple implements EvaluationService {
                     .vendorId(deliveryItemDTO.getVendorId())
                     .productName(deliveryItemDTO.getProductName())
                     .quantity(deliveryItemDTO.getQuantity())
-                    .inboundCO2eEmissionKg((vendorSupply.getInboundCO2eEmissionKg()/vendorSupply.getQuantity()) * deliveryItemDTO.getQuantity())
-                    .outboundCO2eEmissionKg((deliveryItemDTO.getQuantity()/totalQuantity) * predictedOutboundTransportationCO2eEmissionKg)
+                    .inboundCO2eEmissionKg((supplyItem.getInboundCO2eEmissionKg()/ supplyItem.getQuantity()) * deliveryItemDTO.getQuantity())
+                    .outboundCO2eEmissionKg(((double)deliveryItemDTO.getQuantity()/totalQuantity) * predictedOutboundTransportationCO2eEmissionKg)
                     .productionCO2eEmissionKg(totalProductionCO2eEmission)
                     .build();
 
@@ -134,7 +131,7 @@ public class EvaluationServiceImple implements EvaluationService {
 
         }
 
-        return modelMapper.map(evaluation, EvaluationResDTO.class);
+        return modelMapper.map(evaluation, EvaluationDTO.class);
 
     }
 
