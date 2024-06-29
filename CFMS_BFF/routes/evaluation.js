@@ -5,28 +5,9 @@ const router = express.Router();
 
 const CO2eEVALUATION_SERVICE_NAME = 'CO2e-Evaluation-CFMS'
 
-// Route evaluation/supply requests to the CO2e_evaluation microservice
-router.get('/supplies', async (req, res) => {
-    try {
-        const serviceUrl = getTargetServiceUrl(CO2eEVALUATION_SERVICE_NAME);
-        const response = await axios.get(`${serviceUrl}/supplies`);
-        res.status(response.status).json(response.data);
-    } catch (error) {
-        res.status(error.response.status || 500).json(error.response.data);
-    }
-});
+// Route evaluation requests to the CO2e_evaluation microservice
+router.get('/', async (req, res) => {
 
-router.post('/supplies', async (req, res) => {
-    try {
-        const serviceUrl = getTargetServiceUrl(CO2eEVALUATION_SERVICE_NAME);
-        const response = await axios.post(`${serviceUrl}/supplies`, req.body);
-        res.status(response.status).json(response.data);
-    } catch (error) {
-        res.status(error.response.status || 500).json(error.response.data);
-    }
-});
-
-router.get('/evaluations', async (req, res) => {
     try {
         const serviceUrl = getTargetServiceUrl(CO2eEVALUATION_SERVICE_NAME);
         const response = await axios.get(`${serviceUrl}/evaluations`);
@@ -46,11 +27,12 @@ router.get('/evaluations', async (req, res) => {
                         ...result,
                         inboundCO2eEmissionKg: undefined,
                         outboundCO2eEmissionKg: undefined,
-                        transportationEmission: {
-                            inboundCO2eEmissionKg: inbound,
-                            outboundCO2eEmissionKg: outbound
+                        productionCO2eEmissionKg: undefined,
+                        CO2eEmission: {
+                            Inbound: inbound,
+                            Outbound: outbound,
+                            Production: production
                         },
-                        productionCO2eEmissionKg: production,
                         totalCO2eEmission,
                         CO2eEmissionPerKg
                     };
@@ -64,9 +46,9 @@ router.get('/evaluations', async (req, res) => {
     }
 });
 
-router.post('/evaluations', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
-        const serviceUrl = getTargetServiceUrl(CO2eEVALUATION_SERVICE_NAME) || 'http://localhost:8070';
+        const serviceUrl = getTargetServiceUrl(CO2eEVALUATION_SERVICE_NAME);
         const response = await axios.post(`${serviceUrl}/evaluations`, req.body);
         res.status(response.status).json(response.data);
     } catch (error) {

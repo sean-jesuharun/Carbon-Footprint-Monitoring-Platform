@@ -8,12 +8,13 @@ const verifyToken = require('../middleware/auth');
 // Routes for different microservices
 const vehicleRoutes = require('./vehicle');
 const vendorRoutes = require('./vendor');
+const supplyRoutes = require('./supply')
 const evaluationRoutes = require('./evaluation');
 
 // Define sub-routes
 router.use('/vehicles', vehicleRoutes);
 router.use('/vendors', vendorRoutes);
-router.use('/supplies', evaluationRoutes)
+router.use('/supplies', supplyRoutes);
 router.use('/evaluations', evaluationRoutes);
 
 module.exports = router;
