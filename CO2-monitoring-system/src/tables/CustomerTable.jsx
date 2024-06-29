@@ -7,8 +7,9 @@ import { styled } from '@mui/system';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
-    backgroundColor: '#1b263b',
-    color: '#f1faee',
+    backgroundColor: '#ffffff',
+    color: 'black',
+    border: '10px solid #D5E9E5',
   },
 }));
 
@@ -39,15 +40,15 @@ const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
 }));
 
 const BlueIconButton = styled(IconButton)({
-  color: 'blue',
+  color: '#ACCA8E',
 });
 
 const GreenIconButton = styled(IconButton)({
-  color: 'green',
+  color: '#D5E9E5',
 });
 
 const RedIconButton = styled(IconButton)({
-  color: 'red',
+  color: '#E56464',
 });
 
 export default function CustomerTable({ darkMode, drawerOpen }) {
@@ -56,8 +57,6 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
   const [deleteId, setDeleteId] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [currentRow, setCurrentRow] = useState({});
-  const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const [viewRow, setViewRow] = useState({});
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -90,7 +89,6 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
       disableColumnMenu: true,
       renderCell: (params) => (
         <div >
-          <BlueIconButton onClick={() => handleView(params.id)} sx={{ padding: '5px' }}><Visibility /></BlueIconButton>
           <GreenIconButton onClick={() => handleEdit(params.id)} sx={{ padding: '5px' }}><Edit /></GreenIconButton>
           <RedIconButton onClick={() => handleDeleteConfirmation(params.id)} sx={{ padding: '5px' }}><Delete /></RedIconButton>
         </div>
@@ -98,11 +96,7 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
     },
   ];
 
-  const handleView = (id) => {
-    const rowToView = rows.find((row) => row.id === id);
-    setViewRow(rowToView);
-    setViewDialogOpen(true);
-  };
+ 
 
   const handleEdit = (id) => {
     const rowToEdit = rows.find((row) => row.id === id);
@@ -151,15 +145,13 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
     setCurrentRow({});
   };
 
-  const handleCloseViewDialog = () => {
-    setViewDialogOpen(false);
-    setViewRow({});
-  };
-
+  
   return (
-    <Paper elevation={5} style={{ padding: '0.5rem', marginLeft: drawerOpen ? 300 : 80, transition: 'margin-left 0.3s', marginRight: '1rem', backgroundColor: '#caf0f8' }}>
-      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px' }}>
-        <DataGrid
+    <Paper elevation={5} style={{ width:'70%',padding:'0.5rem',marginLeft: '15rem', backgroundColor: '#ffffff',transition: 'margin-left 0.3s',marginRight:'1rem', border: '10px solid #D5E9E5' }}
+    >
+      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px',padding:'0.5rem' }}>
+        
+      <DataGrid
           rows={rows}
           columns={columns}
           initialState={{
@@ -168,6 +160,20 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
             },
           }}
           pageSizeOptions={[5, 10]}
+          sx={{
+            padding:'1rem',
+            '& .MuiDataGrid-columnHeaders': {
+              color: 'black',           
+              fontSize: '1rem',
+              fontWeight: 'bold',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              backgroundColor: '#D1E6E4',   
+            },
+            '& .MuiDataGrid-footerContainer': {
+              backgroundColor: '#D1E6E4',
+            },
+          }}
         />
       </div>
 
@@ -175,13 +181,13 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>Are you sure you want to delete this row?</DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#caf0f8', '&:hover': { backgroundColor: '#778da9' } }}>Cancel</Button>
+          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#198773' }}>Cancel</Button>
           <Button onClick={handleDelete} variant="contained" color="error">Delete</Button>
         </StyledDialogActions>
       </StyledDialog>
 
       <StyledDialog open={editDialogOpen} onClose={handleCloseEditDialog}>
-        <DialogTitle>Edit Customer</DialogTitle>
+        <DialogTitle sx={{ textAlign: 'center', color: '#198773', fontWeight: 'bold' }}>Edit Customer</DialogTitle>
         <DialogContent>
           <StyledTextField
             margin="dense"
@@ -209,22 +215,12 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
           />
         </DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseEditDialog} sx={{ color: '#caf0f8', '&:hover': { backgroundColor: '#778da9' } }}>Cancel</Button>
-          <Button onClick={handleEditSubmit} variant="contained" sx={{ color: '#fff', backgroundColor: '#1b263b', '&:hover': { backgroundColor: '#778da9' } }}>Save</Button>
+          <Button onClick={handleCloseEditDialog} sx={{ color: '#198773', '&:hover': { backgroundColor: '##D5E9E5'} }}>Cancel</Button>
+          <Button onClick={handleEditSubmit} variant="contained" sx={{ color: 'black', backgroundColor: '#D5E9E5', '&:hover': { backgroundColor: '#ffffff', } }}>Save</Button>
         </StyledDialogActions>
       </StyledDialog>
 
-      <StyledDialog open={viewDialogOpen} onClose={handleCloseViewDialog}>
-        <DialogTitle>View Customer</DialogTitle>
-        <DialogContent>
-          <p><strong>Customer Name:</strong> {viewRow.customerName}</p>
-          <p><strong>Location:</strong> {viewRow.location}</p>
-          <p><strong>Distance From Warehouse:</strong> {viewRow.distanceFromWarehouse}</p>
-        </DialogContent>
-        <StyledDialogActions>
-          <Button onClick={handleCloseViewDialog} sx={{ color: '#caf0f8' }}>Close</Button>
-        </StyledDialogActions>
-      </StyledDialog>
+      
     </Paper>
   );
 }

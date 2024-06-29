@@ -23,15 +23,15 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import PersonIcon from '@mui/icons-material/Person';
 import BusinessIcon from '@mui/icons-material/Business';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { Link } from 'react-router-dom';
-import CustomerTable from './tables/CustomerTable';
+import { Link,useLocation } from 'react-router-dom';
+
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  backgroundColor: alpha(theme.palette.common.white, 1),
   '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
+    backgroundColor: alpha(theme.palette.common.white, 0.3),
   },
   marginRight: theme.spacing(2),
   marginLeft: 0,
@@ -50,10 +50,11 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  color:'#198773'
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
+  color: '#1b263b',
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
@@ -61,53 +62,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     width: '100%',
     [theme.breakpoints.up('md')]: {
       width: '20ch',
-    },
-  },
-}));
-
-const MaterialUISwitch = styled(Switch)(({ theme }) => ({
-  width: 62,
-  height: 34,
-  padding: 7,
-  '& .MuiSwitch-switchBase': {
-    margin: 1,
-    padding: 0,
-    transform: 'translateX(6px)',
-    '&.Mui-checked': {
-      color: '#fff',
-      transform: 'translateX(22px)',
-      '& .MuiSwitch-thumb:before': {
-        backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-          '#fff'
-        )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`,
-      },
-      '& + .MuiSwitch-track': {
-        opacity: 1,
-        backgroundColor: theme.palette.mode === 'dark' ? '#415a77' : '#aab4be',
-      },
-    },
-    '& .MuiSwitch-thumb': {
-      backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c',
-      width: 32,
-      height: 32,
-      '&::before': {
-        content: "''",
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        left: 0,
-        top: 0,
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-        backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-          '#fff'
-        )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`,
-      },
-    },
-    '& .MuiSwitch-track': {
-      opacity: 1,
-      backgroundColor: theme.palette.mode === 'dark' ? '#415a77' : '#aab4be',
-      borderRadius: 20 / 2,
     },
   },
 }));
@@ -121,7 +75,7 @@ const openedMixin = (theme) => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: 'hidden',
-  backgroundColor: "#1b263b"
+  backgroundColor: "#D1E6E4"
 });
 
 const closedMixin = (theme) => ({
@@ -134,7 +88,7 @@ const closedMixin = (theme) => ({
   [theme.breakpoints.up('sm')]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
-  backgroundColor: '#1b263b'
+  backgroundColor: '#D1E6E4'
 });
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -174,10 +128,12 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     ...(open && {
       ...openedMixin(theme),
       '& .MuiDrawer-paper': openedMixin(theme),
-    }),
+      
+}),
     ...(!open && {
       ...closedMixin(theme),
       '& .MuiDrawer-paper': closedMixin(theme),
+    
     }),
   }),
 );
@@ -192,6 +148,8 @@ export default function Navbar() {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  const location=useLocation();
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -214,7 +172,7 @@ export default function Navbar() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" sx={{ backgroundColor: '#1b263b' }} open={open}>
+      <AppBar position="fixed" sx={{ backgroundColor: '#198773' }} open={open}>
         <Toolbar>
           <IconButton
             aria-label="open drawer"
@@ -222,7 +180,7 @@ export default function Navbar() {
             edge="start"
             sx={{
               marginRight: 5,
-              color: '#caf0f8',
+              color: '#D1E6E4',
               ...(open && { display: 'none' }),
             }}
           >
@@ -231,7 +189,7 @@ export default function Navbar() {
           <Typography
             variant="h5"
             noWrap
-            color="#caf0f8"
+            color="#D1E6E4"
             component="div"
             sx={{ display: { xs: 'none', sm: 'block' } ,fontWeight:1000}}
           >
@@ -250,9 +208,6 @@ export default function Navbar() {
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <MaterialUISwitch 
-          
-          />
           <IconButton
             size="large"
             edge="end"
@@ -260,9 +215,9 @@ export default function Navbar() {
             aria-controls={menuId}
             aria-haspopup="true"
             onClick={handleProfileMenuOpen}
-            color="inherit"
+            sx={{color:"#ffffff", width: '48px', height: '48px'}}
           >
-            <AccountCircle />
+            <AccountCircle sx={{ fontSize: '36px' }}/>
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -280,14 +235,20 @@ export default function Navbar() {
         <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
       </Menu>
 
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={open}
+       sx={{
+    '& .MuiDrawer-paper': {
+      width: open ? drawerWidth : `calc(${theme.spacing(8)} + 1px)`,
+    },
+  }}
+      >
         <DrawerHeader>
-          <IconButton onClick={handleDrawerClose} sx={{ color: '#caf0f8' }}>
+          <IconButton onClick={handleDrawerClose} sx={{ backgroundColor: '#D1E6E4' }}>
             <MenuIcon />
           </IconButton>
         </DrawerHeader>
 
-        <List sx={{ color: "#caf0f8" }}>
+        <List sx={{ backgroundColor: "#D1E6E4" }}>
           {[
             { text: 'Dashboard', icon: <DashboardIcon />, to: '/' },
             { text: 'Vehicle Management', icon: <DirectionsCarIcon />, to: '/vehicle-management' },
@@ -295,9 +256,18 @@ export default function Navbar() {
             { text: 'Customer Management', icon: <PersonIcon />, to: '/customer-management' },
             { text: 'Vendor Supply Management', icon: <LocalShippingIcon />, to: '/vendor-supply-management' }
           ].map(({ text, icon, to }) => (
-            <ListItemButton key={text} disablePadding sx={{ justifyContent: open ? 'initial' : 'center', px: 2.5 }}
+            <ListItemButton key={text} disablePadding
+             sx={{ justifyContent: open ? 'initial' : 'center', px: 2.5,
+              backgroundColor: location.pathname === to ? '#198773' : 'inherit',
+              '&:hover': {
+                backgroundColor: '#fff',
+              }
+              }}
               component={Link} to={to}>
-              <ListItemIcon sx={{ color: "#caf0f8", minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
+              <ListItemIcon 
+              sx={{
+                // backgroundColor: location.pathname === to ? '#198773' : '#D1E6E4', 
+                 minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
                 {icon}
               </ListItemIcon>
               <ListItemText primary={text}

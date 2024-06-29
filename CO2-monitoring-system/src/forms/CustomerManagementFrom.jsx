@@ -4,14 +4,6 @@ import axios from 'axios';
 import Navbar from '../Navbar';
 import { styled } from '@mui/system';
 
-const GlassCard = styled(Card)(({ theme }) => ({
-  background: 'rgba(255, 255, 255, 0.5)',
-  backdropFilter: 'blur(20px)',
-  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.2)',
-  borderRadius: '10px',
-  padding: '20px',
-  color: '#edf6f9',
-}));
 
 const CustomerManagementForm = () => {
   const [formData, setFormData] = useState({
@@ -92,14 +84,14 @@ const CustomerManagementForm = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '20px',backgroundImage: 'linear-gradient(135deg, #1b263b,#caf0f8)' }}>
+    <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '30px',backgroundColor:'#ffffff'}}>
       
       <Navbar/>
       <form onSubmit={handleSubmit} >
         <br />
         <br />
-        <Typography variant='h2'  color='#caf0f8' fontWeight={1000} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>Customer Management Form</Typography>
-        <GlassCard style={{ width: '70%', margin: '2rem auto',color:'#1b263b' }}>
+        <Typography variant='h3'  color='#5D6259' fontWeight={1000}>Customer Management Form</Typography>
+        <Card style={{ width: '70%', margin: '2rem auto',borderRadius:'0.5rem' ,padding:'1rem',border: '10px solid #D5E9E5' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
             <Typography variant="subtitle1" gutterBottom>Customer Name:</Typography>
             <TextField
@@ -141,17 +133,18 @@ const CustomerManagementForm = () => {
               InputLabelProps={{ style: { color: '#000' } }}
             />
           </CardContent>
-        </GlassCard>
+        </Card>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5px' }}>
           <Button 
             type="submit" 
             variant='contained' 
             sx={{ 
               padding: '10px 20px', 
-              color: '#fff', 
-              backgroundColor: '#1b263b',
+              color: '#ffffff', 
+              backgroundColor: '#198773',
               '&:hover': {
-                backgroundColor: '#778da9',
+                backgroundColor: '#ffffff',
+                color:'#198773'
               },
             }}
           >

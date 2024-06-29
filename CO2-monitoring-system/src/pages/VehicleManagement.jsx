@@ -1,10 +1,11 @@
 import React from 'react'
-import MiniDrawer from '../MiniDrawer'
 import VehicleTable from '../tables/VehicleTable'
 import { Button ,Typography} from '@mui/material'
 import { useNavigate} from 'react-router-dom'
 import Box from '@mui/material/Box';
 import Navbar from '../Navbar'
+import AddIcon from '@mui/icons-material/Add';
+
 
 function VehicleManagement() {
   const navigate = useNavigate();
@@ -13,25 +14,30 @@ function VehicleManagement() {
     navigate('/vehicle-management-form');
   }
   return (
-    <div style={{ backgroundImage: 'linear-gradient(135deg, #1b263b,#caf0f8)', minHeight: '100vh' }}>       
+    <div style={{  minHeight: '100vh' , backgroundColor:'#ffffff'}}>       
         
         <Navbar/>
         <Box sx={{ display: 'flex', justifyContent: 'center',marginLeft:'4rem',marginTop:{xs: 10, sm: 10 } }}>
-          <Typography variant='h2' color='#caf0f8' fontWeight={1000} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>Vehicle Management</Typography>
+          <Typography variant='h3' color='#5D6259' fontWeight={1000} >Vehicle Management</Typography>
         </Box>       
         <Box display="flex" justifyContent="flex-end" padding="1.6rem">
         <Button
         variant='contained'
         sx={{ 
-          padding: '1rem 2rem', 
-          color: '#fff', 
-          backgroundColor: '#1b263b',
+          padding: '0.5rem 1rem', 
+          color: '#ffffff', 
+          backgroundColor: '#198773',
           '&:hover': {
-            backgroundColor: '#778da9',
-          },}}
+            backgroundColor: '#ffffff',
+            color:'#198773'
+          },
+          borderRadius:'1rem'
+        }}
         onClick={handleButtonClick}
-        style={{marginTop: '1rem'}}>
-          Add a new vehicle
+        style={{marginTop: '1rem'}}
+        startIcon={<AddIcon />} >
+        
+          new vehicle
           </Button>
         </Box>
 

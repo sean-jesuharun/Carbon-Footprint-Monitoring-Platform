@@ -1,62 +1,37 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Delete,  Visibility } from '@mui/icons-material';
+import { Delete, Visibility } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import { styled } from '@mui/system';
 import axios from 'axios';
-import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Tooltip, useMediaQuery, useTheme } from '@mui/material';
-
+import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
-    backgroundColor: '#1b263b',
-    color: '#f1faee',
+    backgroundColor: '#ffffff',
+    color: 'black',
+    border: '10px solid #D5E9E5',
   },
 }));
 
 const BlueIconButton = styled(IconButton)({
-  color: 'blue',
+  color: '#ACCA8E',
 });
-
 
 const RedIconButton = styled(IconButton)({
-  color: 'red',
+  color: '#E56464',
 });
-
-const StyledTextField = styled(TextField)(({ theme }) => ({
-  '& .MuiInputBase-root': {
-    backgroundColor: '#ffffff',
-    color: 'black',
-  },
-  '& .MuiInputLabel-root': {
-    color: '#1b263b',
-    marginTop: '5px',
-    fontSize: '1.2rem',
-    fontWeight: 'bold',
-  },
-  '& .MuiInputBase-input': {
-    color: 'black',
-  },
-  '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: 'black',
-  },
-  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-    borderColor: 'black',
-  },
-}));
 
 const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
   color: '#fff',
 }));
 
-export default function Dashboard({ darkMode,drawerOpen }) {
+export default function Dashboard({ darkMode, drawerOpen }) {
   const [rows, setRows] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedResults, setSelectedResults] = useState([]);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const [currentRow, setCurrentRow] = useState({});
-  const [viewDialogOpen, setViewDialogOpen] = useState(false);
 
   useEffect(() => {
     // Fetch data from API
@@ -68,7 +43,7 @@ export default function Dashboard({ darkMode,drawerOpen }) {
           jobName: job.jobName,
           customerId: job.customerId,
           vehicleId: job.vehicleId,
-          results: job.results
+          results: job.results,
         }));
         setRows(data);
         console.log(data);
@@ -81,28 +56,38 @@ export default function Dashboard({ darkMode,drawerOpen }) {
   }, []);
 
   const columns = [
-    { field: 'jobName', headerName: 'Job Name', width: 200, flex:1,headerAlign: 'center', align: 'center' },
-    { field: 'customerId', headerName: 'Customer id', width: 150,flex:1, headerAlign: 'center', align: 'center' },
-    { field: 'vehicleId', headerName: 'Vehicle id', width: 130, flex:1,headerAlign: 'center', align: 'center' },
+    { field: 'jobName', headerName: 'Job Name', width: 200, flex: 1, headerAlign: 'center', align: 'center' },
+    { field: 'customerId', headerName: 'Customer id', width: 150, flex: 1, headerAlign: 'center', align: 'center' },
+    { field: 'vehicleId', headerName: 'Vehicle id', width: 130, flex: 1, headerAlign: 'center', align: 'center' },
     {
       field: 'results',
       headerName: 'Result',
       width: 200,
-      flex:1,
+      flex: 1,
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => (
-        <Button 
-        style={{ backgroundColor: '#1b263b', color: '#caf0f8',flex:1 }}
-        onClick={() => handleOpen(params.value)}>
-          <BlueIconButton>  <Visibility/> </BlueIconButton>
+        <Button
+          style={{
+            backgroundColor: '#198773',
+            color: '#ffffff',
+            flex: 1,
+            height: 32,
+            width: 150,
+            margin: '2px',
+          }}
+          onClick={() => handleOpen(params.value)}
+        >
+          <BlueIconButton>
+            <Visibility />
+          </BlueIconButton>
           Evaluation
         </Button>
-      )
+      ),
     },
     {
       field: 'actions',
-      headerName: 'Actions',
+      headerName: 'Delete',
       width: 120,
       headerAlign: 'center',
       align: 'center',
@@ -111,11 +96,12 @@ export default function Dashboard({ darkMode,drawerOpen }) {
       disableColumnMenu: true,
       renderCell: (params) => (
         <div>
-          <BlueIconButton onClick={() => handleView(params.id)} sx={{ padding: '5px' }}><Visibility /></BlueIconButton>
-          <RedIconButton onClick={() => handleDelete(params.id)} sx={{ padding: '5px' }}><Delete /></RedIconButton>
+          <RedIconButton onClick={() => handleDeleteConfirmation(params.id)} sx={{ padding: '5px' }}>
+            <Delete />
+          </RedIconButton>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   const handleOpen = (results) => {
@@ -126,13 +112,6 @@ export default function Dashboard({ darkMode,drawerOpen }) {
   const handleClose = () => {
     setOpen(false);
   };
-
-  const handleView = (id) => {
-    const rowToView = rows.find((row) => row.id === id);
-    setCurrentRow(rowToView || {}); // Ensure currentRow is set to an empty object if not found
-    setViewDialogOpen(true);
-  };
-
 
   const handleDeleteConfirmation = (id) => {
     setDeleteConfirmation(true);
@@ -157,18 +136,23 @@ export default function Dashboard({ darkMode,drawerOpen }) {
     setDeleteId(null);
   };
 
-
-  const handleCloseViewDialog = () => {
-    setViewDialogOpen(false);
-    setViewProducts([]);
-  };
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
-    <Paper elevation={5} style={{ padding:'0.5rem',marginLeft: drawerOpen ? 300 : 80, backgroundColor: '#caf0f8',transition: 'margin-left 0.3s',marginRight:'1rem' }}>
-      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px' }}>
+    <Paper
+      elevation={5}
+      style={{
+        width: '80%',
+        padding: '0.5rem',
+        marginLeft: '10rem',
+        backgroundColor: '#ffffff',
+        transition: 'margin-left 0.3s',
+        marginRight: '1rem',
+        border: '10px solid #D5E9E5',
+      }}
+    >
+      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px', padding: '0.5rem' }}>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -178,11 +162,25 @@ export default function Dashboard({ darkMode,drawerOpen }) {
             },
           }}
           pageSizeOptions={[5, 10]}
+          sx={{
+            padding: '1rem',
+            '& .MuiDataGrid-columnHeaders': {
+              color: 'black',
+              fontSize: '1rem',
+              fontWeight: 'bold',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              backgroundColor: '#D1E6E4',
+            },
+            '& .MuiDataGrid-footerContainer': {
+              backgroundColor: '#D1E6E4',
+            },
+          }}
         />
       </div>
 
       <StyledDialog open={open} onClose={handleClose}>
-        <DialogTitle> Evaluation Result Details</DialogTitle>
+        <DialogTitle>Evaluation Result Details</DialogTitle>
         <DialogContent>
           {selectedResults.map((result, index) => (
             <div key={index} style={{ marginBottom: '8px' }}>
@@ -195,30 +193,22 @@ export default function Dashboard({ darkMode,drawerOpen }) {
           ))}
         </DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleClose} sx={{color:'#caf0f8'}}>Close</Button>
+          <Button onClick={handleClose} sx={{ color: '#198773' }}>
+            Close
+          </Button>
         </StyledDialogActions>
       </StyledDialog>
 
       <StyledDialog open={deleteConfirmation} onClose={handleCloseDeleteConfirmation}>
         <DialogTitle>Confirmation</DialogTitle>
-        <DialogContent>
-          Are you sure you want to delete this row?
-        </DialogContent>
+        <DialogContent>Are you sure you want to delete this row?</DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#caf0f8' }}>Cancel</Button>
-          <Button onClick={handleDelete} variant="contained" color="error">Delete</Button>
-        </StyledDialogActions>
-      </StyledDialog>
-
-      <StyledDialog open={viewDialogOpen} onClose={handleCloseViewDialog}>
-        <DialogTitle>View Details</DialogTitle>
-        <DialogContent>
-          <p><strong>Job Name:</strong> {currentRow.jobName}</p>
-          <p><strong>Customer ID:</strong> {currentRow.customerId}</p>
-          <p><strong>Vehicle ID:</strong> {currentRow.vehicleId}</p>
-        </DialogContent>
-        <StyledDialogActions>
-          <Button onClick={handleCloseViewDialog} sx={{ color: '#caf0f8' }}>Close</Button>
+          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#198773' }}>
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} variant="contained" color="error">
+            Delete
+          </Button>
         </StyledDialogActions>
       </StyledDialog>
     </Paper>

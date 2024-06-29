@@ -6,6 +6,7 @@ import { useNavigate} from 'react-router-dom'
 import Box from '@mui/material/Box';
 import Navbar from '../Navbar'
 import { styled, useTheme } from '@mui/material/styles';
+import AddIcon from '@mui/icons-material/Add';
 
 
 
@@ -19,8 +20,7 @@ function VendorManagement() {
   
 
   return (
-    <div style={{ backgroundImage: 'linear-gradient(135deg, #1b263b,#caf0f8)', minHeight: '100vh' }}>       
-        
+      <div style={{ backgroundColor:'#ffffff',minHeight: '100vh' }}>        
         <Navbar/>
         <Box sx={{
             display: 'flex',
@@ -30,7 +30,7 @@ function VendorManagement() {
             
           }}>
           {/* <Typography variant='h2' color='#1b263b'>Vendor Management</Typography> */}
-          <Typography variant='h2' color='#caf0f8' fontWeight={1000} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>Vendor Management</Typography>
+          <Typography variant='h3' color='#5D6259' fontWeight={1000} >Vendor Management</Typography>
 
         </Box>
 
@@ -38,15 +38,19 @@ function VendorManagement() {
         <Button
         variant='contained'
         sx={{ 
-          padding: '1rem 1rem', 
-          color: '#fff', 
-          backgroundColor: '#1b263b',
+          padding: '0.5rem 1rem', 
+          color: '#ffffff', 
+          backgroundColor: '#198773',
           '&:hover': {
-            backgroundColor: '#778da9',
-          },}}
+            backgroundColor: '#ffffff',
+            color:'#198773'
+          },
+          borderRadius:'1rem'
+        }}
         onClick={handleButtonClick}
-        style={{marginTop: '1rem'}}>
-          Add a new vendor
+        startIcon={<AddIcon />}   
+        >
+           new vendor
           </Button>
         </Box>
 

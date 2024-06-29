@@ -7,8 +7,9 @@ import axios from 'axios';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
-    backgroundColor: '#1b263b',
-    color: '#f1faee',
+    backgroundColor: '#ffffff',
+    color: 'black',
+    border: '10px solid #D5E9E5',
   },
 }));
 
@@ -34,28 +35,21 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
-  color: '#fff',
-}));
-
-const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
-  color: '#fff',
-}));
 
 const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
   color: '#fff',
 }));
 
 const BlueIconButton = styled(IconButton)({
-  color: 'blue',
+  color: '#ACCA8E',
 });
 
 const GreenIconButton = styled(IconButton)({
-  color: 'green',
+  color: '#D5E9E5',
 });
 
 const RedIconButton = styled(IconButton)({
-  color: 'red',
+  color: '#E56464',
 });
 
 export default function Vehicletable({ darkMode,drawerOpen }) {
@@ -173,8 +167,8 @@ export default function Vehicletable({ darkMode,drawerOpen }) {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
-    <Paper elevation={5} style={{ padding: '0.5rem',marginLeft: drawerOpen ? 300 : 80, backgroundColor: '#caf0f8',marginRight:'1rem' }}>
-      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px' }}>
+    <Paper elevation={5} style={{ width:'80%',padding: '0.5rem',marginLeft:'10rem', backgroundColor: '#ffffff',marginRight:'1rem', border: '10px solid #D5E9E5' }}>
+      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px',padding:'0.5rem' }}>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -184,20 +178,34 @@ export default function Vehicletable({ darkMode,drawerOpen }) {
             },
           }}
           pageSizeOptions={[5, 10]}
+          sx={{
+            padding:'1rem',
+            '& .MuiDataGrid-columnHeaders': {
+              color: 'black',           
+              fontSize: '1rem',
+              fontWeight: 'bold',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              backgroundColor: '#D1E6E4',   
+            },
+            '& .MuiDataGrid-footerContainer': {
+              backgroundColor: '#D1E6E4',
+            },
+          }}
         />
       </div>
 
       <StyledDialog open={deleteConfirmation} onClose={handleCloseDeleteConfirmation}>
-        <StyledDialogTitle>Confirmation</StyledDialogTitle>
-        <StyledDialogContent>Are you sure you want to delete this row?</StyledDialogContent>
+        <DialogTitle>Confirmation</DialogTitle>
+        <DialogContent>Are you sure you want to delete this row?</DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#caf0f8' }}>Cancel</Button>
+          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#198773' }}>Cancel</Button>
           <Button onClick={handleDelete} variant="contained" color="error">Delete</Button>
         </StyledDialogActions>
       </StyledDialog>
 
       <StyledDialog open={editDialogOpen} onClose={handleCloseEditDialog}>
-        <DialogTitle sx={{ textAlign: 'center', color: '#caf0f8', fontWeight: 'bold' }}>Edit Vehicle</DialogTitle>
+        <DialogTitle sx={{ textAlign: 'center', color: '#198773', fontWeight: 'bold' }}>Edit Vehicle</DialogTitle>
         <DialogContent>
           <StyledTextField
             margin="dense"
@@ -249,82 +257,13 @@ export default function Vehicletable({ darkMode,drawerOpen }) {
           />
         </DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseEditDialog} sx={{ color: '#caf0f8', '&:hover': { backgroundColor: '#778da9', } }}>Cancel</Button>
-          <Button onClick={handleEditSubmit} variant="contained" sx={{ color: '#fff', backgroundColor: '#1b263b', '&:hover': { backgroundColor: '#778da9', } }}>Save</Button>
+          <Button onClick={handleCloseEditDialog} sx={{ color: '#198773', '&:hover': { backgroundColor: '##D5E9E5'} }}>Cancel</Button>
+          <Button onClick={handleEditSubmit} variant="contained" sx={{ color: 'black', backgroundColor: '#D5E9E5', '&:hover': { backgroundColor: '#ffffff', } }}>Save</Button>
         </StyledDialogActions>
       </StyledDialog>
 
-      {/* <StyledDialog open={viewDialogOpen} onClose={handleCloseViewDialog}>
-        <DialogTitle sx={{ textAlign: 'center', color: '#caf0f8', fontWeight: 'bold' }}>View Vehicle</DialogTitle>
-        <DialogContent>
-          <StyledTextField
-            margin="dense"
-            label="Model"
-            name="model"
-            value={viewRow.model || ''}
-            InputProps={{
-              readOnly: true,
-            }}
-            fullWidth
-          />
-          <StyledTextField
-            margin="dense"
-            label="Engine Size"
-            name="engineSize"
-            value={viewRow.engineSize || ''}
-            InputProps={{
-              readOnly: true,
-            }}
-            fullWidth
-          />
-          <StyledTextField
-            margin="dense"
-            label="No of Cylinders"
-            name="cylinders"
-            value={viewRow.cylinders || ''}
-            InputProps={{
-              readOnly: true,
-            }}
-            fullWidth
-          />
-          <StyledTextField
-            margin="dense"
-            label="Vehicle Type"
-            name="vehicleType"
-            value={viewRow.vehicleType || ''}
-            InputProps={{
-              readOnly: true,
-            }}
-            fullWidth
-          />
-          <StyledTextField
-            margin="dense"
-            label="Transmission"
-            name="transmission"
-            value={viewRow.transmission || ''}
-            InputProps={{
-              readOnly: true,
-            }}
-            fullWidth
-          />
-          <StyledTextField
-            margin="dense"
-            label="Fuel Type"
-            name="fuelType"
-            value={viewRow.fuelType || ''}
-            InputProps={{
-              readOnly: true,
-            }}
-            fullWidth
-          />
-        </DialogContent>
-        <StyledDialogActions>
-          <Button onClick={handleCloseViewDialog} sx={{ color: '#caf0f8' }}>Close</Button>
-        </StyledDialogActions>
-      </StyledDialog> */}
-
         <StyledDialog open={viewDialogOpen} onClose={handleCloseViewDialog} classes={{ paper: 'dialogPaper' }}>
-                <DialogTitle className="dialogTitle">View Vehicle</DialogTitle>
+                <DialogTitle sx={{ textAlign: 'center', color: '#198773', fontWeight: 'bold' }}>View Vehicle</DialogTitle>
                 <DialogContent className="dialogContent">
                   <p><strong>Model :</strong> {viewRow.model}</p>
                   <p><strong>Engine Size :</strong> {viewRow.engineSize}</p>
@@ -335,7 +274,7 @@ export default function Vehicletable({ darkMode,drawerOpen }) {
 
                 </DialogContent>
                 <StyledDialogActions className="dialogActions">
-                  <Button onClick={handleCloseViewDialog} className="buttonCancel">Close</Button>
+                  <Button onClick={handleCloseViewDialog} sx={{color:'#198773'}}>Close</Button>
                 </StyledDialogActions>
               </StyledDialog>
     </Paper>

@@ -6,21 +6,22 @@ import { styled } from '@mui/system';
 import axios from 'axios';
 
 const BlueIconButton = styled(IconButton)({
-  color: 'blue',
+  color: '#ACCA8E',
 });
 
 const GreenIconButton = styled(IconButton)({
-  color: 'green',
+  color: '#D5E9E5',
 });
 
 const RedIconButton = styled(IconButton)({
-  color: 'red',
+  color: '#E56464',
 });
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
-    backgroundColor: '#1b263b',
-    color: '#f1faee',
+    backgroundColor: '#ffffff',
+    color: 'black',
+    border: '10px solid #D5E9E5',
   },
 }));
 
@@ -59,7 +60,7 @@ export default function VendorSupplytable({ darkMode,drawerOpen}) {
   const [deleteId, setDeleteId] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [currentRow, setCurrentRow] = useState({});
-  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  
 
   useEffect(() => {
     // Fetch data from API
@@ -93,19 +94,14 @@ export default function VendorSupplytable({ darkMode,drawerOpen}) {
       disableColumnMenu: true,
       renderCell: (params) => (
         <div>
-          <BlueIconButton onClick={() => handleView(params.id)} sx={{padding:'5px'}}><Visibility /></BlueIconButton>
           <GreenIconButton onClick={() => handleEdit(params.id)} sx={{padding:'5px'}}><Edit /></GreenIconButton>
-          <RedIconButton onClick={() => handleDelete(params.id)} sx={{padding:'5px'}}><Delete /></RedIconButton>
+          <RedIconButton onClick={() => handleDeleteConfirmation(params.id)} sx={{padding:'5px'}}><Delete /></RedIconButton>
         </div>
       ),
     },
   ];
 
-  const handleView = (id) => {
-    const rowToView = rows.find((row) => row.id === id);
-    setCurrentRow(rowToView || {}); // Ensure currentRow is set to an empty object if not found
-    setViewDialogOpen(true);
-  };
+  
 
   const handleEdit = (id) => {
     const rowToEdit = rows.find((row) => row.id === id);
@@ -156,15 +152,12 @@ export default function VendorSupplytable({ darkMode,drawerOpen}) {
     setCurrentRow({});
   };
 
-  const handleCloseViewDialog = () => {
-    setViewDialogOpen(false);
-    setViewProducts([]);
-  };
+  
 
   return (
-    <Paper elevation={5} style={{ padding: '0.5rem',marginLeft: drawerOpen ? 300 : 80, backgroundColor: '#caf0f8',marginRight:'1rem' }}>
-      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px' }}>
-        <DataGrid
+    <Paper elevation={5} style={{ width:'80%',padding: '0.5rem',marginLeft:'10rem', backgroundColor: '#ffffff',marginRight:'1rem', border: '10px solid #D5E9E5' }}>
+      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px',padding:'0.5rem' }}>
+      <DataGrid
           rows={rows}
           columns={columns}
           initialState={{
@@ -173,22 +166,34 @@ export default function VendorSupplytable({ darkMode,drawerOpen}) {
             },
           }}
           pageSizeOptions={[5, 10]}
+          sx={{
+            padding:'1rem',
+            '& .MuiDataGrid-columnHeaders': {
+              color: 'black',           
+              fontSize: '1rem',
+              fontWeight: 'bold',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              backgroundColor: '#D1E6E4',   
+            },
+            '& .MuiDataGrid-footerContainer': {
+              backgroundColor: '#D1E6E4',
+            },
+          }}
         />
       </div>
 
       <StyledDialog open={deleteConfirmation} onClose={handleCloseDeleteConfirmation}>
         <DialogTitle>Confirmation</DialogTitle>
-        <DialogContent>
-          Are you sure you want to delete this row?
-        </DialogContent>
+        <DialogContent>Are you sure you want to delete this row?</DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#caf0f8' }}>Cancel</Button>
+          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#198773' }}>Cancel</Button>
           <Button onClick={handleDelete} variant="contained" color="error">Delete</Button>
         </StyledDialogActions>
       </StyledDialog>
 
       <StyledDialog open={editDialogOpen} onClose={handleCloseEditDialog}>
-        <DialogTitle sx={{ textAlign: 'center', color: '#caf0f8', fontWeight: 'bold' }}>Edit Supply</DialogTitle>
+        <DialogTitle sx={{ textAlign: 'center', color: '#198773', fontWeight: 'bold' }}>Edit Supply</DialogTitle>
         <DialogContent>
           <StyledTextField
             margin="dense"
@@ -225,23 +230,12 @@ export default function VendorSupplytable({ darkMode,drawerOpen}) {
           />
         </DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseEditDialog} sx={{ color: '#caf0f8', '&:hover': { backgroundColor: '#778da9', } }}>Cancel</Button>
-          <Button onClick={handleEditSubmit} variant="contained" sx={{ color: '#fff', backgroundColor: '#1b263b', '&:hover': { backgroundColor: '#778da9', } }}>Save</Button>
+          <Button onClick={handleCloseEditDialog} sx={{ color: '#198773', '&:hover': { backgroundColor: '##D5E9E5'} }}>Cancel</Button>
+          <Button onClick={handleEditSubmit} variant="contained" sx={{ color: 'black', backgroundColor: '#D5E9E5', '&:hover': { backgroundColor: '#ffffff', } }}>Save</Button>
         </StyledDialogActions>
       </StyledDialog>
 
-      <StyledDialog open={viewDialogOpen} onClose={handleCloseViewDialog} classes={{ paper: 'dialogPaper' }}>
-        <DialogTitle className="dialogTitle">View Supply</DialogTitle>
-        <DialogContent className="dialogContent">
-          <p><strong>Vendor ID :</strong> {currentRow.id}</p>
-          <p><strong>Date :</strong> {currentRow.date}</p>
-          <p><strong>Product Name :</strong> {currentRow.productName}</p>
-          <p><strong>Quantity :</strong>{currentRow.quantity}</p>
-        </DialogContent>
-        <StyledDialogActions className="dialogActions">
-          <Button onClick={handleCloseViewDialog} className="buttonCancel">Close</Button>
-        </StyledDialogActions>
-      </StyledDialog>
+      
     </Paper>
   );
 }

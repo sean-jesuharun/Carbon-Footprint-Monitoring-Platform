@@ -8,21 +8,22 @@ import axios from 'axios';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
-    backgroundColor: '#1b263b',
-    color: '#f1faee',
+    backgroundColor: '#ffffff',
+    color: 'black',
+    border: '10px solid #D5E9E5',
   },
 }));
 
 const BlueIconButton = styled(IconButton)({
-  color: 'blue',
+  color: '#ACCA8E',
 });
 
 const GreenIconButton = styled(IconButton)({
-  color: 'green',
+  color: '#D5E9E5',
 });
 
 const RedIconButton = styled(IconButton)({
-  color: 'red',
+  color: '#E56464',
 });
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -51,13 +52,7 @@ const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
   color: '#fff',
 }));
 
-const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
-  color: '#fff',
-}));
 
-const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
-  color: '#fff',
-}));
 
 export default function Vendortable({ darkMode, drawerOpen }) {
   const [rows, setRows] = useState([]);
@@ -110,7 +105,7 @@ export default function Vendortable({ darkMode, drawerOpen }) {
       renderCell: (params) => (
         <Tooltip title="View Product Details" arrow placement="right">
           <Button
-            style={{ backgroundColor: '#1b263b', color: '#caf0f8',flex:1 }}
+            style={{ backgroundColor: '#198773', color: '#ffffff',flex:1,height:32,width:150 }}
             onClick={() => handleViewProducts(params.row.id)}
           >
             <BlueIconButton>  <Visibility/> </BlueIconButton>
@@ -131,7 +126,6 @@ export default function Vendortable({ darkMode, drawerOpen }) {
       disableColumnMenu: true,
       renderCell: (params) => (
         <div>
-          <BlueIconButton onClick={() => handleView(params.row.id)} sx={{ padding: '5px' }}><Visibility /></BlueIconButton>
           <GreenIconButton onClick={() => handleEdit(params.row.id)} sx={{ padding: '5px' }} ><Edit /></GreenIconButton>
           <RedIconButton onClick={() => handleDeleteConfirmation(params.row.id)} sx={{ padding: '5px' }}><Delete /></RedIconButton>
         </div>
@@ -145,11 +139,7 @@ export default function Vendortable({ darkMode, drawerOpen }) {
     setViewDialogOpen(true);
   };
 
-  const handleView = (id) => {
-    const rowToView = rows.find((row) => row.id === id);
-    setCurrentRow(rowToView || {}); // Ensure currentRow is set to an empty object if not found
-    setViewDialogOpen(true);
-  };
+ 
 
   const handleEdit = (id) => {
     const rowToEdit = rows.find((row) => row.id === id);
@@ -211,9 +201,10 @@ export default function Vendortable({ darkMode, drawerOpen }) {
   
 
   return (
-    <Paper elevation={5} style={{ padding: '0.5rem', marginLeft: drawerOpen ? 300 : 80, backgroundColor: '#caf0f8',marginRight:'1rem' }}>
-      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px' }}>
-        <DataGrid
+    <Paper elevation={5} 
+    style={{ width:'80%',padding:'0.5rem',marginLeft: '10rem', backgroundColor: '#ffffff',transition: 'margin-left 0.3s',marginRight:'1rem', border: '10px solid #D5E9E5' }}>
+      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px',padding:'0.5rem' }}>
+      <DataGrid
           rows={rows}
           columns={columns}
           initialState={{
@@ -222,6 +213,20 @@ export default function Vendortable({ darkMode, drawerOpen }) {
             },
           }}
           pageSizeOptions={[5, 10]}
+          sx={{
+            padding:'1rem',
+            '& .MuiDataGrid-columnHeaders': {
+              color: 'black',           
+              fontSize: '1rem',
+              fontWeight: 'bold',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              backgroundColor: '#D1E6E4',   
+            },
+            '& .MuiDataGrid-footerContainer': {
+              backgroundColor: '#D1E6E4',
+            },
+          }}
         />
       </div>
 
@@ -231,13 +236,13 @@ export default function Vendortable({ darkMode, drawerOpen }) {
           Are you sure you want to delete this row?
         </DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#caf0f8' }}>Cancel</Button>
+          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#198773' }}>Cancel</Button>
           <Button onClick={handleDelete} variant="contained" color="error">Delete</Button>
         </StyledDialogActions>
       </StyledDialog>
 
       <StyledDialog open={editDialogOpen} onClose={handleCloseEditDialog}>
-        <DialogTitle sx={{ textAlign: 'center', color: '#caf0f8', fontWeight: 'bold' }}>Edit Vendor</DialogTitle>
+        <DialogTitle sx={{ textAlign: 'center', color: '#198773', fontWeight: 'bold' }}>Edit Vendor</DialogTitle>
         <DialogContent>
           <StyledTextField
             margin="dense"
@@ -265,18 +270,18 @@ export default function Vendortable({ darkMode, drawerOpen }) {
           />
         </DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseEditDialog} sx={{ color: '#caf0f8', '&:hover': { backgroundColor: '#778da9', } }}>Cancel</Button>
-          <Button onClick={handleEditSubmit} variant="contained" sx={{ color: '#fff', backgroundColor: '#1b263b', '&:hover': { backgroundColor: '#778da9', } }}>Save</Button>
+          <Button onClick={handleCloseEditDialog} sx={{ color: '#198773', '&:hover': { backgroundColor: '##D5E9E5'} }}>Cancel</Button>
+          <Button onClick={handleEditSubmit} variant="contained" sx={{ color: 'black', backgroundColor: '#D5E9E5', '&:hover': { backgroundColor: '#ffffff', } }}>Save</Button>
         </StyledDialogActions>
       </StyledDialog>
 
       <StyledDialog open={viewDialogOpen} onClose={handleCloseViewDialog}>
-        
+      <DialogTitle sx={{ textAlign: 'center', color: '#198773', fontWeight: 'bold' }}>View  Product Details</DialogTitle>
+
         <DialogContent>
           {viewProducts.length > 0 ? (
             viewProducts.map((product, index) => (
               <div key={index}>
-                <DialogTitle>View  Product Details</DialogTitle>
                 <p><strong>Product Name:</strong> {product.productName}</p>
                 <p><strong>Animal Species:</strong> {product.animalSpecies}</p>
                 <p><strong>Commodity:</strong> {product.commodity}</p>
@@ -286,16 +291,13 @@ export default function Vendortable({ darkMode, drawerOpen }) {
               </div>
             ))
           ) : (
-            <div>
-              <DialogTitle>View Vendor Details</DialogTitle>
-              <p><strong>Vendor Name:</strong> {currentRow.vendorName}</p>
-              <p><strong>Location:</strong> {currentRow.location}</p>
-              <p><strong>Distance From Warehouse:</strong> {currentRow.distanceFromWarehouse}</p>
-            </div>
+            <p>No products to display.</p>
+
           )}
         </DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseViewDialog} sx={{ color: '#caf0f8' }}>Close</Button>
+          <Button onClick={handleCloseViewDialog} sx={{ color: '#198773' }}>Close</Button>
+          
         </StyledDialogActions>
       </StyledDialog>
     </Paper>
