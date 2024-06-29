@@ -50,7 +50,7 @@ public class VendorSupply {
     private Integer quantity;
 
     @Basic
-    @Column(name = "inbound_co2e_emission", nullable = false)
-    private Double InboundCo2eEmission;
+    @Column(name = "inbound_co2e_kg", nullable = false)
+    private Double inboundCO2eEmissionKg;
 
 }

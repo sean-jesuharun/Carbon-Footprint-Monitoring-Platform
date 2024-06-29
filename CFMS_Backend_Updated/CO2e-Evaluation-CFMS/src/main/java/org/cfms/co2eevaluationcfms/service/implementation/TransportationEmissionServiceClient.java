@@ -44,7 +44,7 @@ public class TransportationEmissionServiceClient {
         // Deserializing the JSON response into a Map<String, Integer> using ParameterizedTypeReference
         // Mapping the response to extract the 'co2Emission' value from the map
         // Blocking the execution until the response is received.
-        Integer predictedTransportationCO2eEmission = webClient.post()
+        Integer predictedTransportationCO2gPerKm = webClient.post()
                 .uri("/transportationEmissionPrediction")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(transportationEmissionDTO))
@@ -53,7 +53,7 @@ public class TransportationEmissionServiceClient {
                 .map(response -> response.get("co2Emission"))
                 .block();
 
-        return  predictedTransportationCO2eEmission;
+        return  predictedTransportationCO2gPerKm;
 
     }
 

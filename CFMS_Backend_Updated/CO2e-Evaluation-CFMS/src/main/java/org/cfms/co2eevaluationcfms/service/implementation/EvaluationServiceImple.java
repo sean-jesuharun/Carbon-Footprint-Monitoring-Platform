@@ -73,9 +73,14 @@ public class EvaluationServiceImple implements EvaluationService {
         VehicleDTO vehicleDTO = vehicleServiceClient.getVehicleById(evaluationReqDTO.getVehicleId());
 
         // Calculating fuel_consumption in (L/100km)
-        double fuel_consumption_L_per_100km = (evaluationReqDTO.getFuelConsumption()/customerDTO.getDistanceFromWarehouse()) * 100;
+        double fuelConsumptionLPer100Km = (evaluationReqDTO.getFuelConsumption()/customerDTO.getDistanceFromWarehouse()) * 100;
 
-        Integer predictedOutboundTransportationCo2eEmission = transportationEmissionServiceClient.predictTransportationEmission(vehicleDTO.getModel(), vehicleDTO.getEngineSize(), vehicleDTO.getCylinders(), fuel_consumption_L_per_100km, vehicleDTO.getVehicleType(), vehicleDTO.getFuelType());
+        // Predicting Total Outbound Transportation Emission (g/km).
+        Integer predictedOutboundTransportationCO2eEmissionGPerKm = transportationEmissionServiceClient.predictTransportationEmission(vehicleDTO.getModel(), vehicleDTO.getEngineSize(), vehicleDTO.getCylinders(), fuelConsumptionLPer100Km, vehicleDTO.getVehicleType(), vehicleDTO.getFuelType());
+
+        // Total Outbound Transportation Emission (kg)
+        // Finding emission for total distance and converting it to kg
+        double predictedOutboundTransportationCO2eEmissionKg = (predictedOutboundTransportationCO2eEmissionGPerKm * customerDTO.getDistanceFromWarehouse()) / 1000;
 
         // Finding the Total Quantity of Products Being involved in Delivery (Outbound Transportation).
         int totalQuantity = evaluationReqDTO.getDeliveryItems().stream()
@@ -101,9 +106,8 @@ public class EvaluationServiceImple implements EvaluationService {
                     .findFirst()
                     .orElseThrow(() -> new NoSuchElementException("ProductionMatrix not found for " + deliveryItemDTO.getProductName() + " Of Vendor " + vendorDTO.getVendorName()));
 
-
-            double predictedProductionCO2eEmissionPerKg = productionEmissionServiceClient.predictProductionEmission(productionMatrixDTO.getRegion(), productionMatrixDTO.getAnimalSpecies(), productionMatrixDTO.getProductionSystem(), productionMatrixDTO.getCommodity());
-            double totalProductionCO2eEmission = calculateTotalProductionCO2eEmission(predictedProductionCO2eEmissionPerKg, deliveryItemDTO.getQuantity());
+            Double predictedProductionCO2eEmissionPerKg = productionEmissionServiceClient.predictProductionEmission(productionMatrixDTO.getRegion(), productionMatrixDTO.getAnimalSpecies(), productionMatrixDTO.getProductionSystem(), productionMatrixDTO.getCommodity());
+            Double totalProductionCO2eEmission = calculateTotalProductionCO2eEmission(predictedProductionCO2eEmissionPerKg, deliveryItemDTO.getQuantity());
 
             // Retrieve VendorSupplies to get Inbound Emission
             List<VendorSupply> vendorSupplies = vendorSupplyRepository.findByVendorIdAndProductNameOrderByDateAsc(deliveryItemDTO.getVendorId(), deliveryItemDTO.getProductName());
@@ -119,9 +123,9 @@ public class EvaluationServiceImple implements EvaluationService {
                     .vendorId(deliveryItemDTO.getVendorId())
                     .productName(deliveryItemDTO.getProductName())
                     .quantity(deliveryItemDTO.getQuantity())
-                    .inboundCo2e((vendorSupply.getInboundCo2eEmission()/vendorSupply.getQuantity()) * deliveryItemDTO.getQuantity())
-                    .outboundCo2e(((double) deliveryItemDTO.getQuantity()/totalQuantity) * predictedOutboundTransportationCo2eEmission)
-                    .productionCo2e(totalProductionCO2eEmission)
+                    .inboundCO2eEmissionKg((vendorSupply.getInboundCO2eEmissionKg()/vendorSupply.getQuantity()) * deliveryItemDTO.getQuantity())
+                    .outboundCO2eEmissionKg((deliveryItemDTO.getQuantity()/totalQuantity) * predictedOutboundTransportationCO2eEmissionKg)
+                    .productionCO2eEmissionKg(totalProductionCO2eEmission)
                     .build();
 
             resultRepository.save(result);
@@ -135,7 +139,7 @@ public class EvaluationServiceImple implements EvaluationService {
     }
 
     // Calculating Total Production Emission using Quantity and predictedProductionCO2eEmissionPerKg.
-    public double calculateTotalProductionCO2eEmission(double predictedProductionCO2eEmissionPerKg, int quantity){
+    public Double calculateTotalProductionCO2eEmission(double predictedProductionCO2eEmissionPerKg, int quantity){
 
         return predictedProductionCO2eEmissionPerKg*quantity;
     }

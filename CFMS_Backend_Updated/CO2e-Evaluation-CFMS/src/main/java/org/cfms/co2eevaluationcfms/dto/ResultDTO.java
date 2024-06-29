@@ -10,7 +10,7 @@ public class ResultDTO {
     private Long vendorId;
     private String productName;
     private Integer quantity;
-    private Double inboundCo2e;
-    private Double outboundCo2e;
-    private Double productionCo2e;
+    private Double inboundCO2eEmissionKg;
+    private Double outboundCO2eEmissionKg;
+    private Double productionCO2eEmissionKg;
 }

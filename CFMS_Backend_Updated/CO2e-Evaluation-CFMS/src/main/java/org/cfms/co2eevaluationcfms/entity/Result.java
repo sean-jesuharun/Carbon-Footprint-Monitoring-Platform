@@ -48,16 +48,16 @@ public class Result {
     private Integer quantity;
 
     @Basic
-    @Column(name = "inbound_co2e", nullable = false)
-    private Double inboundCo2e;
+    @Column(name = "inbound_co2e_kg", nullable = false)
+    private Double inboundCO2eEmissionKg;
 
     @Basic
-    @Column(name = "outbound_co2e", nullable = false)
-    private Double outboundCo2e;
+    @Column(name = "outbound_co2e_kg", nullable = false)
+    private Double outboundCO2eEmissionKg;
 
     @Basic
-    @Column(name = "production_co2e", nullable = false)
-    private Double productionCo2e;
+    @Column(name = "production_co2e_kg", nullable = false)
+    private Double productionCO2eEmissionKg;
 
 
 }

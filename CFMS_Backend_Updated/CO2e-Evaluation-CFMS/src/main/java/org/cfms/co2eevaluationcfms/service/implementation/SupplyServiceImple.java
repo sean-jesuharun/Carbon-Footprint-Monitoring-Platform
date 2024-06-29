@@ -45,17 +45,18 @@ public class SupplyServiceImple implements SupplyService {
     @Transactional
     public SupplyReqDTO createSupply(SupplyReqDTO supplyReqDTO) {
 
-        // Retrieve Vendor
         VendorDTO vendorDTO = vendorServiceClient.getVendorById(supplyReqDTO.getVendorId());
-
-        // Retrieve Vehicle
         VehicleDTO vehicleDTO = vehicleServiceClient.getVehicleById(supplyReqDTO.getVehicleId());
 
         // Calculating fuel_consumption in (L/100km)
-        double fuel_consumption_L_per_100km = (supplyReqDTO.getFuelConsumption()/vendorDTO.getDistanceFromWarehouse()) * 100;
+        double fuelConsumptionLPer100Km = (supplyReqDTO.getFuelConsumption()/vendorDTO.getDistanceFromWarehouse()) * 100;
 
-        // Predicting Total Inbound Transportation Emission.
-        Integer predictedInboundTransportationCo2eEmission = transportationEmissionServiceClient.predictTransportationEmission(vehicleDTO.getModel(), vehicleDTO.getEngineSize(), vehicleDTO.getCylinders(), fuel_consumption_L_per_100km, vehicleDTO.getVehicleType(), vehicleDTO.getFuelType());
+        // Predicting Total Inbound Transportation Emission (g/km).
+        Integer predictedInboundTransportationCO2eEmissionGPerKm = transportationEmissionServiceClient.predictTransportationEmission(vehicleDTO.getModel(), vehicleDTO.getEngineSize(), vehicleDTO.getCylinders(), fuelConsumptionLPer100Km, vehicleDTO.getVehicleType(), vehicleDTO.getFuelType());
+
+        // Total Inbound Transportation Emission (kg)
+        // Finding emission for total distance and converting it to kg
+        double predictedInboundTransportationCO2eEmissionKg = (predictedInboundTransportationCO2eEmissionGPerKm * vendorDTO.getDistanceFromWarehouse()) / 1000;
 
         // Datetime of the Transportation.
         OffsetDateTime dateTime = OffsetDateTime.now();
@@ -72,7 +73,7 @@ public class SupplyServiceImple implements SupplyService {
                     .productName(supplyItemDTO.getProductName().toUpperCase())
                     .date(dateTime)
                     .quantity(supplyItemDTO.getQuantity())
-                    .InboundCo2eEmission(((double) supplyItemDTO.getQuantity()/totalQuantity) * predictedInboundTransportationCo2eEmission)
+                    .inboundCO2eEmissionKg((supplyItemDTO.getQuantity()/totalQuantity) * predictedInboundTransportationCO2eEmissionKg)
                     .build();
 
             vendorSupplyRepository.save(vendorSupply);
