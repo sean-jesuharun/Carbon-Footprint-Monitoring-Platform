@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import VerifyEmail from './pages/VerifyEmail';
 import Dashboard from './pages/Dashboard';
 import Page1 from './pages/Page1';
+import CustomerManagement from './pages/CustomerManagement';
 
 
 const PrivateRoute = ({ children }) => {
@@ -21,6 +22,7 @@ const App = () => {
                 <Route path="/verify-email" element={<VerifyEmail />} />
                 <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
                 <Route path="/page1" element={<PrivateRoute><Page1 /></PrivateRoute>} />
+                <Route path="/customermanagement" element={<PrivateRoute><CustomerManagement/></PrivateRoute>} />
             </Routes>
         </div>
     );

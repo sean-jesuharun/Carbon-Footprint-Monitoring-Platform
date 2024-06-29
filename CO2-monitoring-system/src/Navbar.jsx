@@ -23,7 +23,9 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import PersonIcon from '@mui/icons-material/Person';
 import BusinessIcon from '@mui/icons-material/Business';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { Link,useLocation } from 'react-router-dom';
+import { Link,useLocation,useNavigate } from 'react-router-dom';
+import { logout } from './Api';
+
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -149,6 +151,15 @@ export default function Navbar() {
     setAnchorEl(null);
   };
 
+  const navigate = useNavigate();
+const handleLogout = () => {
+  // Clear JWT token from localStorage
+ logout();
+  
+  // Redirect to login page
+  navigate('/login');
+};
+
   const location=useLocation();
 
   const isMenuOpen = Boolean(anchorEl);
@@ -232,7 +243,7 @@ export default function Navbar() {
       >
         <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
         <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-        <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
 
       <Drawer variant="permanent" open={open}
