@@ -37,7 +37,7 @@ export default function Dashboard({ darkMode, drawerOpen }) {
     // Fetch data from API
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8070/evaluations');
+        const response = await axios.get('http://localhost:8080/evaluations');
         const data = response.data.map((job) => ({
           id: job.id,
           jobName: job.jobName,
@@ -121,7 +121,7 @@ export default function Dashboard({ darkMode, drawerOpen }) {
   const handleDelete = async () => {
     try {
       console.log(`Attempting to delete row with id ${deleteId}`);
-      await axios.delete(`http://localhost:8070/evaluations/${deleteId}`);
+      await axios.delete(`http://localhost:8080/evaluations/${deleteId}`);
       console.log(`Delete successful for row with id ${deleteId}`);
       setRows((prevRows) => prevRows.filter((row) => row.id !== deleteId));
     } catch (error) {
@@ -185,10 +185,16 @@ export default function Dashboard({ darkMode, drawerOpen }) {
           {selectedResults.map((result, index) => (
             <div key={index} style={{ marginBottom: '8px' }}>
               <strong>Product Name:</strong> {result.productName} <br />
+              {result.CO2eEmissionPerKg} <strong> kg CO2e/kg</strong> <br />
+              <strong>Vendor Id:</strong> {result.vendorId} <br />
               <strong>Quantity:</strong> {result.quantity} <br />
-              <strong>Inbound CO2e:</strong> {result.inboundCo2e} <br />
-              <strong>Outbound CO2e:</strong> {result.outboundCo2e} <br />
-              <strong>Production CO2e:</strong> {result.productionCo2e}
+              <strong>Emissions (kg CO2e):</strong> <br />
+              <div style={{ marginLeft: '16px' }}>
+                <span style={{ display: 'inline-block', width: '100px' }}><strong>Inbound</strong></span>: {result.CO2eEmission.Inbound} <br />
+                <span style={{ display: 'inline-block', width: '100px' }}><strong>Outbound</strong></span>: {result.CO2eEmission.Outbound} <br />
+                <span style={{ display: 'inline-block', width: '100px' }}><strong>Production</strong></span>: {result.CO2eEmission.Production} <br />
+              </div>
+              <strong>Total CO2e:</strong> {result.totalCO2eEmission}
             </div>
           ))}
         </DialogContent>

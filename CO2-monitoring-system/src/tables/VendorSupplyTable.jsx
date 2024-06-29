@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Tooltip, useMediaQuery, useTheme } from '@mui/material';
-import { Delete, Edit, Visibility } from '@mui/icons-material';
+import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, useMediaQuery, useTheme } from '@mui/material';
+import { Delete, Edit } from '@mui/icons-material';
 import { styled } from '@mui/system';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 
 const BlueIconButton = styled(IconButton)({
   color: '#ACCA8E',
@@ -51,8 +52,7 @@ const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
   color: '#fff',
 }));
 
-
-export default function VendorSupplytable({ darkMode,drawerOpen}) {
+export default function VendorSupplyTable({ darkMode, drawerOpen }) {
   const [rows, setRows] = useState([]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -60,15 +60,18 @@ export default function VendorSupplytable({ darkMode,drawerOpen}) {
   const [deleteId, setDeleteId] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [currentRow, setCurrentRow] = useState({});
-  
 
   useEffect(() => {
     // Fetch data from API
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:8070/supplies');
-        setRows(response.data);
-        console.log(response.data);
+        const dataWithIds = response.data.map((item) => ({
+          ...item,
+          id: uuidv4(), // Generate a unique UUID for each row
+        }));
+        setRows(dataWithIds);
+        console.log(dataWithIds);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -78,15 +81,16 @@ export default function VendorSupplytable({ darkMode,drawerOpen}) {
   }, []);
 
   const columns = [
-    { field: 'id', headerName: 'Vendor Id', flex: 1, Width: 150, headerAlign: 'center', align: 'center' },
-    { field: 'date', headerName: 'Date', flex: 1, Width: 200, headerAlign: 'center', align: 'center' },
-    { field: 'productName', headerName: 'Product', flex: 1, Width: 130, headerAlign: 'center', align: 'center' },
-    { field: 'quantity', headerName: 'Quantity', flex: 1, Width: 130, headerAlign: 'center', align: 'center' },
+    { field: 'date', headerName: 'Date', flex: 1, width: 200, headerAlign: 'center', align: 'center' },
+    { field: 'vendorId', headerName: 'Vendor Id', flex: 1, width: 150, headerAlign: 'center', align: 'center' },
+    { field: 'vehicleId', headerName: 'Vehicle Id', flex: 1, width: 150, headerAlign: 'center', align: 'center' },
+    { field: 'productName', headerName: 'Product', flex: 1, width: 130, headerAlign: 'center', align: 'center' },
+    { field: 'quantity', headerName: 'Quantity', flex: 1, width: 130, headerAlign: 'center', align: 'center' },
     {
       field: 'actions',
       headerName: 'Actions',
       flex: 1,
-      Width: 120,
+      width: 120,
       headerAlign: 'center',
       align: 'center',
       sortable: false,
@@ -94,14 +98,12 @@ export default function VendorSupplytable({ darkMode,drawerOpen}) {
       disableColumnMenu: true,
       renderCell: (params) => (
         <div>
-          <GreenIconButton onClick={() => handleEdit(params.id)} sx={{padding:'5px'}}><Edit /></GreenIconButton>
-          <RedIconButton onClick={() => handleDeleteConfirmation(params.id)} sx={{padding:'5px'}}><Delete /></RedIconButton>
+          <GreenIconButton onClick={() => handleEdit(params.id)} sx={{ padding: '5px' }}><Edit /></GreenIconButton>
+          <RedIconButton onClick={() => handleDeleteConfirmation(params.id)} sx={{ padding: '5px' }}><Delete /></RedIconButton>
         </div>
       ),
     },
   ];
-
-  
 
   const handleEdit = (id) => {
     const rowToEdit = rows.find((row) => row.id === id);
@@ -152,12 +154,10 @@ export default function VendorSupplytable({ darkMode,drawerOpen}) {
     setCurrentRow({});
   };
 
-  
-
   return (
-    <Paper elevation={5} style={{ width:'80%',padding: '0.5rem',marginLeft:'10rem', backgroundColor: '#ffffff',marginRight:'1rem', border: '10px solid #D5E9E5' }}>
-      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px',padding:'0.5rem' }}>
-      <DataGrid
+    <Paper elevation={5} style={{ width: '80%', padding: '0.5rem', marginLeft: '10rem', backgroundColor: '#ffffff', marginRight: '1rem', border: '10px solid #D5E9E5' }}>
+      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px', padding: '0.5rem' }}>
+        <DataGrid
           rows={rows}
           columns={columns}
           initialState={{
@@ -167,14 +167,14 @@ export default function VendorSupplytable({ darkMode,drawerOpen}) {
           }}
           pageSizeOptions={[5, 10]}
           sx={{
-            padding:'1rem',
+            padding: '1rem',
             '& .MuiDataGrid-columnHeaders': {
-              color: 'black',           
+              color: 'black',
               fontSize: '1rem',
               fontWeight: 'bold',
             },
             '& .MuiDataGrid-columnHeader': {
-              backgroundColor: '#D1E6E4',   
+              backgroundColor: '#D1E6E4',
             },
             '& .MuiDataGrid-footerContainer': {
               backgroundColor: '#D1E6E4',
@@ -198,8 +198,8 @@ export default function VendorSupplytable({ darkMode,drawerOpen}) {
           <StyledTextField
             margin="dense"
             label="Vendor ID"
-            name="id"
-            value={currentRow.id || ''}
+            name="vendorId"
+            value={currentRow.vendorId || ''}
             onChange={handleEditChange}
             fullWidth
           />
@@ -219,8 +219,7 @@ export default function VendorSupplytable({ darkMode,drawerOpen}) {
             onChange={handleEditChange}
             fullWidth
           />
-
-           <StyledTextField
+          <StyledTextField
             margin="dense"
             label="Quantity"
             name="quantity"
@@ -230,12 +229,10 @@ export default function VendorSupplytable({ darkMode,drawerOpen}) {
           />
         </DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseEditDialog} sx={{ color: '#198773', '&:hover': { backgroundColor: '##D5E9E5'} }}>Cancel</Button>
-          <Button onClick={handleEditSubmit} variant="contained" sx={{ color: 'black', backgroundColor: '#D5E9E5', '&:hover': { backgroundColor: '#ffffff', } }}>Save</Button>
+          <Button onClick={handleCloseEditDialog} sx={{ color: '#198773' }}>Cancel</Button>
+          <Button onClick={handleEditSubmit} variant="contained">Save</Button>
         </StyledDialogActions>
       </StyledDialog>
-
-      
     </Paper>
   );
 }
