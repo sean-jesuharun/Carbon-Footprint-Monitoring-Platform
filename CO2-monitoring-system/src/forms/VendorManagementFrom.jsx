@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardContent, TextField, Button, Typography, MenuItem, Snackbar, Alert } from '@mui/material';
+import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 import Navbar from '../Navbar';
 import { styled } from '@mui/system';
@@ -101,11 +102,10 @@ const VendorManagementForm = () => {
 
     console.log(formData);
 
-    const url = 'http://localhost:8050/vendors'; 
     const requestData = { ...formData };
 
     try {
-      const response = await axios.post(url, requestData);
+      const response = await axiosInstance.post('/vendors', requestData);
       console.log('Data submitted successfully:', response.data);
 
       // Show success snackbar

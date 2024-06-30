@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert } from '@mui/material';
+import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 import Navbar from '../Navbar';
 import { styled } from '@mui/system';
@@ -24,7 +25,7 @@ const VendorSupplyForm = () => {
     // Fetch vendors from backend
     const fetchVendors = async () => {
       try {
-        const response = await axios.get('http://localhost:8050/vendors');
+        const response = await axiosInstance.get('/vendors');
         setVendors(response.data);
       } catch (error) {
         console.error('Error fetching vendors:', error);
@@ -37,7 +38,7 @@ const VendorSupplyForm = () => {
     // Fetch vehicles from backend
     const fetchVehicles = async () => {
       try {
-        const response = await axios.get('http://localhost:8040/vehicles');
+        const response = await axiosInstance.get('/vehicles');
         setVehicles(response.data);
       } catch (error) {
         console.error('Error fetching vehicles:', error);
@@ -51,7 +52,7 @@ const VendorSupplyForm = () => {
     const fetchSupplyItems = async () => {
       if (formData.vendorId) {
         try {
-          const response = await axios.get(`http://localhost:8050/vendors/${formData.vendorId}`);
+          const response = await axiosInstance.get(`/vendors/${formData.vendorId}`);
           setSupplyItems(response.data.vendorProducts);
         } catch (error) {
           console.error('Error fetching supply items:', error);
@@ -105,7 +106,7 @@ const VendorSupplyForm = () => {
     console.log('Form Data:', formData);
     try {
       // Send form data to backend API
-      await axios.post('http://localhost:8070/supplies', formData);
+      await axiosInstance.post('/supplies', formData);
       console.log('Form data submitted successfully');
       
       // Show success snackbar

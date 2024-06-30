@@ -4,6 +4,7 @@ import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, B
 import { Delete, Edit, Visibility } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import { styled } from '@mui/system';
+import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
@@ -67,7 +68,7 @@ export default function Vendortable({ darkMode, drawerOpen }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8050/vendors');
+        const response = await axiosInstance.get('/vendors');
         const data = response.data.map((vendor) => ({
           id: vendor.id,
           vendorName: vendor.vendorName,
@@ -153,7 +154,7 @@ export default function Vendortable({ darkMode, drawerOpen }) {
 
   const handleEditSubmit = async () => {
     try {
-      await axios.put(`http://localhost:8050/vendors/${currentRow.id}`, currentRow);
+      await axiosInstance.put(`/vendors/${currentRow.id}`, currentRow);
       setRows((prevRows) => prevRows.map((row) => (row.id === currentRow.id ? currentRow : row)));
       setEditDialogOpen(false);
       setCurrentRow({});
@@ -170,7 +171,7 @@ export default function Vendortable({ darkMode, drawerOpen }) {
   const handleDelete = async () => {
     try {
       console.log(`Attempting to delete row with id ${deleteId}`);
-      await axios.delete(`http://localhost:8050/vendors/${deleteId}`);
+      await axiosInstance.delete(`/vendors/${deleteId}`);
       console.log(`Delete successful for row with id ${deleteId}`);
       setRows((prevRows) => prevRows.filter((row) => row.id !== deleteId));
     } catch (error) {

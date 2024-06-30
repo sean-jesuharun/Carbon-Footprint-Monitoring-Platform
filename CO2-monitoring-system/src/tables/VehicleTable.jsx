@@ -3,6 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,useMediaQuery, useTheme  } from '@mui/material';
 import { Delete, Edit, Visibility } from '@mui/icons-material';
 import { styled } from '@mui/system';
+import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
@@ -66,7 +67,7 @@ export default function Vehicletable({ darkMode,drawerOpen }) {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8040/vehicles'); 
+      const response = await axiosInstance.get('/vehicles'); 
       
       setRows(response.data);
     } catch (error) {
@@ -123,7 +124,7 @@ export default function Vehicletable({ darkMode,drawerOpen }) {
 
   const handleEditSubmit = async () => {
     try {
-      await axios.put(`http://localhost:8040/vehicles/${currentRow.id}`, currentRow);
+      await axiosInstance.put(`/vehicles/${currentRow.id}`, currentRow);
       setRows((prevRows) => prevRows.map((row) => (row.id === currentRow.id ? currentRow : row)));
       setEditDialogOpen(false);
       setCurrentRow({});
@@ -139,7 +140,7 @@ export default function Vehicletable({ darkMode,drawerOpen }) {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8040/vehicles/${deleteId}`);
+      await axiosInstance.delete(`/vehicles/${deleteId}`);
       setRows((prevRows) => prevRows.filter((row) => row.id !== deleteId));
     } catch (error) {
       console.error('Error deleting data:', error);

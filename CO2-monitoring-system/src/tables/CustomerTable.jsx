@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Delete, Edit, Visibility } from '@mui/icons-material';
 import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, useMediaQuery, useTheme } from '@mui/material';
+import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 import { styled } from '@mui/system';
 
@@ -63,7 +64,7 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8060/customers');
+        const response = await axiosInstance.get('/customers');
         setRows(response.data);
         console.log(response.data);
       } catch (error) {
@@ -110,7 +111,7 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
 
   const handleEditSubmit = async () => {
     try {
-      await axios.put(`http://localhost:8060/customers/${currentRow.id}`, currentRow);
+      await axiosInstance.put(`/customers/${currentRow.id}`, currentRow);
       setRows((prevRows) => prevRows.map((row) => (row.id === currentRow.id ? currentRow : row)));
       setEditDialogOpen(false);
       setCurrentRow({});
@@ -126,7 +127,7 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8060/customers/${deleteId}`);
+      await axiosInstance.delete(`/customers/${deleteId}`);
       setRows((prevRows) => prevRows.filter((row) => row.id !== deleteId));
     } catch (error) {
       console.error('Error deleting data:', error);

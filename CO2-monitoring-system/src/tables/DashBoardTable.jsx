@@ -4,6 +4,7 @@ import { Delete, Visibility } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import { styled } from '@mui/system';
 import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
@@ -37,7 +38,7 @@ export default function Dashboard({ darkMode, drawerOpen }) {
     // Fetch data from API
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/evaluations');
+        const response = await axiosInstance.get('/evaluations');
         const data = response.data.map((job) => ({
           id: job.id,
           jobName: job.jobName,
@@ -121,7 +122,7 @@ export default function Dashboard({ darkMode, drawerOpen }) {
   const handleDelete = async () => {
     try {
       console.log(`Attempting to delete row with id ${deleteId}`);
-      await axios.delete(`http://localhost:8080/evaluations/${deleteId}`);
+      await axiosInstance.delete(`/evaluations/${deleteId}`);
       console.log(`Delete successful for row with id ${deleteId}`);
       setRows((prevRows) => prevRows.filter((row) => row.id !== deleteId));
     } catch (error) {

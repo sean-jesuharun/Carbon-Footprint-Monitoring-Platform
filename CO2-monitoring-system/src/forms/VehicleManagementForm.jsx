@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, Card, CardContent, TextField, Select, MenuItem, Button, Typography, Snackbar, Alert } from '@mui/material';
+import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 import Navbar from '../Navbar';
 import { styled } from '@mui/system';
@@ -32,12 +33,11 @@ const VehicleManagementForm = () => {
     e.preventDefault();
 
     console.log(formData);
-
-    const url = 'http://localhost:8040/vehicles'; 
+ 
     const requestData = { ...formData };
 
     try {
-      const response = await axios.post(url, requestData);
+      const response = await axiosInstance.post('/vehicles', requestData);
       console.log('Data submitted successfully:', response.data);
 
       // Show success snackbar

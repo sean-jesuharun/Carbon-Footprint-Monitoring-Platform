@@ -3,6 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, useMediaQuery, useTheme } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { styled } from '@mui/system';
+import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -65,7 +66,7 @@ export default function VendorSupplyTable({ darkMode, drawerOpen }) {
     // Fetch data from API
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8070/supplies');
+        const response = await axiosInstance.get('/supplies');
         const dataWithIds = response.data.map((item) => ({
           ...item,
           id: uuidv4(), // Generate a unique UUID for each row
@@ -117,7 +118,7 @@ export default function VendorSupplyTable({ darkMode, drawerOpen }) {
 
   const handleEditSubmit = async () => {
     try {
-      await axios.put(`http://localhost:8070/supplies/${currentRow.id}`, currentRow);
+      await axiosInstance.put(`/supplies/${currentRow.id}`, currentRow);
       setRows((prevRows) => prevRows.map((row) => (row.id === currentRow.id ? currentRow : row)));
       setEditDialogOpen(false);
       setCurrentRow({});
@@ -134,7 +135,7 @@ export default function VendorSupplyTable({ darkMode, drawerOpen }) {
   const handleDelete = async () => {
     try {
       console.log(`Attempting to delete row with id ${deleteId}`);
-      await axios.delete(`http://localhost:8070/supplies/${deleteId}`);
+      await axiosInstance.delete(`/supplies/${deleteId}`);
       console.log(`Delete successful for row with id ${deleteId}`);
       setRows((prevRows) => prevRows.filter((row) => row.id !== deleteId));
     } catch (error) {
