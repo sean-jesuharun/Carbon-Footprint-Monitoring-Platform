@@ -6,7 +6,7 @@ const router = express.Router();
 const CO2eEVALUATION_SERVICE_NAME = 'CO2e-Evaluation-CFMS'
 
 // Route evaluation requests to the CO2e_evaluation microservice
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
 
     try {
         const serviceUrl = getTargetServiceUrl(CO2eEVALUATION_SERVICE_NAME);
@@ -42,17 +42,29 @@ router.get('/', async (req, res) => {
 
         res.status(response.status).json(transformedData);
     } catch (error) {
-        res.status(error.response.status || 500).json(error.response.data);
+        next(error); // Pass the error to the error handling middleware
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
         const serviceUrl = getTargetServiceUrl(CO2eEVALUATION_SERVICE_NAME);
         const response = await axios.post(`${serviceUrl}/evaluations`, req.body);
         res.status(response.status).json(response.data);
     } catch (error) {
-        res.status(error.response.status || 500).json(error.response.data);
+        next(error); // Pass the error to the error handling middleware
+    }
+});
+
+router.delete('/:evaluationId', async (req, res, next) => {
+    const evaluationId = req.params.evaluationId;
+
+    try {
+        const serviceUrl = getTargetServiceUrl(CO2eEVALUATION_SERVICE_NAME);
+        const response = await axios.delete(`${serviceUrl}/evaluations/${evaluationId}`);
+        res.status(response.status).json(response.data);
+    } catch (error) {
+        next(error); // Pass the error to the error handling middleware
     }
 });
 

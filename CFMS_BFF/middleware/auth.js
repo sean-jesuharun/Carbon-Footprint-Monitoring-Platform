@@ -26,25 +26,25 @@ const verifyToken = async (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
-        return res.status(401).json({ error: 'Unauthorized' });
+        return res.status(401).json({ errors: [{ message: 'Unauthorized' }] });
     }
 
     const decodedJwt = jwt.decode(token, { complete: true });
 
     if (!decodedJwt) {
-        return res.status(401).json({ error: 'Invalid token' });
+        return res.status(401).json({ errors: [{ message: 'Invalid token' }] });
     }
 
     const { kid } = decodedJwt.header;
     const pem = pems[kid];
 
     if (!pem) {
-        return res.status(401).json({ error: 'Invalid token' });
+        return res.status(401).json({ errors: [{ message: 'Invalid token' }] });
     }
 
     jwt.verify(token, pem, { algorithms: ['RS256'] }, (err, decoded) => {
         if (err) {
-            return res.status(401).json({ error: 'Unauthorized', message: err.message });
+            return res.status(401).json({ errors: [{ message: 'Unauthorized', detail: err.message }] });
         }
 
         req.user = decoded;

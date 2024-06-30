@@ -6,23 +6,23 @@ const router = express.Router();
 const SUPPLY_SERVICE_NAME = 'CO2e-Evaluation-CFMS'
 
 // Route supply requests to the CO2e_evaluation microservice
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         const serviceUrl = getTargetServiceUrl(SUPPLY_SERVICE_NAME);
         const response = await axios.get(`${serviceUrl}/supplies`);
         res.status(response.status).json(response.data);
     } catch (error) {
-        res.status(error.response.status || 500).json(error.response.data);
+        next(error); // Pass the error to the error handling middleware
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
         const serviceUrl = getTargetServiceUrl(SUPPLY_SERVICE_NAME);
         const response = await axios.post(`${serviceUrl}/supplies`, req.body);
         res.status(response.status).json(response.data);
     } catch (error) {
-        res.status(error.response.status || 500).json(error.response.data);
+        next(error); // Pass the error to the error handling middleware
     }
 });
 

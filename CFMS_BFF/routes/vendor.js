@@ -6,27 +6,27 @@ const router = express.Router();
 const VENDOR_SERVICE_NAME = 'Vendor-Service-CFMS'
 
 // Route vendors requests to the vendor microservice
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         const serviceUrl = getTargetServiceUrl(VENDOR_SERVICE_NAME);
         const response = await axios.get(`${serviceUrl}/vendors`);
         res.status(response.status).json(response.data);
     } catch (error) {
-        res.status(error.response.status || 500).json(error.response.data);
+        next(error); // Pass the error to the error handling middleware
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
         const serviceUrl = getTargetServiceUrl(VENDOR_SERVICE_NAME);
         const response = await axios.post(`${serviceUrl}/vendors`, req.body);
         res.status(response.status).json(response.data);
     } catch (error) {
-        res.status(error.response.status || 500).json(error.response.data);
+        next(error); // Pass the error to the error handling middleware
     }
 });
 
-router.get('/:vendorId', async (req, res) => {
+router.get('/:vendorId', async (req, res, next) => {
     const vendorId = req.params.vendorId;
 
     try {
@@ -34,11 +34,11 @@ router.get('/:vendorId', async (req, res) => {
         const response = await axios.get(`${serviceUrl}/vendors/${vendorId}`);
         res.status(response.status).json(response.data);
     } catch (error) {
-        res.status(error.response.status || 500).json(error.response.data);
+        next(error); // Pass the error to the error handling middleware
     }
 });
 
-router.patch('/:vendorId', async (req, res) => {
+router.patch('/:vendorId', async (req, res, next) => {
     const vendorId = req.params.vendorId;
 
     try {
@@ -46,11 +46,11 @@ router.patch('/:vendorId', async (req, res) => {
         const response = await axios.patch(`${serviceUrl}/vendors/${vendorId}`, req.body);
         res.status(response.status).json(response.data);
     } catch (error) {
-        res.status(error.response.status || 500).json(error.response.data);
+        next(error); // Pass the error to the error handling middleware
     }
 });
 
-router.delete('/:vendorId', async (req, res) => {
+router.delete('/:vendorId', async (req, res, next) => {
     const vendorId = req.params.vendorId;
 
     try {
@@ -58,11 +58,11 @@ router.delete('/:vendorId', async (req, res) => {
         const response = await axios.delete(`${serviceUrl}/vendors/${vendorId}`);
         res.status(response.status).json(response.data);
     } catch (error) {
-        res.status(error.response.status || 500).json(error.response.data);
+        next(error); // Pass the error to the error handling middleware
     }
 });
 
-router.post('/:vendorId/products', async (req, res) => {
+router.post('/:vendorId/products', async (req, res, next) => {
     const vendorId = req.params.vendorId;
 
     try {
@@ -70,11 +70,11 @@ router.post('/:vendorId/products', async (req, res) => {
         const response = await axios.post(`${serviceUrl}/vendors/${vendorId}/products`, req.body);
         res.status(response.status).json(response.data);
     } catch (error) {
-        res.status(error.response.status || 500).json(error.response.data);
+        next(error); // Pass the error to the error handling middleware
     }
 });
 
-router.delete('/:vendorId/products/:productName', async (req, res) => {
+router.delete('/:vendorId/products/:productName', async (req, res, next) => {
     const { vendorId, productName } = req.params;
 
     try {
@@ -82,7 +82,7 @@ router.delete('/:vendorId/products/:productName', async (req, res) => {
         const response = await axios.delete(`${serviceUrl}/vendors/${vendorId}/products/${productName}`);
         res.status(response.status).json(response.data);
     } catch (error) {
-        res.status(error.response.status || 500).json(error.response.data);
+        next(error); // Pass the error to the error handling middleware
     }
 });
 
