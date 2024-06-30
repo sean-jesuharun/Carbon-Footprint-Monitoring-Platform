@@ -23,10 +23,34 @@ const VehicleManagementForm = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+
+    //// Validation based on field name
+  switch (name) {
+    case 'cylinders':
+      // Allow only full numbers (integers)
+      if (/^\d*$/.test(value)) {
+        setFormData({
+          ...formData,
+          [name]: value
+        });
+      }
+      break;
+    case 'engineSize':
+      // Allow numbers with optional decimal point
+      if (/^\d*\.?\d*$/.test(value)) {
+        setFormData({
+          ...formData,
+          [name]: value
+        });
+      }
+      break;
+  
+    default:
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+  }
   };
 
   const handleSubmit = async (e) => {
@@ -98,6 +122,9 @@ const VehicleManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
+              inputProps={{
+                inputMode: 'numeric'  // Specify inputMode
+              }}
             />
             </Grid>
 
@@ -111,6 +138,9 @@ const VehicleManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
+              inputProps={{
+                inputMode: 'numeric'  // Specify inputMode
+              }}
             />
             </Grid>
 
@@ -127,7 +157,7 @@ const VehicleManagementForm = () => {
              </Grid>
 
 
-             <Grid item xs={12} md={4}>
+             <Grid item xs={12} md={6}>
             <Typography variant="subtitle1" gutterBottom>Transmission:</Typography>
             <TextField
               type="text"
@@ -138,21 +168,8 @@ const VehicleManagementForm = () => {
               required
             />
             </Grid>
-
-            <Grid item xs={12} md={4}>
-            <Typography variant="subtitle1" gutterBottom>Capacity:</Typography>
-            <TextField
-              type="number"
-              name="capacity"
-              value={formData.capacity}
-              onChange={handleInputChange}
-              fullWidth
-              required
-            />
-            </Grid>
-
             
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={6}>
             <Typography variant="subtitle1" gutterBottom>Fuel Type:</Typography>
             <Select
               name="fuelType"

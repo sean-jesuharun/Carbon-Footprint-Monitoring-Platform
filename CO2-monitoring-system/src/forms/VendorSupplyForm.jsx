@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert } from '@mui/material';
+import { Card, CardContent, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert,Grid } from '@mui/material';
 import axiosInstance from '../utils/axiosInstance';
-import axios from 'axios';
 import Navbar from '../Navbar';
-import { styled } from '@mui/system';
-
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const VendorSupplyForm = () => {
   const [formData, setFormData] = useState({
@@ -129,6 +129,13 @@ const VendorSupplyForm = () => {
     setSnackbarOpen(false);
   };
 
+  const handleDateChange = (date) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      date,
+    }));
+  };
+
   return (
     <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '30px',       backgroundColor:'#ffffff'}}>
       
@@ -139,8 +146,13 @@ const VendorSupplyForm = () => {
         <Typography variant='h3' color='#5D6259' fontWeight={1000} >Vendor Supply Form</Typography>
         <Card style={{ width: '100%', margin: '2rem auto',borderRadius:'0.5rem' ,padding:'1rem',border: '10px solid #D5E9E5' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
+          <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+
             <FormControl fullWidth required style={{marginBottom:'0.5rem'}}>
+            
               <InputLabel>Vendor Name</InputLabel>
+            
               <Select
                 name="vendorId"
                 value={formData.vendorId}
@@ -152,7 +164,12 @@ const VendorSupplyForm = () => {
                   </MenuItem>
                 ))}
               </Select>
-            </FormControl>
+             </FormControl>
+             </Grid>
+
+
+            <Grid item xs={12} md={6}>
+
             <FormControl fullWidth required>
               <InputLabel>Vehicle ID</InputLabel>
               <Select
@@ -167,7 +184,11 @@ const VendorSupplyForm = () => {
                 ))}
               </Select>
             </FormControl>
-            <Typography variant="subtitle1" gutterBottom style={{color:'#1b263b'}}>Fuel Consumption (liters):</Typography>
+            </Grid>
+            </Grid>
+
+            <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
             <TextField
               type="number"
               name="fuelConsumption"
@@ -175,10 +196,26 @@ const VendorSupplyForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
+              placeholder="Fuel Consumption (liters)"
               InputLabelProps={{
                 shrink: true,
               }}
             />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Select Date"
+                  value={formData.date}
+                  onChange={handleDateChange}
+                  renderInput={(params) => <TextField {...params} fullWidth required />}
+                />
+              </LocalizationProvider>
+             </Grid>
+        
+            </Grid>
+
             <hr />
             <Typography variant="h5" style={{ marginBottom: '1rem',color:'#1b263b' }}>Supplied Items</Typography>
             {formData.supplyItems.map((supplyItem, index) => (
@@ -204,7 +241,10 @@ const VendorSupplyForm = () => {
                   onChange={(e) => handleSupplyItemChange(index, e)}
                   fullWidth
                   required
-                  placeholder={`Quantity ${index + 1}`}
+                  placeholder={`Quantity(kg)`}
+                  inputProps={{
+                    inputMode: 'numeric'  // Specify inputMode
+                  }}
                 />
                 <Button type="button" onClick={() => handleRemoveSupplyItem(index)} style={{backgroundColor:'#198773',color:'#ffffff',margin:'0.5rem'}}>Remove</Button>
               </div>

@@ -1,20 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Grid,
-  Card,
-  CardContent,
-  TextField,
-  Button,
-  Typography,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Snackbar,
-  Alert
-} from '@mui/material';
+import { Grid,Card,CardContent,TextField,Button,Typography,Select,MenuItem,FormControl,InputLabel,Snackbar,Alert} from '@mui/material';
 import axiosInstance from '../utils/axiosInstance';
 import Navbar from '../Navbar';
+import BackDrop from '../BackDrop';
 
 const DeliveryForm = () => {
   const [formData, setFormData] = useState({
@@ -31,6 +19,10 @@ const DeliveryForm = () => {
   const [products, setProducts] = useState({});
   const [error, setError] = useState(null);
   const [errorOpen, setErrorOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(null);
+  const [successOpen, setSuccessOpen] = useState(false);
+
 
   useEffect(() => {
     fetchCustomers();
@@ -122,12 +114,21 @@ const DeliveryForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
     try {
       await axiosInstance.post('/evaluations', formData);
-      console.log('Form data submitted successfully');
+      setSuccess('Form data submitted successfully');
       resetForm();
+      setSuccessOpen(true);
+
     } catch (error) {
       handleRequestError(error);
+    }finally{
+      setLoading(false);
+
     }
   };
 
@@ -154,6 +155,8 @@ const DeliveryForm = () => {
       return;
     }
     setErrorOpen(false);
+    setSuccessOpen(false);
+
   };
 
   const resetForm = () => {
@@ -181,6 +184,11 @@ const DeliveryForm = () => {
             <Snackbar open={errorOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
               <Alert severity="error" onClose={handleSnackbarClose}>
                 {error}
+              </Alert>
+            </Snackbar>
+            <Snackbar open={successOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+              <Alert severity="success" onClose={handleSnackbarClose}>
+                {success}
               </Alert>
             </Snackbar>
             <Grid container spacing={2}>
@@ -220,6 +228,9 @@ const DeliveryForm = () => {
                   fullWidth
                   required
                   label="Fuel Consumption (liters)"
+                  inputProps={{
+                    inputMode: 'numeric'  // Specify inputMode
+                  }}
                 />
               </Grid>
               <hr />
@@ -266,7 +277,10 @@ const DeliveryForm = () => {
                       onChange={(e) => handleDeliveryItemChange(index, e)}
                       fullWidth
                       required
-                      placeholder={`Quantity`}
+                      placeholder={`Quantity (kg)`}
+                      inputProps={{
+                        inputMode: 'numeric'  // Specify inputMode
+                      }}
                     />
                   </Grid>
                 </Grid>
@@ -298,6 +312,8 @@ const DeliveryForm = () => {
           </Button>
         </div>
       </form>
+      <BackDrop open={loading} handleClose={() => setLoading(false)} />
+
     </div>
   );
 };

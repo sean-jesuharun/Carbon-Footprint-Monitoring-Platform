@@ -5,7 +5,6 @@ import axios from 'axios';
 import Navbar from '../Navbar';
 import { styled } from '@mui/system';
 
-
 const CustomerManagementForm = () => {
   const [formData, setFormData] = useState({
     customerName: '',
@@ -21,6 +20,7 @@ const CustomerManagementForm = () => {
 
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
   const [snackbarMessage, setSnackbarMessage] = useState(''); // Snackbar message state
+  
 
   const validateField = (name, value) => {
     let error = '';
@@ -54,6 +54,7 @@ const CustomerManagementForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
 
     console.log(formData);
  
@@ -62,6 +63,7 @@ const CustomerManagementForm = () => {
     try {
       const response = await axiosInstance.post('/customers', requestData);
       console.log('Data submitted successfully:', response.data);
+      
 
       // Show success snackbar
       setSnackbarMessage('Customer details submitted successfully!');
@@ -76,6 +78,8 @@ const CustomerManagementForm = () => {
 
     } catch (error) {
       console.error('Error submitting data:', error);
+    
+
     }
   };
 
@@ -152,6 +156,7 @@ const CustomerManagementForm = () => {
           </Button>
         </div>
       </form>
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}

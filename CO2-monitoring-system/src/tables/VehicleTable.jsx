@@ -4,7 +4,6 @@ import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, B
 import { Delete, Edit, Visibility } from '@mui/icons-material';
 import { styled } from '@mui/system';
 import axiosInstance from '../utils/axiosInstance';
-import axios from 'axios';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
@@ -41,9 +40,7 @@ const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
   color: '#fff',
 }));
 
-const BlueIconButton = styled(IconButton)({
-  color: '#ACCA8E',
-});
+
 
 const GreenIconButton = styled(IconButton)({
   color: '#D5E9E5',
@@ -62,8 +59,7 @@ export default function Vehicletable({ darkMode,drawerOpen }) {
   const [deleteId, setDeleteId] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [currentRow, setCurrentRow] = useState({});
-  const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const [viewRow, setViewRow] = useState({});
+  
 
   const fetchData = async () => {
     try {
@@ -98,7 +94,6 @@ export default function Vehicletable({ darkMode,drawerOpen }) {
       disableColumnMenu: true,
       renderCell: (params) => (
         <div>
-          <BlueIconButton onClick={() => handleView(params.id)}><Visibility /></BlueIconButton>
           <GreenIconButton onClick={() => handleEdit(params.id)}><Edit /></GreenIconButton>
           <RedIconButton onClick={() => handleDeleteConfirmation(params.id)}><Delete /></RedIconButton>
         </div>
@@ -159,10 +154,7 @@ export default function Vehicletable({ darkMode,drawerOpen }) {
     setCurrentRow({});
   };
 
-  const handleCloseViewDialog = () => {
-    setViewDialogOpen(false);
-    setViewRow({});
-  };
+ 
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -263,21 +255,7 @@ export default function Vehicletable({ darkMode,drawerOpen }) {
         </StyledDialogActions>
       </StyledDialog>
 
-        <StyledDialog open={viewDialogOpen} onClose={handleCloseViewDialog} classes={{ paper: 'dialogPaper' }}>
-                <DialogTitle sx={{ textAlign: 'center', color: '#198773', fontWeight: 'bold' }}>View Vehicle</DialogTitle>
-                <DialogContent className="dialogContent">
-                  <p><strong>Model :</strong> {viewRow.model}</p>
-                  <p><strong>Engine Size :</strong> {viewRow.engineSize}</p>
-                  <p><strong>No Of Cylinders :</strong> {viewRow.cylinders}</p>
-                  <p><strong>Vehicle Type :</strong>{viewRow.vehicleType}</p>
-                  <p><strong>Transmission :</strong>{viewRow.transmission}</p>
-                  <p><strong>Fuel Type :</strong>{viewRow.fuelType}</p>
-
-                </DialogContent>
-                <StyledDialogActions className="dialogActions">
-                  <Button onClick={handleCloseViewDialog} sx={{color:'#198773'}}>Close</Button>
-                </StyledDialogActions>
-              </StyledDialog>
+       
     </Paper>
   );
 }

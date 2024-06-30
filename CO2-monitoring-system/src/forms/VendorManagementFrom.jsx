@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Card, CardContent, TextField, Button, Typography, MenuItem, Snackbar, Alert } from '@mui/material';
-import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 import Navbar from '../Navbar';
 import { styled } from '@mui/system';
@@ -102,10 +101,11 @@ const VendorManagementForm = () => {
 
     console.log(formData);
 
+    const url = 'http://localhost:8050/vendors'; 
     const requestData = { ...formData };
 
     try {
-      const response = await axiosInstance.post('/vendors', requestData);
+      const response = await axios.post(url, requestData);
       console.log('Data submitted successfully:', response.data);
 
       // Show success snackbar
@@ -182,7 +182,7 @@ const VendorManagementForm = () => {
               <div key={index} style={{ marginBottom: '10px' }}>
                 <TextField
                   type="text"
-                  label={`Product Name ${index + 1}`}
+                  label="Product Name"
                   value={product.productName}
                   onChange={(e) => handleProductChange(index, 'productName', e.target.value)}
                   fullWidth
@@ -206,7 +206,7 @@ const VendorManagementForm = () => {
                     <MenuItem value="Russian Federation">Russian Federation</MenuItem>
                     <MenuItem value="South Asia">South Asia</MenuItem>
                     <MenuItem value="Sub-Saharan Africa">Sub-Saharan Africa</MenuItem>
-                    <MenuItem value="Western Europe">Western Europe</MenuItem>
+                    <MenuItem value="Western Europe">Western Europe</MenuItem>
                   </TextField>
                   <TextField
                     select
