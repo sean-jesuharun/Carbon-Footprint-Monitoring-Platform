@@ -1,17 +1,18 @@
 package org.cfms.co2eevaluationcfms.controller;
 
+import jakarta.validation.Valid;
 import org.cfms.co2eevaluationcfms.dto.DeliveryDTO;
 import org.cfms.co2eevaluationcfms.dto.EvaluationDTO;
 import org.cfms.co2eevaluationcfms.service.implementation.EvaluationServiceImple;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("evaluations")
 @CrossOrigin
-public class EvaluationController {
+public class EvaluationController extends AbstractController{
 
     private EvaluationServiceImple evaluationServiceImple;
 
@@ -21,12 +22,20 @@ public class EvaluationController {
     }
 
     @GetMapping
-    public List<EvaluationDTO> getEvaluations() {
-        return evaluationServiceImple.getEvaluations();
+    public ResponseEntity<Object> getEvaluations() {
+        return handleSuccessfulOkResponse(evaluationServiceImple.getEvaluations());
     }
 
     @PostMapping
-    public EvaluationDTO addEvaluation(@RequestBody DeliveryDTO deliveryDTO) {
-        return evaluationServiceImple.addEvaluation(deliveryDTO);
+    public ResponseEntity<Object> addEvaluation(@Valid @RequestBody DeliveryDTO deliveryDTO) {
+        System.out.println(deliveryDTO);
+        return handleSuccessfulCreatedResponse(evaluationServiceImple.addEvaluation(deliveryDTO));
     }
+
+    @DeleteMapping("{evaluationId}")
+    public ResponseEntity<HttpStatus> deleteEvaluationById(@PathVariable Long evaluationId) {
+        evaluationServiceImple.deleteEvaluationById(evaluationId);
+        return handleSuccessfulNoContentResponse();
+    }
+
 }

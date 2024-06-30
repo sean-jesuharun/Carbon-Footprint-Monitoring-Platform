@@ -1,17 +1,16 @@
 package org.cfms.co2eevaluationcfms.controller;
 
+import jakarta.validation.Valid;
 import org.cfms.co2eevaluationcfms.dto.SupplyDTO;
-import org.cfms.co2eevaluationcfms.dto.SupplyDetailDTO;
 import org.cfms.co2eevaluationcfms.service.implementation.SupplyServiceImple;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("supplies")
 @CrossOrigin
-public class SupplyController {
+public class SupplyController extends AbstractController{
 
     private SupplyServiceImple supplyServiceImple;
 
@@ -21,13 +20,13 @@ public class SupplyController {
     }
 
     @GetMapping
-    public List<SupplyDetailDTO> getSupplies() {
-        return supplyServiceImple.getSupplies();
+    public ResponseEntity<Object> getSupplies() {
+        return handleSuccessfulOkResponse(supplyServiceImple.getSupplies());
     }
 
     @PostMapping
-    public SupplyDTO createSupply(@RequestBody SupplyDTO supplyDTO) {
-        return supplyServiceImple.createSupply(supplyDTO);
+    public ResponseEntity<Object> createSupply(@Valid @RequestBody SupplyDTO supplyDTO) {
+        return handleSuccessfulCreatedResponse(supplyServiceImple.createSupply(supplyDTO));
     }
 
 }

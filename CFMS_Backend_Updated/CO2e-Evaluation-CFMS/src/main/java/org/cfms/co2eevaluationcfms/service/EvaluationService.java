@@ -10,4 +10,6 @@ public interface EvaluationService {
     List<EvaluationDTO> getEvaluations();
 
     EvaluationDTO addEvaluation(DeliveryDTO deliveryDTO);
+
+    void deleteEvaluationById(Long evaluationId);
 }

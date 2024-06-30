@@ -5,6 +5,8 @@ import org.cfms.co2eevaluationcfms.dto.*;
 import org.cfms.co2eevaluationcfms.entity.Evaluation;
 import org.cfms.co2eevaluationcfms.entity.Result;
 import org.cfms.co2eevaluationcfms.entity.SupplyItem;
+import org.cfms.co2eevaluationcfms.exception.ProductionMatrixNotFoundException;
+import org.cfms.co2eevaluationcfms.exception.SupplyItemNotFoundException;
 import org.cfms.co2eevaluationcfms.repository.EvaluationRepository;
 import org.cfms.co2eevaluationcfms.repository.ResultRepository;
 import org.cfms.co2eevaluationcfms.repository.SupplyItemRepository;
@@ -101,7 +103,7 @@ public class EvaluationServiceImple implements EvaluationService {
                     .filter(vendorProductDTO -> deliveryItemDTO.getProductName().equals(vendorProductDTO.getProductName()))
                     .map(VendorProductDTO::getProductionMatrix)
                     .findFirst()
-                    .orElseThrow(() -> new NoSuchElementException("ProductionMatrix not found for " + deliveryItemDTO.getProductName() + " Of Vendor " + vendorDTO.getVendorName()));
+                    .orElseThrow(() -> new ProductionMatrixNotFoundException("ProductionMatrix not found for " + deliveryItemDTO.getProductName() + " Of Vendor " + vendorDTO.getVendorName()));
 
             Double predictedProductionCO2eEmissionPerKg = productionEmissionServiceClient.predictProductionEmission(productionMatrixDTO.getRegion(), productionMatrixDTO.getAnimalSpecies(), productionMatrixDTO.getProductionSystem(), productionMatrixDTO.getCommodity());
             Double totalProductionCO2eEmission = calculateTotalProductionCO2eEmission(predictedProductionCO2eEmissionPerKg, deliveryItemDTO.getQuantity());
@@ -113,7 +115,7 @@ public class EvaluationServiceImple implements EvaluationService {
             SupplyItem supplyItem = vendorSupplies.stream()
                     .filter(supply -> deliveryItemDTO.getQuantity() < supply.getQuantity())
                     .findFirst()
-                    .orElseThrow(() -> new NoSuchElementException("No VendorSupply found to satisfy the quantity " + deliveryItemDTO.getQuantity() + " of " + deliveryItemDTO.getProductName() + " from " + vendorDTO.getVendorName()));
+                    .orElseThrow(() -> new SupplyItemNotFoundException("No Supply found to satisfy the quantity of " + deliveryItemDTO.getQuantity() + " units of '" + deliveryItemDTO.getProductName() + "' from '" + vendorDTO.getVendorName() + "'"));
 
             Result result = Result.builder()
                     .evaluation(evaluation)
@@ -141,4 +143,9 @@ public class EvaluationServiceImple implements EvaluationService {
         return predictedProductionCO2eEmissionPerKg*quantity;
     }
 
+    public void deleteEvaluationById(Long evaluationId) {
+
+        evaluationRepository.deleteById(evaluationId);
+
+    }
 }
