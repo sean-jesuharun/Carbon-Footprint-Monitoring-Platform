@@ -28,7 +28,6 @@ public class EvaluationController extends AbstractController{
 
     @PostMapping
     public ResponseEntity<Object> addEvaluation(@Valid @RequestBody DeliveryDTO deliveryDTO) {
-        System.out.println(deliveryDTO);
         return handleSuccessfulCreatedResponse(evaluationServiceImple.addEvaluation(deliveryDTO));
     }
 

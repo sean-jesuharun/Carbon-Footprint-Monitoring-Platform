@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -22,6 +23,9 @@ public class SupplyDTO {
     @NotNull(message = "FuelConsumption is Mandatory")
     @Positive(message = "FuelConsumption cannot be Zero/Negative")
     private Double fuelConsumption;
+
+    @NotNull(message = "Date is Mandatory")
+    private OffsetDateTime date;
 
     @Valid
     @NotEmpty(message = "Supply must have Product")

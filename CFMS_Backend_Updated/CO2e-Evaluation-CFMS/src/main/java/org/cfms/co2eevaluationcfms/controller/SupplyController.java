@@ -29,4 +29,9 @@ public class SupplyController extends AbstractController{
         return handleSuccessfulCreatedResponse(supplyServiceImple.createSupply(supplyDTO));
     }
 
+    @DeleteMapping("{supplyId}/products/{productName}")
+    public void removeProductFromSupply(@PathVariable Long supplyId, @PathVariable String productName) {
+        supplyServiceImple.removeProductFromSupply(supplyId, productName);
+    }
+
 }

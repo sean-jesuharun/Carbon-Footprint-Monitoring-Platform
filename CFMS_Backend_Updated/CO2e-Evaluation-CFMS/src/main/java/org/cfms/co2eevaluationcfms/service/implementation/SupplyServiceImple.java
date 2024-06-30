@@ -5,6 +5,7 @@ import org.cfms.co2eevaluationcfms.dto.*;
 import org.cfms.co2eevaluationcfms.entity.Supply;
 import org.cfms.co2eevaluationcfms.entity.SupplyItem;
 import org.cfms.co2eevaluationcfms.entity.SupplyItemKey;
+import org.cfms.co2eevaluationcfms.exception.SupplyNotFoundException;
 import org.cfms.co2eevaluationcfms.repository.SupplyItemRepository;
 import org.cfms.co2eevaluationcfms.repository.SupplyRepository;
 import org.cfms.co2eevaluationcfms.service.SupplyService;
@@ -12,7 +13,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,9 +63,7 @@ public class SupplyServiceImple implements SupplyService {
 
         // Total Inbound Transportation Emission (kg)
         // Finding emission for total distance and converting it to kg
-        Double predictedInboundTransportationCO2eEmissionKg = (predictedInboundTransportationCO2eEmissionGPerKm * vendorDTO.getDistanceFromWarehouse()) / 1000;
-
-        System.out.println(predictedInboundTransportationCO2eEmissionKg);
+        double predictedInboundTransportationCO2eEmissionKg = (predictedInboundTransportationCO2eEmissionGPerKm * vendorDTO.getDistanceFromWarehouse()) / 1000;
 
         // Finding the Total Quantity of Products Being involved in the Transportation.
         int totalQuantity = supplyDTO.getSupplyItems().stream()
@@ -76,7 +74,7 @@ public class SupplyServiceImple implements SupplyService {
                 .vendorId(supplyDTO.getVendorId())
                 .vehicleId(supplyDTO.getVehicleId())
                 .fuelConsumptionL(supplyDTO.getFuelConsumption())
-                .date(OffsetDateTime.now())
+                .date(supplyDTO.getDate())
                 .supplyItems(new ArrayList<>())
                 .build();
 
@@ -100,6 +98,19 @@ public class SupplyServiceImple implements SupplyService {
         }
 
         return modelMapper.map(supply, SupplyDTO.class);
+
+    }
+
+    @Transactional
+    public void removeProductFromSupply(Long supplyId, String productName){
+
+        Supply supply = supplyRepository.findById(supplyId)
+                .orElseThrow(() -> new SupplyNotFoundException("Supply not found with Id : " + supplyId));
+
+        supplyItemRepository.deleteById(SupplyItemKey.builder()
+                        .supply(supply)
+                        .productName(productName)
+                        .build());
 
     }
 

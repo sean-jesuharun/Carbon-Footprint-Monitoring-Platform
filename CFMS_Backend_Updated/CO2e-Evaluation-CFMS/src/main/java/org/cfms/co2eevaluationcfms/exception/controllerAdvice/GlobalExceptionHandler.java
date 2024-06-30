@@ -3,6 +3,7 @@ package org.cfms.co2eevaluationcfms.exception.controllerAdvice;
 import org.cfms.co2eevaluationcfms.controller.AbstractController;
 import org.cfms.co2eevaluationcfms.exception.ProductionMatrixNotFoundException;
 import org.cfms.co2eevaluationcfms.exception.SupplyItemNotFoundException;
+import org.cfms.co2eevaluationcfms.exception.SupplyNotFoundException;
 import org.cfms.co2eevaluationcfms.exception.model.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -24,6 +25,15 @@ public class GlobalExceptionHandler extends AbstractController {
 
     @ExceptionHandler(ProductionMatrixNotFoundException.class)
     public ResponseEntity<Object> handleProductionMatrixNotFoundException(ProductionMatrixNotFoundException ex) {
+
+        Map<String, List<ErrorResponse>> errors = new HashMap<>();
+        errors.put(ERROR, Collections.singletonList(new ErrorResponse(ex.getMessage())));
+
+        return handleClientErrorNotFoundResponse(errors);
+    }
+
+    @ExceptionHandler(SupplyNotFoundException.class)
+    public ResponseEntity<Object> handleSupplyNotFoundException(SupplyNotFoundException ex) {
 
         Map<String, List<ErrorResponse>> errors = new HashMap<>();
         errors.put(ERROR, Collections.singletonList(new ErrorResponse(ex.getMessage())));

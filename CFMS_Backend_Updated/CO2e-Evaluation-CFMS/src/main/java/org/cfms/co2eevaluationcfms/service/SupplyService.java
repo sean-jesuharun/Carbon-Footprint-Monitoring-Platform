@@ -11,4 +11,5 @@ public interface SupplyService {
 
     SupplyDTO createSupply(SupplyDTO supplyDTO);
 
+    void removeProductFromSupply(Long supplyId, String productName);
 }
