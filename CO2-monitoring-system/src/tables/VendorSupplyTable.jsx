@@ -76,12 +76,6 @@ export default function VendorSupplyTable({ darkMode, drawerOpen }) {
     },
   ];
 
-  const handleEdit = (id) => {
-    const rowToEdit = rows.find((row) => row.id === id);
-    setCurrentRow(rowToEdit || {}); // Ensure currentRow is set to an empty object if not found
-    setEditDialogOpen(true);
-  };
-
   const handleDeleteConfirmation = (id) => {
     setDeleteConfirmation(true);
     setDeleteId(id);
@@ -89,9 +83,25 @@ export default function VendorSupplyTable({ darkMode, drawerOpen }) {
 
   const handleDelete = async () => {
     try {
-      console.log(`Attempting to delete row with id ${deleteId}`);
-      await axiosInstance.delete(`/supplies/${deleteId}`);
-      console.log(`Delete successful for row with id ${deleteId}`);
+      if (!deleteId) {
+        console.error('No deleteId specified.');
+        return;
+      }
+  
+      // Find the supplyId and productName from the row with deleteId
+      const rowToDelete = rows.find((row) => row.id === deleteId);
+      if (!rowToDelete) {
+        console.error(`Row with id ${deleteId} not found.`);
+        return;
+      }
+  
+      const { supplyId, productName } = rowToDelete;
+  
+      console.log(`Attempting to delete product ${productName} from supply ${supplyId}`);
+      await axiosInstance.delete(`/supplies/${supplyId}/products/${encodeURIComponent(productName)}`);
+      console.log(`Delete successful for product ${productName} from supply ${supplyId}`);
+  
+      // Update the rows state after successful deletion
       setRows((prevRows) => prevRows.filter((row) => row.id !== deleteId));
     } catch (error) {
       console.error('Error deleting data:', error);

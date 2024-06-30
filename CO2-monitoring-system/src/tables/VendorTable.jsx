@@ -154,7 +154,16 @@ export default function Vendortable({ darkMode, drawerOpen }) {
 
   const handleEditSubmit = async () => {
     try {
-      await axiosInstance.put(`/vendors/${currentRow.id}`, currentRow);
+      const { id, vendorName, location, distanceFromWarehouse } = currentRow || {};
+      if (!id) {
+        console.error('Cannot submit empty data.');
+        return;
+      }
+      await axiosInstance.patch(`/vendors/${currentRow.id}`, {
+        vendorName,
+        location,
+        distanceFromWarehouse,
+      });
       setRows((prevRows) => prevRows.map((row) => (row.id === currentRow.id ? currentRow : row)));
       setEditDialogOpen(false);
       setCurrentRow({});
@@ -298,7 +307,6 @@ export default function Vendortable({ darkMode, drawerOpen }) {
         </DialogContent>
         <StyledDialogActions>
           <Button onClick={handleCloseViewDialog} sx={{ color: '#198773' }}>Close</Button>
-          
         </StyledDialogActions>
       </StyledDialog>
     </Paper>

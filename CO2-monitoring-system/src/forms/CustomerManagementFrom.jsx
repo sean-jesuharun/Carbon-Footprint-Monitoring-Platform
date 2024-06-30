@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Card, CardContent, TextField, Button, Typography, Snackbar, Alert } from '@mui/material';
 import axiosInstance from '../utils/axiosInstance';
-import axios from 'axios';
+import BackDrop from '../BackDrop';
 import Navbar from '../Navbar';
-import { styled } from '@mui/system';
 
 const CustomerManagementForm = () => {
   const [formData, setFormData] = useState({
@@ -12,90 +11,75 @@ const CustomerManagementForm = () => {
     distanceFromWarehouse: ''
   });
 
-  const [errors, setErrors] = useState({
-    customerName: '',
-    location: '',
-    distanceFromWarehouse: ''
-  });
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
-  const [snackbarMessage, setSnackbarMessage] = useState(''); // Snackbar message state
-  
-
-  const validateField = (name, value) => {
-    let error = '';
-    const lettersAndSpaces = /^[A-Za-z\s]*$/;
-
-    if ((name === 'customerName' || name === 'location') && !lettersAndSpaces.test(value)) {
-      error = 'This field should only contain letters and spaces';
-    }
-    if (name === 'distanceFromWarehouse') {
-      const distance = parseFloat(value);
-      if (isNaN(distance) || distance <= 0) {
-        error = 'Distance should be a positive number greater than 0';
-      }
-    }
-    return error;
-  };
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [errorOpen, setErrorOpen] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    const error = validateField(name, value);
-
     setFormData({
       ...formData,
       [name]: value
-    });
-    setErrors({
-      ...errors,
-      [name]: error
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-
-    console.log(formData);
- 
-    const requestData = { ...formData };
+    setLoading(true);
+    setError(null);
+    setSnackbarMessage('');
 
     try {
-      const response = await axiosInstance.post('/customers', requestData);
-      console.log('Data submitted successfully:', response.data);
-      
-
-      // Show success snackbar
+      await axiosInstance.post('/customers', formData);
       setSnackbarMessage('Customer details submitted successfully!');
       setSnackbarOpen(true);
-
-      // Reset the form
-      setFormData({
-        customerName: '',
-        location: '',
-        distanceFromWarehouse: ''
-      });
-
+      resetForm();
     } catch (error) {
-      console.error('Error submitting data:', error);
-    
-
+      handleRequestError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSnackbarClose = () => {
+  const handleRequestError = (error, serviceName = null) => {
+    let errorMessage = 'An error occurred while processing your request.';
+    if (error.response && error.response.data) {
+      if (error.response.data.errors) {
+        errorMessage = error.response.data.errors.map((err) => err.message).join(', ');
+      } else if (error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
+    }
+    setError(serviceName ? `${serviceName}: ${errorMessage}` : errorMessage);
+    setErrorOpen(true);
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') return;
     setSnackbarOpen(false);
+    setErrorOpen(false);
+  };
+
+  const resetForm = () => {
+    setFormData({
+      customerName: '',
+      location: '',
+      distanceFromWarehouse: ''
+    });
   };
 
   return (
-    <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '30px',backgroundColor:'#ffffff'}}>
-      
-      <Navbar/>
-      <form onSubmit={handleSubmit} >
+    <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+      <Navbar />
+      <form onSubmit={handleSubmit} style={{ width: '100%' }}>
         <br />
         <br />
-        <Typography variant='h3'  color='#5D6259' fontWeight={1000}>Customer Management Form</Typography>
-        <Card style={{ width: '70%', margin: '2rem auto',borderRadius:'0.5rem' ,padding:'1rem',border: '10px solid #D5E9E5' }}>
+        <Typography variant='h3' color='#5D6259' fontWeight={1000} sx={{ textAlign: 'center' }}>
+          Customer Management Form
+        </Typography>
+        <Card style={{ width: '60%', margin: '2rem auto', borderRadius: '0.5rem', padding: '1rem', border: '10px solid #D5E9E5' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
             <Typography variant="subtitle1" gutterBottom>Customer Name:</Typography>
             <TextField
@@ -105,10 +89,6 @@ const CustomerManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
-              error={!!errors.customerName}
-              helperText={errors.customerName}
-              inputProps={{ style: { color: '#000' } }}
-              InputLabelProps={{ style: { color: '#000' } }}
             />
             <Typography variant="subtitle1" gutterBottom>Customer Location:</Typography>
             <TextField
@@ -118,10 +98,6 @@ const CustomerManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
-              error={!!errors.location}
-              helperText={errors.location}
-              inputProps={{ style: { color: '#000' } }}
-              InputLabelProps={{ style: { color: '#000' } }}
             />
             <Typography variant="subtitle1" gutterBottom>Distance From Warehouse (km):</Typography>
             <TextField
@@ -131,24 +107,21 @@ const CustomerManagementForm = () => {
               onChange={handleInputChange}
               fullWidth
               required
-              error={!!errors.distanceFromWarehouse}
-              helperText={errors.distanceFromWarehouse}
-              inputProps={{ step: "0.01", min: "0.01" ,color:'#000'}} // Ensure input accepts decimal values
-              InputLabelProps={{ style: { color: '#000' } }}
+              inputProps={{ step: "0.01", min: "0.01" }}
             />
           </CardContent>
         </Card>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5px' }}>
-          <Button 
-            type="submit" 
-            variant='contained' 
-            sx={{ 
-              padding: '10px 20px', 
-              color: '#ffffff', 
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{
+              padding: '10px 20px',
+              color: '#ffffff',
               backgroundColor: '#198773',
               '&:hover': {
                 backgroundColor: '#ffffff',
-                color:'#198773'
+                color: '#198773'
               },
             }}
           >
@@ -156,17 +129,17 @@ const CustomerManagementForm = () => {
           </Button>
         </div>
       </form>
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity="success">
           {snackbarMessage}
         </Alert>
       </Snackbar>
+      <Snackbar open={errorOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity="error">
+          {error}
+        </Alert>
+      </Snackbar>
+      {loading && <BackDrop />}
     </div>
   );
 };
