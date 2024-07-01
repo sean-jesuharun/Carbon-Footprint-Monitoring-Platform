@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Delete, Edit, Visibility } from '@mui/icons-material';
-import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, useMediaQuery, useTheme } from '@mui/material';
-import axiosInstance from '../utils/axiosInstance';
-import axios from 'axios';
+import { Delete, Edit } from '@mui/icons-material';
+import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, useMediaQuery, useTheme, Snackbar, Alert,} from '@mui/material';
 import { styled } from '@mui/system';
+import axiosInstance from '../utils/axiosInstance';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
@@ -40,10 +39,6 @@ const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
   color: '#fff',
 }));
 
-const BlueIconButton = styled(IconButton)({
-  color: '#ACCA8E',
-});
-
 const GreenIconButton = styled(IconButton)({
   color: '#D5E9E5',
 });
@@ -58,46 +53,41 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
   const [deleteId, setDeleteId] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [currentRow, setCurrentRow] = useState({});
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get('/customers');
-        setRows(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
     fetchData();
   }, []);
 
-  const columns = [
-    { field: 'customerName', headerName: 'Name', flex: 1, minWidth: 80, headerAlign: 'center', align: 'center' },
-    { field: 'location', headerName: 'Location', flex: 1, minWidth: 80, headerAlign: 'center', align: 'center' },
-    { field: 'distanceFromWarehouse', headerName: 'Distance From Warehouse', flex: 1, minWidth: 80, headerAlign: 'center', align: 'center' },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 1,
-      minWidth: 100,
-      headerAlign: 'center', align: 'center',
-      sortable: false,
-      filterable: false,
-      disableColumnMenu: true,
-      renderCell: (params) => (
-        <div >
-          <GreenIconButton onClick={() => handleEdit(params.id)} sx={{ padding: '5px' }}><Edit /></GreenIconButton>
-          <RedIconButton onClick={() => handleDeleteConfirmation(params.id)} sx={{ padding: '5px' }}><Delete /></RedIconButton>
-        </div>
-      ),
-    },
-  ];
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get('/customers');
+      setRows(response.data);
+      setSnackbarSeverity('success');
+      setSnackbarMessage('Data fetched successfully!');
+      setSnackbarOpen(true);
+    } catch (error) {
+      handleRequestError(error);
+    }
+  };
 
- 
+  const handleRequestError = (error, serviceName = null) => {
+    let errorMessage = 'An error occurred while processing your request.';
+    if (error.response && error.response.data) {
+      if (error.response.data.errors) {
+        errorMessage = error.response.data.errors.map((err) => err.message).join(', ');
+      } else if (error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
+    }
+    setSnackbarSeverity('error');
+    setSnackbarMessage(serviceName ? `${serviceName}: ${errorMessage}` : errorMessage);
+    setSnackbarOpen(true);
+  };
 
   const handleEdit = (id) => {
     const rowToEdit = rows.find((row) => row.id === id);
@@ -115,8 +105,11 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
       setRows((prevRows) => prevRows.map((row) => (row.id === currentRow.id ? currentRow : row)));
       setEditDialogOpen(false);
       setCurrentRow({});
+      setSnackbarSeverity('success');
+      setSnackbarMessage('Customer details updated successfully!');
+      setSnackbarOpen(true);
     } catch (error) {
-      console.error('Error updating data:', error);
+      handleRequestError(error);
     }
   };
 
@@ -129,8 +122,11 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
     try {
       await axiosInstance.delete(`/customers/${deleteId}`);
       setRows((prevRows) => prevRows.filter((row) => row.id !== deleteId));
+      setSnackbarSeverity('success');
+      setSnackbarMessage('Customer deleted successfully!');
+      setSnackbarOpen(true);
     } catch (error) {
-      console.error('Error deleting data:', error);
+      handleRequestError(error);
     }
     setDeleteConfirmation(false);
     setDeleteId(null);
@@ -146,13 +142,48 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
     setCurrentRow({});
   };
 
-  
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const columns = [
+    { field: 'customerName', headerName: 'Name', flex: 1, minWidth: 80, headerAlign: 'center', align: 'center' },
+    { field: 'location', headerName: 'Location', flex: 1, minWidth: 80, headerAlign: 'center', align: 'center' },
+    { field: 'distanceFromWarehouse', headerName: 'Distance From Warehouse', flex: 1, minWidth: 80, headerAlign: 'center', align: 'center' },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      flex: 1,
+      minWidth: 100,
+      headerAlign: 'center',
+      align: 'center',
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => (
+        <div>
+          <GreenIconButton onClick={() => handleEdit(params.id)} sx={{ padding: '5px' }}><Edit /></GreenIconButton>
+          <RedIconButton onClick={() => handleDeleteConfirmation(params.id)} sx={{ padding: '5px' }}><Delete /></RedIconButton>
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <Paper elevation={5} style={{ width:'70%',padding:'0.5rem',marginLeft: '15rem', backgroundColor: '#ffffff',transition: 'margin-left 0.3s',marginRight:'1rem', border: '10px solid #D5E9E5' }}
+    <Paper
+      elevation={5}
+      style={{
+        width: '70%',
+        padding: '0.5rem',
+        marginLeft: '15rem',
+        backgroundColor: '#ffffff',
+        transition: 'margin-left 0.3s',
+        marginRight: '1rem',
+        border: '10px solid #D5E9E5',
+      }}
     >
-      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px',padding:'0.5rem' }}>
-        
-      <DataGrid
+      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px', padding: '0.5rem' }}>
+        <DataGrid
           rows={rows}
           columns={columns}
           initialState={{
@@ -162,14 +193,14 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
           }}
           pageSizeOptions={[5, 10]}
           sx={{
-            padding:'1rem',
+            padding: '1rem',
             '& .MuiDataGrid-columnHeaders': {
-              color: 'black',           
+              color: 'black',
               fontSize: '1rem',
               fontWeight: 'bold',
             },
             '& .MuiDataGrid-columnHeader': {
-              backgroundColor: '#D1E6E4',   
+              backgroundColor: '#D1E6E4',
             },
             '& .MuiDataGrid-footerContainer': {
               backgroundColor: '#D1E6E4',
@@ -216,12 +247,16 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
           />
         </DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseEditDialog} sx={{ color: '#198773', '&:hover': { backgroundColor: '##D5E9E5'} }}>Cancel</Button>
-          <Button onClick={handleEditSubmit} variant="contained" sx={{ color: 'black', backgroundColor: '#D5E9E5', '&:hover': { backgroundColor: '#ffffff', } }}>Save</Button>
+          <Button onClick={handleCloseEditDialog} sx={{ color: '#198773', '&:hover': { backgroundColor: '##D5E9E5' } }}>Cancel</Button>
+          <Button onClick={handleEditSubmit} variant="contained" sx={{ color: 'black', backgroundColor: '#D5E9E5', '&:hover': { backgroundColor: '#ffffff' } }}>Save</Button>
         </StyledDialogActions>
       </StyledDialog>
 
-      
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Paper>
   );
 }

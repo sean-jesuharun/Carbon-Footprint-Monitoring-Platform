@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, useMediaQuery, useTheme } from '@mui/material';
-import { Delete} from '@mui/icons-material';
+import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, useMediaQuery, useTheme, Snackbar, Alert } from '@mui/material';
+import { Delete } from '@mui/icons-material';
 import { styled } from '@mui/system';
 import axiosInstance from '../utils/axiosInstance';
 import { v4 as uuidv4 } from 'uuid';
-
-
 
 const RedIconButton = styled(IconButton)({
   color: '#E56464',
@@ -20,37 +18,87 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-
-
 const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
   color: '#fff',
 }));
 
 export default function VendorSupplyTable({ darkMode, drawerOpen }) {
   const [rows, setRows] = useState([]);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    // Fetch data from API
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get('/supplies');
-        const dataWithIds = response.data.map((item) => ({
-          ...item,
-          id: uuidv4(), // Generate a unique UUID for each row
-        }));
-        setRows(dataWithIds);
-        console.log(dataWithIds);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
     fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get('/supplies');
+      const dataWithIds = response.data.map((item) => ({
+        ...item,
+        id: uuidv4(),
+      }));
+      setRows(dataWithIds);
+      setSnackbarSeverity('success');
+      setSnackbarMessage('Data fetched successfully!');
+      setSnackbarOpen(true);
+    } catch (error) {
+      handleRequestError(error);
+    }
+  };
+
+  const handleRequestError = (error, serviceName = null) => {
+    let errorMessage = 'An error occurred while processing your request.';
+    if (error.response && error.response.data) {
+      if (error.response.data.errors) {
+        errorMessage = error.response.data.errors.map((err) => err.message).join(', ');
+      } else if (error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
+    }
+    setSnackbarSeverity('error');
+    setSnackbarMessage(serviceName ? `${serviceName}: ${errorMessage}` : errorMessage);
+    setSnackbarOpen(true);
+  };
+
+  const handleDeleteConfirmation = (id) => {
+    setDeleteConfirmation(true);
+    setDeleteId(id);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const rowToDelete = rows.find((row) => row.id === deleteId);
+      if (!rowToDelete) {
+        throw new Error('Row not found');
+      }
+
+      const { supplyId, productName } = rowToDelete;
+      await axiosInstance.delete(`/supplies/${supplyId}/products/${encodeURIComponent(productName)}`);
+      setRows((prevRows) => prevRows.filter((row) => row.id !== deleteId));
+      setSnackbarSeverity('success');
+      setSnackbarMessage('Supply deleted successfully!');
+      setSnackbarOpen(true);
+    } catch (error) {
+      handleRequestError(error);
+    }
+    setDeleteConfirmation(false);
+    setDeleteId(null);
+  };
+
+  const handleCloseDeleteConfirmation = () => {
+    setDeleteConfirmation(false);
+    setDeleteId(null);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const columns = [
     { field: 'date', headerName: 'Date', flex: 1, width: 200, headerAlign: 'center', align: 'center' },
@@ -76,49 +124,18 @@ export default function VendorSupplyTable({ darkMode, drawerOpen }) {
     },
   ];
 
-  const handleDeleteConfirmation = (id) => {
-    setDeleteConfirmation(true);
-    setDeleteId(id);
-  };
-
-  const handleDelete = async () => {
-    try {
-      if (!deleteId) {
-        console.error('No deleteId specified.');
-        return;
-      }
-  
-      // Find the supplyId and productName from the row with deleteId
-      const rowToDelete = rows.find((row) => row.id === deleteId);
-      if (!rowToDelete) {
-        console.error(`Row with id ${deleteId} not found.`);
-        return;
-      }
-  
-      const { supplyId, productName } = rowToDelete;
-  
-      console.log(`Attempting to delete product ${productName} from supply ${supplyId}`);
-      await axiosInstance.delete(`/supplies/${supplyId}/products/${encodeURIComponent(productName)}`);
-      console.log(`Delete successful for product ${productName} from supply ${supplyId}`);
-  
-      // Update the rows state after successful deletion
-      setRows((prevRows) => prevRows.filter((row) => row.id !== deleteId));
-    } catch (error) {
-      console.error('Error deleting data:', error);
-    }
-    setDeleteConfirmation(false);
-    setDeleteId(null);
-  };
-
-  const handleCloseDeleteConfirmation = () => {
-    setDeleteConfirmation(false);
-    setDeleteId(null);
-  };
-
-
-
   return (
-    <Paper elevation={5} style={{ width: '80%', padding: '0.5rem', marginLeft: '10rem', backgroundColor: '#ffffff', marginRight: '1rem', border: '10px solid #D5E9E5' }}>
+    <Paper
+      elevation={5}
+      style={{
+        width: '80%',
+        padding: '0.5rem',
+        marginLeft: '10rem',
+        backgroundColor: '#ffffff',
+        marginRight: '1rem',
+        border: '10px solid #D5E9E5',
+      }}
+    >
       <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px', padding: '0.5rem' }}>
         <DataGrid
           rows={rows}
@@ -155,7 +172,11 @@ export default function VendorSupplyTable({ darkMode, drawerOpen }) {
         </StyledDialogActions>
       </StyledDialog>
 
-      
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Paper>
   );
 }
