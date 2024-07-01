@@ -5,7 +5,8 @@ import { useState, useEffect } from 'react';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import axiosInstance from '../utils/axiosInstance';
-import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, Tooltip, useMediaQuery, useTheme } from '@mui/material';
+import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, useMediaQuery, useTheme,Box,Grid } from '@mui/material';
+import Divider from '@mui/material/Divider';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
@@ -181,22 +182,57 @@ export default function Dashboard({ darkMode, drawerOpen }) {
       </div>
 
       <StyledDialog open={open} onClose={handleClose}>
-        <DialogTitle>Evaluation Result Details</DialogTitle>
-        <DialogContent>
+        <DialogTitle variant='h4'
+              sx={{
+                backgroundColor:'#D1E6E4',
+                color:'#5D6259',
+                fontWeight:'1000',
+                width:'500px',textAlign:'center',
+                padding:'1rem',
+                fontFamily: 'inter'
+                }}>
+                  Evaluation Details
+         </DialogTitle>
+         <Box sx={{ backgroundColor: 'white',paddingLeft:'2rem' }} >
+          <DialogContent sx={{margin:'0.5rem'}}>
           {selectedResults.map((result, index) => (
-            <div key={index} style={{ marginBottom: '8px' }}>
-              <strong>Product Name:</strong> {result.productName} <br />
-              {result.CO2eEmissionPerKg} <strong> kg CO2e/kg</strong> <br />
-              <strong>Vendor Id:</strong> {result.vendorId} <br />
-              <strong>Quantity:</strong> {result.quantity} <br />
-              <strong>Emissions (kg CO2e):</strong> <br />
-              <div style={{ marginLeft: '16px' }}>
-                <span style={{ display: 'inline-block', width: '100px' }}><strong>Inbound</strong></span>: {result.CO2eEmission.Inbound} <br />
-                <span style={{ display: 'inline-block', width: '100px' }}><strong>Outbound</strong></span>: {result.CO2eEmission.Outbound} <br />
-                <span style={{ display: 'inline-block', width: '100px' }}><strong>Production</strong></span>: {result.CO2eEmission.Production} <br />
-              </div>
-              <strong>Total CO2e:</strong> {result.totalCO2eEmission}
+           <div key={index} style={{ marginBottom: '0.5rem' }}>
+              {index > 0 && <Divider sx={{ marginBottom: '1rem',borderColor:'#198773',borderWidth:'0.5rem' }} />} {/* Divider between evaluations */}
+           <Paper elevation={5} style={{ backgroundColor: 'white', marginBottom: '1rem' }}>
+             <Grid container spacing={2} alignItems="center">
+               <Grid item xs={4}>
+                 <Typography variant='h5' sx={{textAlign:'center',fontFamily:'inter',fontWeight:'bold'}}>{result.productName}</Typography>
+               </Grid>
+               <Grid item xs={8}>
+                 <Typography variant='h5' sx={{ backgroundColor: '#198773', color:'#ffffff',padding: '8px', borderRadius: '5px',textAlign:'center',fontFamily:'inter',fontWeight:'bold' }}>
+                   {result.CO2eEmissionPerKg} kg CO2e/kg
+                 </Typography>
+               </Grid>
+             </Grid>
+           </Paper>
+         
+           <div style={{ margin: '1rem 5rem', lineHeight: '2.5rem',fontSize:'20px',fontFamily:'Hahmlet' }}>
+                <strong>Vendor ID</strong>{' '}
+                <span style={{ marginLeft: '5rem' }}>{result.vendorId}</span> <br />
+                <strong>Quantity</strong>{' '}
+                <span style={{ marginLeft: '5rem' }}>{result.quantity}</span> <br />
+                <strong>Emissions (kg CO2e)</strong> <br />
             </div>
+
+
+             <div style={{ marginLeft:'7rem',lineHeight:'2rem',fontFamily:'Hahmlet',fontSize:'18px' }}>
+               <span style={{ display: 'inline-block', width: '150px' }}><strong>Inbound</strong></span> {result.CO2eEmission.Inbound} <br />
+               <span style={{ display: 'inline-block', width: '150px' }}><strong>Outbound</strong></span> {result.CO2eEmission.Outbound} <br />
+               <span style={{ display: 'inline-block', width: '150px' }}><strong>Production</strong></span> {result.CO2eEmission.Production} <br />
+             </div>
+          
+             <strong style={{ marginLeft:'5rem',fontSize: '20px', lineHeight: '2.5rem',fontFamily:'Hahmlet' }}>Total CO2e</strong> {' '}
+                <span style={{ marginLeft: '3.5rem', fontSize: '20px', lineHeight: '2.5rem' }}>{result.totalCO2eEmission}</span>
+                <br />
+
+           
+         </div>
+         
           ))}
         </DialogContent>
         <StyledDialogActions>
@@ -204,7 +240,10 @@ export default function Dashboard({ darkMode, drawerOpen }) {
             Close
           </Button>
         </StyledDialogActions>
+        
+      </Box>
       </StyledDialog>
+
 
       <StyledDialog open={deleteConfirmation} onClose={handleCloseDeleteConfirmation}>
         <DialogTitle>Confirmation</DialogTitle>
