@@ -26,6 +26,7 @@ router.post('/', async (req, res, next) => {
     }
 });
 
+
 router.delete('/:supplyId/products/:productName', async (req, res, next) => {
     const { supplyId, productName } = req.params;
 
