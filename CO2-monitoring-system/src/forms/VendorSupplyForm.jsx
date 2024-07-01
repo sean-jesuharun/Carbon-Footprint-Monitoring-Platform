@@ -3,9 +3,11 @@ import { Card, CardContent, TextField, Button, Typography, Select, MenuItem, For
 import axiosInstance from '../utils/axiosInstance';
 import Navbar from '../Navbar';
 import BackDrop from '../BackDrop';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import dayjs from 'dayjs';
 
 const VendorSupplyForm = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +15,7 @@ const VendorSupplyForm = () => {
     vehicleId: '',
     fuelConsumption: '',
     supplyItems: [{ productName: '', quantity: '' }],
-    date: null
+    date: dayjs(),
   });
 
   const [vendors, setVendors] = useState([]);
@@ -112,8 +114,15 @@ const VendorSupplyForm = () => {
     setSuccess(null);
 
     try {
+      // Convert date to desired format before sending
+      const formattedData = {
+        ...formData,
+        date: formData.date.format('YYYY-MM-DDTHH:mm:ssZ')
+      };
+
       // Send form data to backend API
-      await axiosInstance.post('/supplies', formData);
+      await axiosInstance.post('/supplies', formattedData);
+      console.log(formattedData);
       setSuccess('Supply details submitted successfully');
       setSuccessOpen(true);
 
@@ -123,7 +132,7 @@ const VendorSupplyForm = () => {
         vehicleId: '',
         fuelConsumption: '',
         supplyItems: [{ productName: '', quantity: '' }],
-        date: null
+        date: dayjs(),
       });
     } catch (error) {
       handleRequestError(error);
@@ -157,6 +166,16 @@ const VendorSupplyForm = () => {
     setErrorOpen(false);
     setSuccessOpen(false);
   };
+
+  // Create a custom theme for DateTimePicker
+    const theme = createTheme({
+      palette: {
+        primary: {
+          main: '#198773', // Change this color to whatever you want
+        },
+      },
+    });
+
 
   return (
     <div style={{ minHeight: '100vh', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '30px', backgroundColor: '#ffffff' }}>
@@ -227,9 +246,10 @@ const VendorSupplyForm = () => {
                 />
               </Grid>
               <Grid item xs={12} md={6}>
+              <ThemeProvider theme={theme}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="Select Date"
+                  <DateTimePicker
+                    label="Date and Time"
                     value={formData.date}
                     onChange={(newValue) => {
                       setFormData({ ...formData, date: newValue });
@@ -237,6 +257,7 @@ const VendorSupplyForm = () => {
                     renderInput={(params) => <TextField {...params} fullWidth />}
                   />
                 </LocalizationProvider>
+                </ThemeProvider>
               </Grid>
             </Grid>
             <hr />
