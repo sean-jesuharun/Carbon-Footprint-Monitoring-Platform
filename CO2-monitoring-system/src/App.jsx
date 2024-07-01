@@ -10,10 +10,10 @@ import VerifyEmail from './pages/VerifyEmail.jsx';
 
 import MiniDrawer from './MiniDrawer';
 
-import CarbonEmissionEvaluationForm from './forms/CarbonEmissionEvaluationFrom.jsx';
-import CustomerManagementForm from './forms/CustomerManagementFrom';
+import CarbonEmissionEvaluationForm from './forms/CarbonEmissionEvaluationForm.jsx';
+import CustomerManagementForm from './forms/CustomerManagementForm.jsx';
 import VehicleManagementForm from './forms/VehicleManagementForm';
-import VendorManagementForm from './forms/VendorManagementFrom';
+import VendorManagementForm from './forms/VendorManagementForm.jsx';
 import VendorSupplyForm from './forms/VendorSupplyForm.jsx';
 
 import Dashboard from './pages/Dashboard';
