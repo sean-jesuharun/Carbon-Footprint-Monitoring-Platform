@@ -10,7 +10,6 @@ const VendorManagementForm = () => {
     location: '',
     distanceFromWarehouse: '',
     vendorProducts: [],
-    nonLivestockProducts: [],
   });
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -44,20 +43,6 @@ const VendorManagementForm = () => {
     });
   };
 
-  const handleNonLivestockProductChange = (index, field, value) => {
-    const updatedNonLivestockProducts = [...formData.nonLivestockProducts];
-    const updatedProduct = { ...updatedNonLivestockProducts[index] };
-  
-    updatedProduct[field] = value;
-  
-    updatedNonLivestockProducts[index] = updatedProduct;
-    setFormData({
-      ...formData,
-      nonLivestockProducts: updatedNonLivestockProducts,
-    });
-  };
-  
-
   const addProduct = () => {
     setFormData({
       ...formData,
@@ -76,33 +61,12 @@ const VendorManagementForm = () => {
     });
   };
 
-  const addNonLivestockProduct = () => {
-    setFormData({
-      ...formData,
-      nonLivestockProducts: [
-        ...formData.nonLivestockProducts,
-        {
-          nonLivestockProductName: '',
-        },
-      ],
-    });
-  };
-
   const removeProduct = (index) => {
     const updatedProducts = [...formData.vendorProducts];
     updatedProducts.splice(index, 1);
     setFormData({
       ...formData,
       vendorProducts: updatedProducts,
-    });
-  };
-
-  const removeNonLivestockProduct = (index) => {
-    const updatedNonLivestockProducts = [...formData.nonLivestockProducts];
-    updatedNonLivestockProducts.splice(index, 1);
-    setFormData({
-      ...formData,
-      nonLivestockProducts: updatedNonLivestockProducts,
     });
   };
 
@@ -150,7 +114,6 @@ const VendorManagementForm = () => {
       location: '',
       distanceFromWarehouse: '',
       vendorProducts: [],
-      nonLivestockProducts: [],
     });
   };
 
@@ -271,59 +234,7 @@ const VendorManagementForm = () => {
                 <Button type="button" onClick={() => removeProduct(index)} style={{backgroundColor:'#198773',color:'#ffffff',margin:'0.5rem'}} >Remove</Button>
               </div>
             ))}
-            {formData.nonLivestockProducts.map((product, index) => (
-              <div key={index} style={{ marginBottom: '10px' }}>
-                <TextField
-  select
-  label="Non Livestock Product Name"
-  value={product.nonLivestockProductName}
-  onChange={(e) => handleNonLivestockProductChange(index, 'nonLivestockProductName', e.target.value)}
-  fullWidth
-  required
->
-  <MenuItem value="Wheat & Rye (Bread)">Wheat & Rye (Bread)</MenuItem>
-  <MenuItem value="Maize (Meal)">Maize (Meal)</MenuItem>
-  <MenuItem value="Barley (Beer)">Barley (Beer)</MenuItem>
-  <MenuItem value="Oatmeal">Oatmeal</MenuItem>
-  <MenuItem value="Rice">Rice</MenuItem>
-  <MenuItem value="Potatoes">Potatoes</MenuItem>
-  <MenuItem value="Cassava">Cassava</MenuItem>
-  <MenuItem value="Cane Sugar">Cane Sugar</MenuItem>
-  <MenuItem value="Beet Sugar">Beet Sugar</MenuItem>
-  <MenuItem value="Other Pulses">Other Pulses</MenuItem>
-  <MenuItem value="Peas">Peas</MenuItem>
-  <MenuItem value="Nuts">Nuts</MenuItem>
-  <MenuItem value="Groundnuts">Groundnuts</MenuItem>
-  <MenuItem value="Soymilk">Soymilk</MenuItem>
-  <MenuItem value="Tofu">Tofu</MenuItem>
-  <MenuItem value="Soybean Oil">Soybean Oil</MenuItem>
-  <MenuItem value="Palm Oil">Palm Oil</MenuItem>
-  <MenuItem value="Sunflower Oil">Sunflower Oil</MenuItem>
-  <MenuItem value="Rapeseed Oil">Rapeseed Oil</MenuItem>
-  <MenuItem value="Olive Oil">Olive Oil</MenuItem>
-  <MenuItem value="Tomatoes">Tomatoes</MenuItem>
-  <MenuItem value="Onions & Leeks">Onions & Leeks</MenuItem>
-  <MenuItem value="Root Vegetables">Root Vegetables</MenuItem>
-  <MenuItem value="Brassicas">Brassicas</MenuItem>
-  <MenuItem value="Other Vegetables">Other Vegetables</MenuItem>
-  <MenuItem value="Citrus Fruit">Citrus Fruit</MenuItem>
-  <MenuItem value="Bananas">Bananas</MenuItem>
-  <MenuItem value="Apples">Apples</MenuItem>
-  <MenuItem value="Berries & Grapes">Berries & Grapes</MenuItem>
-  <MenuItem value="Wine">Wine</MenuItem>
-  <MenuItem value="Other Fruit">Other Fruit</MenuItem>
-  <MenuItem value="Coffee">Coffee</MenuItem>
-  <MenuItem value="Dark Chocolate">Dark Chocolate</MenuItem>
-</TextField>
-
-                <Button type="button" onClick={() => removeNonLivestockProduct(index)} style={{backgroundColor:'#198773',color:'#ffffff',margin:'0.5rem'}} >Remove</Button>
-              </div>
-            ))}
-            <div style={{ display: 'flex', gap: '10px' }}>
-            <Button type="button" onClick={addProduct} style={{ backgroundColor:'#198773', color:'#ffffff' }}>ADD LIVESTOCK PRODUCT</Button>
-            <Button type="button" onClick={addNonLivestockProduct} style={{ backgroundColor:'#198773', color:'#ffffff' }}>ADD NON LIVESTOCK PRODUCT</Button>
-            </div>
-
+            <Button type="button" onClick={addProduct} style={{backgroundColor:'#198773',color:'#ffffff'}}>Add Product</Button>
           </CardContent>
         </Card>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5px' }}>

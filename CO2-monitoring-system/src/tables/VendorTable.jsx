@@ -535,12 +535,8 @@ export default function Vendortable({ darkMode, drawerOpen }) {
         <DialogTitle>Delete Confirmation</DialogTitle>
         <DialogContent>Are you sure you want to delete this vendor?</DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDeleteConfirmation} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleDelete} color="primary">
-            Delete
-          </Button>
+        <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#198773' }}>Cancel</Button>
+        <Button onClick={handleDelete} variant="contained" color="error">Delete</Button>
         </DialogActions>
       </Dialog>
 

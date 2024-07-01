@@ -60,9 +60,9 @@ public class GlobalExceptionHandler extends AbstractController {
         Map<String, List<ErrorResponse>> errors = new HashMap<>();
 
         if (userFriendlyMessage == null){
-            errors.put("error", Collections.singletonList(new ErrorResponse(ex.getMessage())));
+            errors.put(ERROR, Collections.singletonList(new ErrorResponse(ex.getMessage())));
         } else {
-            errors.put("error", Collections.singletonList(new ErrorResponse(userFriendlyMessage)));
+            errors.put(ERROR, Collections.singletonList(new ErrorResponse(userFriendlyMessage)));
         }
 
         return handleClientErrorBadRequestResponse(errors);

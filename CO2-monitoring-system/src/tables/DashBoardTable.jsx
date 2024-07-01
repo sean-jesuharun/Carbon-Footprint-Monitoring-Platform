@@ -1,11 +1,9 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Delete, Visibility } from '@mui/icons-material';
-import { useState, useEffect } from 'react';
+import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, Snackbar, Alert, useMediaQuery, useTheme, Box, Grid, Typography } from '@mui/material';
 import { styled } from '@mui/system';
-import axios from 'axios';
 import axiosInstance from '../utils/axiosInstance';
-import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, useMediaQuery, useTheme,Box,Grid } from '@mui/material';
 import Divider from '@mui/material/Divider';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
@@ -34,28 +32,85 @@ export default function Dashboard({ darkMode, drawerOpen }) {
   const [selectedResults, setSelectedResults] = useState([]);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    // Fetch data from API
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get('/evaluations');
-        const data = response.data.map((job) => ({
-          id: job.id,
-          jobName: job.jobName,
-          customerId: job.customerId,
-          vehicleId: job.vehicleId,
-          results: job.results,
-        }));
-        setRows(data);
-        console.log(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
     fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get('/evaluations');
+      const data = response.data.map((job) => ({
+        id: job.id,
+        jobName: job.jobName,
+        customerId: job.customerId,
+        vehicleId: job.vehicleId,
+        results: job.results,
+      }));
+      setRows(data);
+      setSnackbarSeverity('success');
+      setSnackbarMessage('Data fetched successfully!');
+      setSnackbarOpen(true);
+    } catch (error) {
+      handleRequestError(error);
+    }
+  };
+
+  const handleRequestError = (error, serviceName = null) => {
+    let errorMessage = 'An error occurred while processing your request.';
+    if (error.response && error.response.data) {
+      if (error.response.data.errors) {
+        errorMessage = error.response.data.errors.map((err) => err.message).join(', ');
+      } else if (error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
+    }
+    setSnackbarSeverity('error');
+    setSnackbarMessage(serviceName ? `${serviceName}: ${errorMessage}` : errorMessage);
+    setSnackbarOpen(true);
+  };
+
+  const handleDeleteConfirmation = (id) => {
+    setDeleteConfirmation(true);
+    setDeleteId(id);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await axiosInstance.delete(`/evaluations/${deleteId}`);
+      setRows((prevRows) => prevRows.filter((row) => row.id !== deleteId));
+      setSnackbarSeverity('success');
+      setSnackbarMessage('Evaluation deleted successfully!');
+      setSnackbarOpen(true);
+    } catch (error) {
+      handleRequestError(error);
+    }
+    setDeleteConfirmation(false);
+    setDeleteId(null);
+  };
+
+  const handleCloseDeleteConfirmation = () => {
+    setDeleteConfirmation(false);
+    setDeleteId(null);
+  };
+
+  const handleOpen = (results) => {
+    setSelectedResults(results);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const columns = [
     { field: 'jobName', headerName: 'Job Name', width: 200, flex: 1, headerAlign: 'center', align: 'center' },
@@ -105,41 +160,6 @@ export default function Dashboard({ darkMode, drawerOpen }) {
       ),
     },
   ];
-
-  const handleOpen = (results) => {
-    setSelectedResults(results);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleDeleteConfirmation = (id) => {
-    setDeleteConfirmation(true);
-    setDeleteId(id);
-  };
-
-  const handleDelete = async () => {
-    try {
-      console.log(`Attempting to delete row with id ${deleteId}`);
-      await axiosInstance.delete(`/evaluations/${deleteId}`);
-      console.log(`Delete successful for row with id ${deleteId}`);
-      setRows((prevRows) => prevRows.filter((row) => row.id !== deleteId));
-    } catch (error) {
-      console.error('Error deleting data:', error);
-    }
-    setDeleteConfirmation(false);
-    setDeleteId(null);
-  };
-
-  const handleCloseDeleteConfirmation = () => {
-    setDeleteConfirmation(false);
-    setDeleteId(null);
-  };
-
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <Paper
@@ -244,7 +264,6 @@ export default function Dashboard({ darkMode, drawerOpen }) {
       </Box>
       </StyledDialog>
 
-
       <StyledDialog open={deleteConfirmation} onClose={handleCloseDeleteConfirmation}>
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>Are you sure you want to delete this row?</DialogContent>
@@ -257,6 +276,12 @@ export default function Dashboard({ darkMode, drawerOpen }) {
           </Button>
         </StyledDialogActions>
       </StyledDialog>
+
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Paper>
   );
 }
