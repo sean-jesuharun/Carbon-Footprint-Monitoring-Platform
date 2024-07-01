@@ -34,4 +34,14 @@ public class CustomerController {
         return customerServiceImple.getCustomerById(customerId);
     }
 
+    @PutMapping("{customerId}")
+    public CustomerDTO updateCustomer(@PathVariable("customerId") Long customerId, @RequestBody CustomerDTO customerDTO) {
+        return customerServiceImple.updateCustomer(customerId, customerDTO);
+    }
+
+    @DeleteMapping("{customerId}")
+    public void deleteCustomer(@PathVariable("customerId") Long customerId) {
+        customerServiceImple.deleteCustomer(customerId);
+    }
+
 }

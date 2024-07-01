@@ -57,4 +57,22 @@ public class CustomerServiceImple implements CustomerService {
 
     }
 
+    @Transactional
+    public CustomerDTO updateCustomer(Long customerId, CustomerDTO customerDTO) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new NoSuchElementException("Customer not found with id : " + customerId));
+        customer.setCustomerName(customerDTO.getCustomerName().toUpperCase());
+        customer.setLocation(customerDTO.getLocation());
+        customer.setDistanceFromWarehouse(customerDTO.getDistanceFromWarehouse());
+        customerRepository.save(customer);
+        return modelMapper.map(customer, CustomerDTO.class);
+    }
+
+    public void deleteCustomer(Long customerId) {
+        if (!customerRepository.existsById(customerId)) {
+            throw new NoSuchElementException("Customer not found with id : " + customerId);
+        }
+        customerRepository.deleteById(customerId);
+    }
+
 }
