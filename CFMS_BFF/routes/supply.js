@@ -26,4 +26,16 @@ router.post('/', async (req, res, next) => {
     }
 });
 
+router.delete('/:supplyId/products/:productName', async (req, res, next) => {
+    const { supplyId, productName } = req.params;
+
+    try {
+        const serviceUrl = getTargetServiceUrl(SUPPLY_SERVICE_NAME);
+        const response = await axios.delete(`${serviceUrl}/supplies/${supplyId}/products/${productName}`);
+        res.status(response.status).json(response.data);
+    } catch (error) {
+        next(error); // Pass the error to the error handling middleware
+    }
+});
+
 module.exports = router;
