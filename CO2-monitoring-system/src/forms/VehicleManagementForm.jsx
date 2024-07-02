@@ -15,11 +15,11 @@ const VehicleManagementForm = () => {
     fuelType: '',
   });
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [errorOpen, setErrorOpen] = useState(false);
+  const [success, setSuccess] = useState(null);
+  const [successOpen, setSuccessOpen] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,12 +44,12 @@ const VehicleManagementForm = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setSnackbarMessage('');
+    setSuccess(null);
 
     try {
       await axiosInstance.post('/vehicles', formData);
-      setSnackbarMessage('Vehicle details submitted successfully!');
-      setSnackbarOpen(true);
+      setSuccess('Vehicle details submitted successfully!');
+      setSuccessOpen(true);
       resetForm();
     } catch (error) {
       handleRequestError(error);
@@ -72,9 +72,11 @@ const VehicleManagementForm = () => {
   };
 
   const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') return;
-    setSnackbarOpen(false);
+    if (reason === 'clickaway') {
+      return;
+    }
     setErrorOpen(false);
+    setSuccessOpen(false);
   };
 
   const resetForm = () => {
@@ -100,16 +102,6 @@ const VehicleManagementForm = () => {
         </Typography>
         <Card style={{ width: '70%', margin: '2rem auto', borderRadius: '0.5rem', padding: '1rem', border: '10px solid #D5E9E5' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
-            <Snackbar open={errorOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-              <Alert severity="error" onClose={handleSnackbarClose}>
-                {error}
-              </Alert>
-            </Snackbar>
-            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-              <Alert severity="success" onClose={handleSnackbarClose}>
-                {snackbarMessage}
-              </Alert>
-            </Snackbar>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <TextField label="Vehicle Model" name="model" value={formData.model} onChange={handleInputChange} fullWidth required />
@@ -192,6 +184,18 @@ const VehicleManagementForm = () => {
           </Button>
         </div>
       </form>
+
+      <Snackbar open={errorOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert severity="error" onClose={handleSnackbarClose}>
+          {error}
+        </Alert>
+      </Snackbar>
+      <Snackbar open={successOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert severity="success" onClose={handleSnackbarClose}>
+          {success}
+        </Alert>
+      </Snackbar>
+
       <BackDrop open={loading} handleClose={() => setLoading(false)} />
     </div>
   );

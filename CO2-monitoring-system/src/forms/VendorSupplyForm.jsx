@@ -28,26 +28,26 @@ const VendorSupplyForm = () => {
   const [successOpen, setSuccessOpen] = useState(false);
 
   useEffect(() => {
-    // Fetch vendors from backend
+    // Fetch vendors
     const fetchVendors = async () => {
       try {
         const response = await axiosInstance.get('/vendors');
         setVendors(response.data);
       } catch (error) {
-        handleFetchError(error, 'Fetching Vendors');
+        handleRequestError(error, 'Fetching Vendors');
       }
     };
     fetchVendors();
   }, []);
 
   useEffect(() => {
-    // Fetch vehicles from backend
+    // Fetch vehicles
     const fetchVehicles = async () => {
       try {
         const response = await axiosInstance.get('/vehicles');
         setVehicles(response.data);
       } catch (error) {
-        handleFetchError(error, 'Fetching Vehicles');
+        handleRequestError(error, 'Fetching Vehicles');
       }
     };
     fetchVehicles();
@@ -61,7 +61,7 @@ const VendorSupplyForm = () => {
           const response = await axiosInstance.get(`/vendors/${formData.vendorId}`);
           setSupplyItems(response.data.vendorProducts);
         } catch (error) {
-          handleFetchError(error, `Fetching Supply Items for Vendor ${formData.vendorId}`);
+          handleRequestError(error, `Fetching Supply Items for Vendor ${formData.vendorId}`);
         }
       } else {
         setSupplyItems([]);
@@ -120,30 +120,16 @@ const VendorSupplyForm = () => {
         date: formData.date.format('YYYY-MM-DDTHH:mm:ssZ')
       };
 
-      // Send form data to backend API
-      await axiosInstance.post('/supplies', formattedData);
       console.log(formattedData);
+      await axiosInstance.post('/supplies', formattedData);
       setSuccess('Supply details submitted successfully');
       setSuccessOpen(true);
-
-      // Reset the form
-      setFormData({
-        vendorId: '',
-        vehicleId: '',
-        fuelConsumption: '',
-        supplyItems: [{ productName: '', quantity: '' }],
-        date: dayjs(),
-      });
+      resetForm();
     } catch (error) {
       handleRequestError(error);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleFetchError = (error, serviceName) => {
-    console.error(`Error fetching ${serviceName}:`, error);
-    handleRequestError(error, serviceName);
   };
 
   const handleRequestError = (error, serviceName = null) => {
@@ -167,6 +153,16 @@ const VendorSupplyForm = () => {
     setSuccessOpen(false);
   };
 
+  const resetForm = () => {
+    setFormData({
+      vendorId: '',
+      vehicleId: '',
+      fuelConsumption: '',
+      supplyItems: [{ productName: '', quantity: '' }],
+      date: dayjs(),
+    });
+  };
+
   // Create a custom theme for DateTimePicker
     const theme = createTheme({
       palette: {
@@ -186,16 +182,6 @@ const VendorSupplyForm = () => {
         <Typography variant='h3' color='#5D6259' fontWeight={1000}>Vendor Supply Form</Typography>
         <Card style={{ width: '100%', margin: '2rem auto', borderRadius: '0.5rem', padding: '1rem', border: '10px solid #D5E9E5' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
-            <Snackbar open={errorOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-              <Alert severity="error" onClose={handleSnackbarClose}>
-                {error}
-              </Alert>
-            </Snackbar>
-            <Snackbar open={successOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-              <Alert severity="success" onClose={handleSnackbarClose}>
-                {success}
-              </Alert>
-            </Snackbar>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth required style={{ marginBottom: '0.5rem' }}>
@@ -309,6 +295,18 @@ const VendorSupplyForm = () => {
             }}>Submit</Button>
         </div>
       </form>
+      
+      <Snackbar open={errorOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert severity="error" onClose={handleSnackbarClose}>
+          {error}
+        </Alert>
+      </Snackbar>
+      <Snackbar open={successOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert severity="success" onClose={handleSnackbarClose}>
+          {success}
+        </Alert>
+      </Snackbar>
+
       <BackDrop open={loading} handleClose={() => setLoading(false)} />
     </div>
   );

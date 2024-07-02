@@ -39,7 +39,7 @@ const DeliveryForm = () => {
       const response = await axiosInstance.get('/customers');
       setCustomers(response.data);
     } catch (error) {
-      handleFetchError(error, 'Fetching Customers');
+      handleRequestError(error, 'Fetching Customers');
     }
   };
 
@@ -48,7 +48,7 @@ const DeliveryForm = () => {
       const response = await axiosInstance.get('/vehicles');
       setVehicles(response.data);
     } catch (error) {
-      handleFetchError(error, 'Fetching Vehicles');
+      handleRequestError(error, 'Fetching Vehicles');
     }
   };
 
@@ -57,7 +57,7 @@ const DeliveryForm = () => {
       const response = await axiosInstance.get('/vendors');
       setVendors(response.data);
     } catch (error) {
-      handleFetchError(error, 'Fetching Vendors');
+      handleRequestError(error, 'Fetching Vendors');
     }
   };
 
@@ -70,7 +70,7 @@ const DeliveryForm = () => {
           const response = await axiosInstance.get(`/vendors/${item.vendorId}`);
           productsMap[item.vendorId] = response.data.vendorProducts;
         } catch (error) {
-          handleFetchError(error, `Fetching Products for Vendor ${item.vendorId}`);
+          handleRequestError(error, `Fetching Products for Vendor ${item.vendorId}`);
         }
       }
     }
@@ -120,21 +120,15 @@ const DeliveryForm = () => {
 
     try {
       await axiosInstance.post('/evaluations', formData);
-      setSuccess('Form data submitted successfully');
-      resetForm();
+      setSuccess('Evaluation data submitted successfully');
       setSuccessOpen(true);
-
+      resetForm();
     } catch (error) {
       handleRequestError(error);
     }finally{
       setLoading(false);
 
     }
-  };
-
-  const handleFetchError = (error, serviceName) => {
-    console.error(`Error fetching ${serviceName}:`, error);
-    handleRequestError(error, serviceName);
   };
 
   const handleRequestError = (error, serviceName = null) => {
@@ -181,16 +175,6 @@ const DeliveryForm = () => {
         </Typography>
         <Card style={{ width: '100%', margin: '2rem auto', borderRadius: '0.5rem', padding: '1rem', border: '10px solid #D5E9E5' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
-            <Snackbar open={errorOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-              <Alert severity="error" onClose={handleSnackbarClose}>
-                {error}
-              </Alert>
-            </Snackbar>
-            <Snackbar open={successOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-              <Alert severity="success" onClose={handleSnackbarClose}>
-                {success}
-              </Alert>
-            </Snackbar>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <TextField label="Job Name" name="jobName" value={formData.jobName} onChange={handleInputChange} fullWidth required />
@@ -312,8 +296,19 @@ const DeliveryForm = () => {
           </Button>
         </div>
       </form>
-      <BackDrop open={loading} handleClose={() => setLoading(false)} />
 
+      <Snackbar open={errorOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert severity="error" onClose={handleSnackbarClose}>
+          {error}
+        </Alert>
+      </Snackbar>
+      <Snackbar open={successOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert severity="success" onClose={handleSnackbarClose}>
+          {success}
+        </Alert>
+      </Snackbar>
+
+      <BackDrop open={loading} handleClose={() => setLoading(false)} />
     </div>
   );
 };

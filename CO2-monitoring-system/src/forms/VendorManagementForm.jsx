@@ -12,11 +12,11 @@ const VendorManagementForm = () => {
     vendorProducts: [],
   });
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [errorOpen, setErrorOpen] = useState(false);
+  const [success, setSuccess] = useState(null);
+  const [successOpen, setSuccessOpen] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -74,13 +74,12 @@ const VendorManagementForm = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setSnackbarMessage('');
+    setSuccess(null);
 
     try {
-      // Replace '/vendors' with your actual API endpoint for vendor submission
       await axiosInstance.post('/vendors', formData);
-      setSnackbarMessage('Vendor details submitted successfully!');
-      setSnackbarOpen(true);
+      setSuccess('Vendor details submitted successfully!');
+      setSuccessOpen(true);
       resetForm();
     } catch (error) {
       handleRequestError(error);
@@ -103,9 +102,11 @@ const VendorManagementForm = () => {
   };
 
   const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') return;
-    setSnackbarOpen(false);
+    if (reason === 'clickaway') {
+      return;
+    }
     setErrorOpen(false);
+    setSuccessOpen(false);
   };
 
   const resetForm = () => {
@@ -255,17 +256,19 @@ const VendorManagementForm = () => {
           </Button>
         </div>
       </form>
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity="success">
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+
       <Snackbar open={errorOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity="error">
+        <Alert severity="error" onClose={handleSnackbarClose}>
           {error}
         </Alert>
       </Snackbar>
-      {loading && <BackDrop />}
+      <Snackbar open={successOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert severity="success" onClose={handleSnackbarClose}>
+          {success}
+        </Alert>
+      </Snackbar>
+
+      <BackDrop open={loading} handleClose={() => setLoading(false)} />
     </div>
   );
 };
