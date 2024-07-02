@@ -19,14 +19,17 @@ function VendorSupplyManagement() {
       backgroundColor:'#ffffff',
        minHeight: '100vh' }}>        
         <Navbar/>
+
+        <Box p={2} sx={{margin:'0 9rem'}}>
         <Box sx={{ display: 'flex', justifyContent: 'center',marginLeft:'4rem',
             marginTop: { xs: 10, sm: 10 },  }}>
           <Typography variant='h3'  color='#5D6259' fontWeight={1000} >Vendor Supply Management</Typography>
         </Box>
-        <Box display="flex" justifyContent="flex-end" padding="1.6rem">
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Button
         variant='contained'
         sx={{ 
+          marginTop:'1rem',
           padding: '0.5rem 1rem', 
           color: '#ffffff', 
           backgroundColor: '#198773',
@@ -42,6 +45,8 @@ function VendorSupplyManagement() {
           new supply
           </Button>
         </Box>
+        </Box>
+
 
         <VendorSupplyTable/>
 

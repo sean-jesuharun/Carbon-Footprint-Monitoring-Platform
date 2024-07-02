@@ -26,8 +26,6 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Link,useLocation,useNavigate } from 'react-router-dom';
 import { logout } from './Api';
 
-
-
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,

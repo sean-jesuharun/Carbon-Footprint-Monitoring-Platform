@@ -16,11 +16,12 @@ function Dashboard() {
        minHeight: '100vh' }}>
         <Navbar/>
         
+        <Box p={2} sx={{margin:'0 9rem'}}>
         <Box sx={{ display: 'flex', justifyContent: 'center',marginLeft:'4rem',
-            marginTop: { xs: 10, sm: 10 },  }}>
-          <Typography variant='h3'  color='#5D6259' fontWeight={1000} >Carbon Footprint Evaluation Jobs</Typography>
+            marginTop: { xs: 10, sm: 10 }, mb:2 }}>
+          <Typography variant='h3'  color='#5D6259' fontWeight={1000} sx={{marginBottom:'0.5rem'}}>Carbon Footprint Evaluation Jobs</Typography>
         </Box>
-        <Box display="flex" justifyContent="flex-end" padding="1.6rem">
+        <Box display="flex" justifyContent="flex-end"  sx={{mb:2}}>
         <Button
         variant='contained'
         sx={{ 
@@ -39,6 +40,7 @@ function Dashboard() {
         >
              new calculation
         </Button>
+        </Box>
         </Box>
 
         <DashboardTable/>

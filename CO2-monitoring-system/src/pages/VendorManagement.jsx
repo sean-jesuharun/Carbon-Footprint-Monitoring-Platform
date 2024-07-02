@@ -22,9 +22,11 @@ function VendorManagement() {
   return (
       <div style={{ backgroundColor:'#ffffff',minHeight: '100vh' }}>        
         <Navbar/>
+
+        <Box p={2} sx={{margin:'0 9rem'}}>
         <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
+            textAlign:'center',
+            mb:2,
             marginLeft:'4rem',
             marginTop: { xs: 10, sm: 10 }, 
             
@@ -34,11 +36,10 @@ function VendorManagement() {
 
         </Box>
 
-        <Box display="flex" justifyContent="flex-end" padding="1.6rem">
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Button
         variant='contained'
         sx={{ 
-          padding: '0.5rem 1rem', 
           color: '#ffffff', 
           backgroundColor: '#198773',
           '&:hover': {
@@ -53,9 +54,10 @@ function VendorManagement() {
            new vendor
           </Button>
         </Box>
+        </Box>
 
-        <VendorTable />
-
+       <VendorTable />
+      
     </div>
   )
 }

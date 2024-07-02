@@ -61,3 +61,4 @@ export const logout = () => {
 export const fetchProtectedData = () => {
     return axios.get(`${API_URL}/protected-data`, { headers: getAuthHeaders() });
 };
+

@@ -17,13 +17,15 @@ function CustomerManagement() {
       backgroundColor:'#ffffff',
        minHeight: '100vh' }}>
      
-        
         <Navbar/>
+
+        <Box p={2} sx={{margin:'0 9rem'}}>
+
         <Box sx={{ display: 'flex', justifyContent: 'center',marginLeft:'4rem',
             marginTop: { xs: 10, sm: 10 },  }}>
           <Typography variant='h3'  color='#5D6259' fontWeight={1000} >Customer Management</Typography>
         </Box>
-        <Box display="flex" justifyContent="flex-end" padding="1.6rem" sx={{color:'black'}}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Button
         variant='contained'
         sx={{ 
@@ -42,6 +44,8 @@ function CustomerManagement() {
             new customer
           </Button>
         </Box>
+        </Box>
+
         <CustomerTable/>
 
     </div>
