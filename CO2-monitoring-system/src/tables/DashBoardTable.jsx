@@ -38,10 +38,6 @@ export default function Dashboard({ darkMode, drawerOpen }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get('/evaluations');
@@ -54,12 +50,16 @@ export default function Dashboard({ darkMode, drawerOpen }) {
       }));
       setRows(data);
       setSnackbarSeverity('success');
-      setSnackbarMessage('Data fetched successfully!');
+      setSnackbarMessage('Evaluation data fetched successfully!');
       setSnackbarOpen(true);
     } catch (error) {
       handleRequestError(error);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleRequestError = (error, serviceName = null) => {
     let errorMessage = 'An error occurred while processing your request.';
@@ -268,12 +268,8 @@ export default function Dashboard({ darkMode, drawerOpen }) {
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>Are you sure you want to delete this row?</DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#198773' }}>
-            Cancel
-          </Button>
-          <Button onClick={handleDelete} variant="contained" color="error">
-            Delete
-          </Button>
+          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#198773' }}>Cancel</Button>
+          <Button onClick={handleDelete} variant="contained" color="error">Delete</Button>
         </StyledDialogActions>
       </StyledDialog>
 

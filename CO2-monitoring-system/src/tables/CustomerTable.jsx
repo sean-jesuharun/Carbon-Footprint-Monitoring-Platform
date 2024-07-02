@@ -59,21 +59,21 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get('/customers');
       setRows(response.data);
       setSnackbarSeverity('success');
-      setSnackbarMessage('Data fetched successfully!');
+      setSnackbarMessage('Customer data fetched successfully!');
       setSnackbarOpen(true);
     } catch (error) {
       handleRequestError(error);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleRequestError = (error, serviceName = null) => {
     let errorMessage = 'An error occurred while processing your request.';
@@ -132,14 +132,14 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
     setDeleteId(null);
   };
 
-  const handleCloseDeleteConfirmation = () => {
-    setDeleteConfirmation(false);
-    setDeleteId(null);
-  };
-
   const handleCloseEditDialog = () => {
     setEditDialogOpen(false);
     setCurrentRow({});
+  };
+
+  const handleCloseDeleteConfirmation = () => {
+    setDeleteConfirmation(false);
+    setDeleteId(null);
   };
 
   const handleSnackbarClose = () => {

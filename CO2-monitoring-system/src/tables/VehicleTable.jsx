@@ -56,13 +56,15 @@ export default function VehicleTable({ darkMode, drawerOpen }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get('/vehicles');
       setRows(response.data);
       setSnackbarSeverity('success');
-      setSnackbarMessage('Data fetched successfully!');
+      setSnackbarMessage('Vehicle data fetched successfully!');
       setSnackbarOpen(true);
     } catch (error) {
       handleRequestError(error);
@@ -75,8 +77,12 @@ export default function VehicleTable({ darkMode, drawerOpen }) {
 
   const handleRequestError = (error, serviceName = null) => {
     let errorMessage = 'An error occurred while processing your request.';
-    if (error.response && error.response.data && error.response.data.errors) {
-      errorMessage = error.response.data.errors.map((err) => err.message).join(', ');
+    if (error.response && error.response.data) {
+      if (error.response.data.errors) {
+        errorMessage = error.response.data.errors.map((err) => err.message).join(', ');
+      } else if (error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
     }
     setSnackbarSeverity('error');
     setSnackbarMessage(serviceName ? `${serviceName}: ${errorMessage}` : errorMessage);
@@ -126,22 +132,19 @@ export default function VehicleTable({ darkMode, drawerOpen }) {
     setDeleteId(null);
   };
 
-  const handleCloseDeleteConfirmation = () => {
-    setDeleteConfirmation(false);
-    setDeleteId(null);
-  };
-
   const handleCloseEditDialog = () => {
     setEditDialogOpen(false);
     setCurrentRow({});
   };
 
+  const handleCloseDeleteConfirmation = () => {
+    setDeleteConfirmation(false);
+    setDeleteId(null);
+  };
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
-
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const columns = [
     { field: 'model', headerName: 'Model', flex: 1, width: 200, headerAlign: 'center', align: 'center' },

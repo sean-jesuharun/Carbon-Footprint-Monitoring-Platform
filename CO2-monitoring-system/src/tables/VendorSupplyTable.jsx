@@ -32,10 +32,6 @@ export default function VendorSupplyTable({ darkMode, drawerOpen }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get('/supplies');
@@ -45,12 +41,16 @@ export default function VendorSupplyTable({ darkMode, drawerOpen }) {
       }));
       setRows(dataWithIds);
       setSnackbarSeverity('success');
-      setSnackbarMessage('Data fetched successfully!');
+      setSnackbarMessage('Supply data fetched successfully!');
       setSnackbarOpen(true);
     } catch (error) {
       handleRequestError(error);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleRequestError = (error, serviceName = null) => {
     let errorMessage = 'An error occurred while processing your request.';

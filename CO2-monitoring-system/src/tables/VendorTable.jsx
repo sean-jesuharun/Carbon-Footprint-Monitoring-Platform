@@ -80,10 +80,6 @@ export default function Vendortable({ darkMode, drawerOpen }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get('/vendors');
@@ -102,12 +98,16 @@ export default function Vendortable({ darkMode, drawerOpen }) {
       }));
       setRows(data);
       setSnackbarSeverity('success');
-      setSnackbarMessage('Data fetched successfully!');
+      setSnackbarMessage('Vendor data fetched successfully!');
       setSnackbarOpen(true);
     } catch (error) {
       handleRequestError(error);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleRequestError = (error, serviceName = null) => {
     let errorMessage = 'An error occurred while processing your request.';
@@ -122,48 +122,6 @@ export default function Vendortable({ darkMode, drawerOpen }) {
     setSnackbarMessage(serviceName ? `${serviceName}: ${errorMessage}` : errorMessage);
     setSnackbarOpen(true);
   };
-
-  const columns = [
-    { field: 'vendorName', headerName: 'Name', flex: 1, width: 200, headerAlign: 'center', align: 'center' },
-    { field: 'location', headerName: 'Location', flex: 1, width: 150, headerAlign: 'center', align: 'center' },
-    { field: 'distanceFromWarehouse', headerName: 'Distance From Warehouse', flex: 1, width: 180, headerAlign: 'center', align: 'center' },
-    {
-      field: 'vendorProducts',
-      headerName: 'Products Details',
-      flex: 1,
-      width: 300,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (params) => (
-        <Tooltip title="View Product Details" arrow placement="right">
-          <Button
-            style={{ backgroundColor: '#198773', color: '#ffffff', flex: 1, height: 32, width: 150 }}
-            onClick={() => handleViewProducts(params.row.id)}
-          >
-            <BlueIconButton><Visibility /></BlueIconButton>
-            Product
-          </Button>
-        </Tooltip>
-      ),
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 1,
-      width: 120,
-      headerAlign: 'center',
-      align: 'center',
-      sortable: false,
-      filterable: false,
-      disableColumnMenu: true,
-      renderCell: (params) => (
-        <div>
-          <GreenIconButton onClick={() => handleEdit(params.row.id)} sx={{ padding: '5px' }}><Edit /></GreenIconButton>
-          <RedIconButton onClick={() => handleDeleteConfirmation(params.row.id)} sx={{ padding: '5px' }}><Delete /></RedIconButton>
-        </div>
-      ),
-    },
-  ];
 
   const handleViewProducts = (id) => {
     const rowToView = rows.find((row) => row.id === id);
@@ -224,23 +182,19 @@ export default function Vendortable({ darkMode, drawerOpen }) {
     setDeleteId(null);
   };
 
-  const handleCloseDeleteConfirmation = () => {
-    setDeleteConfirmation(false);
-    setDeleteId(null);
-  };
-
   const handleCloseEditDialog = () => {
     setEditDialogOpen(false);
     setCurrentRow({});
   };
 
+  const handleCloseDeleteConfirmation = () => {
+    setDeleteConfirmation(false);
+    setDeleteId(null);
+  };
+
   const handleCloseViewDialog = () => {
     setViewDialogOpen(false);
     setViewProducts([]);
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
   };
 
   const handleAddProductDialogOpen = () => {
@@ -272,7 +226,7 @@ export default function Vendortable({ darkMode, drawerOpen }) {
         (product) => product.productName === newProduct.productName.toUpperCase()
       );
   
-      // Construct a new object with specific properties
+      // Construct a new product object with UI specific format
       const addedProductDetail = {
         productName: addedProduct.productName,
         animalSpecies: addedProduct.productionMatrix.animalSpecies,
@@ -345,6 +299,52 @@ export default function Vendortable({ darkMode, drawerOpen }) {
       handleRequestError(error);
     }
   };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const columns = [
+    { field: 'vendorName', headerName: 'Name', flex: 1, width: 200, headerAlign: 'center', align: 'center' },
+    { field: 'location', headerName: 'Location', flex: 1, width: 150, headerAlign: 'center', align: 'center' },
+    { field: 'distanceFromWarehouse', headerName: 'Distance From Warehouse', flex: 1, width: 180, headerAlign: 'center', align: 'center' },
+    {
+      field: 'vendorProducts',
+      headerName: 'Products Details',
+      flex: 1,
+      width: 300,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => (
+        <Tooltip title="View Product Details" arrow placement="right">
+          <Button
+            style={{ backgroundColor: '#198773', color: '#ffffff', flex: 1, height: 32, width: 150 }}
+            onClick={() => handleViewProducts(params.row.id)}
+          >
+            <BlueIconButton><Visibility /></BlueIconButton>
+            Product
+          </Button>
+        </Tooltip>
+      ),
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      flex: 1,
+      width: 120,
+      headerAlign: 'center',
+      align: 'center',
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => (
+        <div>
+          <GreenIconButton onClick={() => handleEdit(params.row.id)} sx={{ padding: '5px' }}><Edit /></GreenIconButton>
+          <RedIconButton onClick={() => handleDeleteConfirmation(params.row.id)} sx={{ padding: '5px' }}><Delete /></RedIconButton>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <Paper elevation={5} style={{ width: '80%', padding: '0.5rem', marginLeft: '10rem', backgroundColor: '#ffffff', marginRight: '1rem', border: '10px solid #D5E9E5' }}>
