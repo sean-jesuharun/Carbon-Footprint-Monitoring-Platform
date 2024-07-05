@@ -1,16 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Delete, Visibility } from '@mui/icons-material';
-import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, Snackbar, Alert, useMediaQuery, useTheme, Box, Grid, Typography } from '@mui/material';
+import { 
+  IconButton, 
+  Paper, 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogActions, 
+  Button, 
+  Snackbar, 
+  Alert, 
+  useMediaQuery, 
+  useTheme, 
+  Box, 
+  Grid, 
+  Typography, 
+  Accordion, 
+  AccordionSummary, 
+  AccordionDetails,
+  Divider 
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from '@mui/system';
 import axiosInstance from '../utils/axiosInstance';
-import Divider from '@mui/material/Divider';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
     backgroundColor: '#ffffff',
     color: 'black',
-    border: '10px solid #D5E9E5',
+    // border: '10px solid #D5E9E5',
   },
 }));
 
@@ -202,74 +221,103 @@ export default function Dashboard({ darkMode, drawerOpen }) {
       </div>
 
       <StyledDialog open={open} onClose={handleClose}>
-        <DialogTitle variant='h4'
-              sx={{
-                backgroundColor:'#D1E6E4',
-                color:'#5D6259',
-                fontWeight:'1000',
-                width:'500px',textAlign:'center',
-                padding:'1rem',
-                fontFamily: 'inter'
-                }}>
-                  Evaluation Details
-         </DialogTitle>
-         <Box sx={{ backgroundColor: 'white',paddingLeft:'2rem' }} >
-          <DialogContent sx={{margin:'0.5rem'}}>
-          {selectedResults.map((result, index) => (
-           <div key={index} style={{ marginBottom: '0.5rem' }}>
-              {index > 0 && <Divider sx={{ marginBottom: '1rem',borderColor:'#198773',borderWidth:'0.5rem' }} />} {/* Divider between evaluations */}
-           <Paper elevation={5} style={{ backgroundColor: 'white', marginBottom: '1rem' }}>
-             <Grid container spacing={2} alignItems="center">
-               <Grid item xs={4}>
-                 <Typography variant='h5' sx={{textAlign:'center',fontFamily:'inter',fontWeight:'bold'}}>{result.productName}</Typography>
-               </Grid>
-               <Grid item xs={8}>
-                 <Typography variant='h5' sx={{ backgroundColor: '#198773', color:'#ffffff',padding: '8px', borderRadius: '5px',textAlign:'center',fontFamily:'inter',fontWeight:'bold' }}>
-                   {result.CO2eEmissionPerKg} kg CO2e/kg
-                 </Typography>
-               </Grid>
-             </Grid>
-           </Paper>
-         
-           <div style={{ margin: '1rem 5rem', lineHeight: '2.5rem',fontSize:'20px',fontFamily:'Hahmlet' }}>
-                <strong>Vendor ID</strong>{' '}
-                <span style={{ marginLeft: '5rem' }}>{result.vendorId}</span> <br />
-                <strong>Quantity</strong>{' '}
-                <span style={{ marginLeft: '5rem' }}>{result.quantity}</span> <br />
-                <strong>Emissions (kg CO2e)</strong> <br />
-            </div>
-
-
-             <div style={{ marginLeft:'7rem',lineHeight:'2rem',fontFamily:'Hahmlet',fontSize:'18px' }}>
-               <span style={{ display: 'inline-block', width: '150px' }}><strong>Inbound</strong></span> {result.CO2eEmission.Inbound} <br />
-               <span style={{ display: 'inline-block', width: '150px' }}><strong>Outbound</strong></span> {result.CO2eEmission.Outbound} <br />
-               <span style={{ display: 'inline-block', width: '150px' }}><strong>Production</strong></span> {result.CO2eEmission.Production} <br />
-             </div>
-          
-             <strong style={{ marginLeft:'5rem',fontSize: '20px', lineHeight: '2.5rem',fontFamily:'Hahmlet' }}>Total CO2e</strong> {' '}
-                <span style={{ marginLeft: '3.5rem', fontSize: '20px', lineHeight: '2.5rem' }}>{result.totalCO2eEmission}</span>
-                <br />
-
-           
-         </div>
-         
-          ))}
-        </DialogContent>
-        <StyledDialogActions>
-          <Button onClick={handleClose} sx={{ color: '#198773' }}>
-            Close
-          </Button>
-        </StyledDialogActions>
-        
-      </Box>
+        <DialogTitle
+          variant='h4'
+          sx={{
+            backgroundColor: '#D1E6E4',
+            color: '#5D6259',
+            fontWeight: '1000',
+            // width: '550px',
+            textAlign: 'center',
+            padding: '1rem',
+            fontFamily: 'Inter',
+          }}
+        >
+          Evaluation Details
+        </DialogTitle>
+        <Box sx={{ backgroundColor: 'white', padding: '0.5rem' }}>
+          <DialogContent sx={{ margin: '0.5rem' }}>
+            {selectedResults.map((result, index) => (
+              <div key={index} style={{ marginBottom: '0.5rem' }}>
+                <Paper elevation={6} style={{ backgroundColor: '#F5F7F8', marginBottom: '1rem', padding: '1rem' }}>
+                  <Grid container spacing={2} alignItems="center" style={{ marginBottom: '0.5rem'}}>
+                    <Grid item xs={12} sm={5}>
+                      <Typography
+                        variant="h5"
+                        sx={{ textAlign: 'center', fontFamily: 'Inter', fontWeight: 'bold', marginBottom: '0.5rem' }}
+                      >
+                        {result.productName}
+                      </Typography>
+                      <Typography
+                        variant="h5"
+                        sx={{
+                          backgroundColor: '#3f7b70',
+                          color: '#ffffff',
+                          padding: '8px',
+                          borderRadius: '5px',
+                          textAlign: 'center',
+                          fontFamily: 'Inter',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {result.CO2eEmissionPerKg} kg CO2e/kg
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={1}>
+                      <Divider orientation="vertical" sx={{ height: '100%', backgroundColor: '#198773', borderWidth: '1px' }} />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <div style={{ margin: '1rem 0', lineHeight: '2.5rem', fontSize: '16px', fontFamily: 'Hahmlet' }}>
+                        <strong>Vendor ID</strong>{' '}
+                        <span style={{ marginLeft: '5rem' }}>{result.vendorId}</span> <br />
+                        <strong>Quantity</strong>{' '}
+                        <span style={{ marginLeft: '5rem' }}>{result.quantity}</span> <br />
+                      </div>
+                    </Grid>
+                  </Grid>
+                  <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ backgroundColor: '#dddddd' }}>
+                      <Typography sx={{ fontFamily: 'Inter', fontWeight: 'bold', color: '#5D6259' }}>
+                        Total Emission: {result.totalCO2eEmission} kg CO2e
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <div style={{ lineHeight: '2rem', fontFamily: 'Hahmlet', fontSize: '16px' }}>
+                        <div>
+                          <strong>Inbound: </strong> {result.CO2eEmission.Inbound} kg CO2e
+                        </div>
+                        <div>
+                          <strong>Outbound: </strong> {result.CO2eEmission.Outbound} kg CO2e
+                        </div>
+                        <div>
+                          <strong>Production: </strong> {result.CO2eEmission.Production} kg CO2e
+                        </div>
+                      </div>
+                    </AccordionDetails>
+                  </Accordion>
+                </Paper>
+              </div>
+            ))}
+          </DialogContent>
+          <StyledDialogActions>
+            <Button onClick={handleClose} sx={{ color: '#198773' }}>
+              Close
+            </Button>
+          </StyledDialogActions>
+        </Box>
       </StyledDialog>
+
 
       <StyledDialog open={deleteConfirmation} onClose={handleCloseDeleteConfirmation}>
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>Are you sure you want to delete this row?</DialogContent>
         <StyledDialogActions>
-          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#198773' }}>Cancel</Button>
-          <Button onClick={handleDelete} variant="contained" color="error">Delete</Button>
+          <Button onClick={handleCloseDeleteConfirmation} sx={{ color: '#198773' }}>
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} variant="contained" color="error">
+            Delete
+          </Button>
         </StyledDialogActions>
       </StyledDialog>
 
