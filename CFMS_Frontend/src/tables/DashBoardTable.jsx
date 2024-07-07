@@ -1,29 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Delete, Visibility } from '@mui/icons-material';
-import { 
-  IconButton, 
-  Paper, 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogActions, 
-  Button, 
-  Snackbar, 
-  Alert, 
-  useMediaQuery, 
-  useTheme, 
-  Box, 
-  Grid, 
-  Typography, 
-  Accordion, 
-  AccordionSummary, 
-  AccordionDetails,
-  Divider 
-} from '@mui/material';
+import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, Snackbar, Alert, useMediaQuery, useTheme, Box, Grid, Typography, Accordion, AccordionSummary, AccordionDetails,Divider, Select, MenuItem, } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from '@mui/system';
 import axiosInstance from '../utils/axiosInstance';
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, RadialBarChart, RadialBar, Cell, XAxis, YAxis, Tooltip, Legend, CartesianGrid, Label} from 'recharts';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
@@ -180,45 +162,203 @@ export default function Dashboard({ darkMode, drawerOpen }) {
     },
   ];
 
+  const Statistics = ({ evaluations }) => {
+
+    const [selectedProduct, setSelectedProduct] = useState('');
+    
+    const productEmissions = evaluations.reduce((acc, evaluation) => {
+      evaluation.results.forEach(result => {
+        if (!acc[result.productName]) {
+          acc[result.productName] = { Inbound: 0, Outbound: 0, Production: 0, total: 0 };
+        }
+        acc[result.productName].Inbound += result.CO2eEmission.Inbound;
+        acc[result.productName].Outbound += result.CO2eEmission.Outbound;
+        acc[result.productName].Production += result.CO2eEmission.Production;
+        acc[result.productName].total += result.totalCO2eEmission;
+      });
+      return acc;
+    }, {});
+  
+    const productData = Object.keys(productEmissions).map(productName => ({
+      productName: productName,
+      ...productEmissions[productName],
+    }));
+
+    // const vendorEmissions = evaluations.reduce((acc, evaluation) => {
+    //   evaluation.results.forEach(result => {
+    //     const vendorId = result.vendorId;
+    //     if (!acc[vendorId]) {
+    //       acc[vendorId] = { Inbound: 0, Outbound: 0, Production: 0, total: 0 };
+    //     }
+    //     acc[vendorId].Inbound += result.CO2eEmission.Inbound;
+    //     acc[vendorId].Outbound += result.CO2eEmission.Outbound;
+    //     acc[vendorId].Production += result.CO2eEmission.Production;
+    //     acc[vendorId].total += result.totalCO2eEmission;
+    //   });
+    //   return acc;
+    // }, {});
+    
+    // const vendorData = Object.keys(vendorEmissions).map(vendorId => ({
+    //   vendorId: parseInt(vendorId),
+    //   ...vendorEmissions[vendorId],
+    // }));
+
+    // Filter data for selected product
+    const selectedProductData = productData.find(item => item.productName === selectedProduct);
+    // Colors for different emissions
+    const COLORS = ['#8884d8', '#82ca9d', '#ffc658'];
+  
+    return (
+      <Box sx={{ width: '100%', padding: '1rem' }}>
+        <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: '1rem' }}>
+          Emissions Statistics
+        </Typography>
+        
+        <Grid container spacing={3}>
+
+          <Grid item xs={12} md={6}>
+            <BarChart width={600} height={400} data={productData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="productName" />
+              <YAxis
+                label={{ value: 'kg CO2e', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
+                tick={{ dy: 10 }}
+              />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="Inbound" fill="#8884d8" />
+              <Bar dataKey="Outbound" fill="#82ca9d" />
+              <Bar dataKey="Production" fill="#ffc658" />
+              <Bar dataKey="total" fill="#ff7300" />
+            </BarChart>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <LineChart width={600} height={400} data={productData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="productName" />
+              <YAxis
+                label={{ value: 'kg CO2e', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
+                tick={{ dy: 10 }}
+              />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="Inbound" stroke="#8884d8" />
+              <Line type="monotone" dataKey="Outbound" stroke="#82ca9d" />
+              <Line type="monotone" dataKey="Production" stroke="#ffc658" />
+              <Line type="monotone" dataKey="total" stroke="#ff7300" />
+            </LineChart>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+
+            <Grid container spacing={1} alignItems="center" justifyContent="center" style={{ height: '50vh' }}>
+              
+              <Grid item xs={12} sm={5} container direction="column" alignItems="center">
+                {!selectedProduct && (
+                  <Typography variant="h5" sx={{ textAlign: 'center', marginBottom: '1rem' }}>
+                    Select a Product to view Emission Detail
+                  </Typography>
+                )}
+                <Select
+                  value={selectedProduct}
+                  onChange={(e) => setSelectedProduct(e.target.value)}
+                  displayEmpty
+                  fullWidth
+                >
+                  <MenuItem value="" disabled>
+                    Select Product
+                  </MenuItem>
+                  {productData.map((product, index) => (
+                    <MenuItem key={index} value={product.productName}>
+                      {product.productName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Grid>
+
+              <Grid item xs={12} sm={7} container alignItems="center" justifyContent="center">
+                {selectedProductData && (
+                  <PieChart width={400} height={400}>
+                    <Pie
+                      data={[
+                        { name: 'Inbound', value: parseFloat(selectedProductData.Inbound) },
+                        { name: 'Outbound', value: parseFloat(selectedProductData.Outbound) },
+                        { name: 'Production', value: parseFloat(selectedProductData.Production) },
+                      ]}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      fill="#8884d8"
+                      label
+                    >
+                      {productData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                      <Label value={selectedProduct} position="center" />
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                )}
+              </Grid>
+
+            </Grid>
+
+          </Grid>
+
+        </Grid>
+
+      </Box>
+    );
+  };
+
   return (
-    <Paper
-      elevation={5}
-      style={{
-        width: '80%',
-        padding: '0.5rem',
-        marginLeft: '10rem',
-        backgroundColor: '#ffffff',
-        transition: 'margin-left 0.3s',
-        marginRight: '1rem',
-        border: '10px solid #D5E9E5',
-      }}
-    >
-      <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px', padding: '0.5rem' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 10 },
-            },
-          }}
-          pageSizeOptions={[5, 10]}
-          sx={{
-            padding: '1rem',
-            '& .MuiDataGrid-columnHeaders': {
-              color: 'black',
-              fontSize: '1rem',
-              fontWeight: 'bold',
-            },
-            '& .MuiDataGrid-columnHeader': {
-              backgroundColor: '#D1E6E4',
-            },
-            '& .MuiDataGrid-footerContainer': {
-              backgroundColor: '#D1E6E4',
-            },
-          }}
-        />
-      </div>
+
+    <React.Fragment>
+
+      <Paper
+        elevation={5}
+        style={{
+          width: '80%',
+          padding: '0.5rem',
+          marginLeft: '10rem',
+          marginRight: '1rem',
+          backgroundColor: '#ffffff',
+          transition: 'margin-left 0.3s',
+          border: '10px solid #D5E9E5',
+          height: 'auto', // Ensures the height adjusts according to the content
+        }}
+      >
+      {/* <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px', padding: '0.5rem' }}> */}
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        initialState={{
+          pagination: {
+            paginationModel: { page: 0, pageSize: 10 },
+          },
+        }}
+        pageSizeOptions={[5, 10]}
+        autoHeight
+        sx={{
+          padding: '1rem',
+          '& .MuiDataGrid-columnHeaders': {
+            color: 'black',
+            fontSize: '1rem',
+            fontWeight: 'bold',
+          },
+          '& .MuiDataGrid-columnHeader': {
+            backgroundColor: '#D1E6E4',
+          },
+          '& .MuiDataGrid-footerContainer': {
+            backgroundColor: '#D1E6E4',
+          },
+        }}
+      />
+      {/* </div> */}
 
       <StyledDialog open={open} onClose={handleClose}>
         <DialogTitle
@@ -327,5 +467,21 @@ export default function Dashboard({ darkMode, drawerOpen }) {
         </Alert>
       </Snackbar>
     </Paper>
+
+    <Paper
+      elevation={0}
+      style={{
+        padding: '0.5rem',
+        marginTop: '1rem',
+        marginLeft: '5rem',
+        backgroundColor: '#ffffff',
+        transition: 'margin-left 0.3s',
+      }}
+    >
+      <Statistics evaluations={rows} />
+    </Paper>
+
+    </React.Fragment>
+
   );
 }
