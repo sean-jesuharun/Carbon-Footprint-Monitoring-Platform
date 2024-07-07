@@ -3,6 +3,7 @@ package org.cfms.customerservicecfms.service.implementation;
 import jakarta.transaction.Transactional;
 import org.cfms.customerservicecfms.dto.CustomerDTO;
 import org.cfms.customerservicecfms.entity.Customer;
+import org.cfms.customerservicecfms.exception.CustomerNotFoundException;
 import org.cfms.customerservicecfms.repository.CustomerRepository;
 import org.cfms.customerservicecfms.service.CustomerService;
 import org.modelmapper.ModelMapper;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class CustomerServiceImple implements CustomerService {
@@ -53,14 +53,14 @@ public class CustomerServiceImple implements CustomerService {
 
         return customerRepository.findById(customerId)
                 .map(customer -> modelMapper.map(customer, CustomerDTO.class))
-                .orElseThrow(() -> new NoSuchElementException("Customer not found with Id : " + customerId));
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found with Id : " + customerId));
 
     }
 
     @Transactional
     public CustomerDTO updateCustomer(Long customerId, CustomerDTO customerDTO) {
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new NoSuchElementException("Customer not found with id : " + customerId));
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found with id : " + customerId));
         customer.setCustomerName(customerDTO.getCustomerName().toUpperCase());
         customer.setLocation(customerDTO.getLocation());
         customer.setDistanceFromWarehouse(customerDTO.getDistanceFromWarehouse());
@@ -70,7 +70,7 @@ public class CustomerServiceImple implements CustomerService {
 
     public void deleteCustomer(Long customerId) {
         if (!customerRepository.existsById(customerId)) {
-            throw new NoSuchElementException("Customer not found with id : " + customerId);
+            throw new CustomerNotFoundException("Customer not found with id : " + customerId);
         }
         customerRepository.deleteById(customerId);
     }

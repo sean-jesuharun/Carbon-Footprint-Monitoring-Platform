@@ -1,16 +1,17 @@
 package org.cfms.customerservicecfms.controller;
 
+import jakarta.validation.Valid;
 import org.cfms.customerservicecfms.dto.CustomerDTO;
 import org.cfms.customerservicecfms.service.implementation.CustomerServiceImple;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("customers")
 @CrossOrigin
-public class CustomerController {
+public class CustomerController extends AbstractController{
 
     private CustomerServiceImple customerServiceImple;
 
@@ -20,28 +21,29 @@ public class CustomerController {
     }
 
     @GetMapping
-    public List<CustomerDTO> getCustomers() {
-        return customerServiceImple.getCustomers();
+    public ResponseEntity<Object> getCustomers() {
+        return handleSuccessfulOkResponse(customerServiceImple.getCustomers());
     }
 
     @PostMapping
-    public CustomerDTO createCustomer(@RequestBody CustomerDTO customerDTO) {
-        return customerServiceImple.createCustomer(customerDTO);
+    public ResponseEntity<Object> createCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
+        return handleSuccessfulCreatedResponse(customerServiceImple.createCustomer(customerDTO));
     }
 
     @GetMapping("{customerId}")
-    public CustomerDTO getCustomerById(@PathVariable("customerId") Long customerId) {
-        return customerServiceImple.getCustomerById(customerId);
+    public ResponseEntity<Object> getCustomerById(@PathVariable("customerId") Long customerId) {
+        return handleSuccessfulOkResponse(customerServiceImple.getCustomerById(customerId));
     }
 
     @PutMapping("{customerId}")
-    public CustomerDTO updateCustomer(@PathVariable("customerId") Long customerId, @RequestBody CustomerDTO customerDTO) {
-        return customerServiceImple.updateCustomer(customerId, customerDTO);
+    public ResponseEntity<Object> updateCustomer(@PathVariable("customerId") Long customerId, @Valid @RequestBody CustomerDTO customerDTO) {
+        return handleSuccessfulOkResponse(customerServiceImple.updateCustomer(customerId, customerDTO));
     }
 
     @DeleteMapping("{customerId}")
-    public void deleteCustomer(@PathVariable("customerId") Long customerId) {
+    public ResponseEntity<HttpStatus> deleteCustomer(@PathVariable("customerId") Long customerId) {
         customerServiceImple.deleteCustomer(customerId);
+        return handleSuccessfulNoContentResponse();
     }
 
 }
