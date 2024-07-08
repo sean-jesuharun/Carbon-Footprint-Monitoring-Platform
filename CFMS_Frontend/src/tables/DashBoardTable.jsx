@@ -5,7 +5,284 @@ import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, B
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from '@mui/system';
 import axiosInstance from '../utils/axiosInstance';
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, RadialBarChart, RadialBar, Cell, XAxis, YAxis, Tooltip, Legend, CartesianGrid, Label} from 'recharts';
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, RadialBarChart, RadialBar, Cell, XAxis, YAxis, Tooltip, Legend, CartesianGrid, Label, ScatterChart, Scatter} from 'recharts';
+
+const Statistics = ({ evaluations }) => {
+
+  const toolTipStyles = {
+    tooltipContainer: {
+      backgroundColor: '#fff',
+      padding: '10px',
+      border: '1px solid #ccc',
+      borderRadius: '5px',
+      boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+      fontFamily: 'Arial, sans-serif',
+      fontSize: '14px',
+      color: '#333',
+    },
+    productName: {
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginBottom: '8px',
+      fontSize: '16px',
+    },
+    tooltipText: {
+      margin: '4px 0',
+    },
+    tooltipValue: {
+      fontWeight: 'bold',
+      color: '#555',
+    },
+    totalEmission: {
+      marginTop: '10px',
+    },
+    totalTitle: {
+      fontWeight: 'bold',
+      marginBottom: '5px',
+    },
+  };
+
+  const [selectedProduct, setSelectedProduct] = useState('');
+
+  // Data For Bar chart and Pie chart
+  const productEmissions = evaluations.reduce((acc, evaluation) => {
+    evaluation.results.forEach(result => {
+      if (!acc[result.productName]) {
+        acc[result.productName] = { inbound: 0, outbound: 0, production: 0, quantity: 0, total: 0 };
+      }
+      acc[result.productName].inbound += result.CO2eEmission.inbound;
+      acc[result.productName].outbound += result.CO2eEmission.outbound;
+      acc[result.productName].production += result.CO2eEmission.production;
+      acc[result.productName].quantity += result.quantity;
+      acc[result.productName].total += result.totalCO2eEmission;
+    });
+    return acc;
+  }, {});
+
+  const productGroupedData = Object.keys(productEmissions).map(productName => ({
+    productName: productName,
+    ...productEmissions[productName],
+  }));
+
+  const selectedProductData = productGroupedData.find(item => item.productName === selectedProduct);
+
+  // Data for Scatter plot for every delivery product.
+  const productData = evaluations.reduce((acc, evaluation) => {
+    evaluation.results.forEach(result => {
+      if (!acc[result.productName]) {
+        acc[result.productName] = [];
+      }
+      acc[result.productName].push({
+        quantity: result.quantity,
+        emissionPerKg: parseFloat(result.CO2eEmissionPerKg),
+        productName: result.productName,
+        customerId: evaluation.customerId,
+        vendorId: result.vendorId,
+        totalCO2eEmission: result.totalCO2eEmission,
+        inbound: result.CO2eEmission.inbound,
+        outbound: result.CO2eEmission.outbound,
+        production: result.CO2eEmission.production
+      });
+    });
+    return acc;
+  }, {});
+
+  // Barchart custom tooltip
+  const CustomBarChartTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="custom-tooltip" style={toolTipStyles.tooltipContainer}>
+          <p style={toolTipStyles.productName}>{`${label}`}</p>
+          <p style={toolTipStyles.tooltipText}>quantity: <span style={toolTipStyles.tooltipValue}>{data.quantity} kg</span></p>
+          {payload.map((entry, index) => (
+            <p key={`item-${index}`} style={{ ...toolTipStyles.tooltipText, color: entry.color }}> {entry.name}: <span style={{...toolTipStyles.tooltipValue, color: entry.color}}> {entry.value.toFixed(2)} kg CO2e </span></p>
+          ))}
+        </div>
+      );
+    }
+  
+    return null;
+  };
+
+  // Scatter plot custom tooltip
+  const CustomScatterPlotTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="custom-tooltip" style={toolTipStyles.tooltipContainer}>
+          <p style={toolTipStyles.productName}>{data.productName}</p>
+          <p style={toolTipStyles.tooltipText}> Quantity: <span style={toolTipStyles.tooltipValue}>{data.quantity} kg</span></p>
+          <p style={toolTipStyles.tooltipText}> Emission Per kg: <span style={toolTipStyles.tooltipValue}>{data.emissionPerKg} kgCO2e/kg</span></p>
+          <p style={toolTipStyles.tooltipText}> Vendor ID: <span style={toolTipStyles.tooltipValue}>{data.vendorId}</span></p>
+          <p style={toolTipStyles.tooltipText}> Customer ID: <span style={toolTipStyles.tooltipValue}>{data.customerId}</span></p>
+          <div style={toolTipStyles.totalEmission}>
+            <p style={toolTipStyles.totalTitle}>Total Emission: <span style={toolTipStyles.tooltipValue}>{data.totalCO2eEmission} kgCO2e</span></p>
+            <p style={toolTipStyles.tooltipText}>
+              Inbound: <span style={toolTipStyles.tooltipValue}>{data.inbound} kgCO2e</span>
+            </p>
+            <p style={toolTipStyles.tooltipText}>
+              Outbound: <span style={toolTipStyles.tooltipValue}>{data.outbound} kgCO2e</span>
+            </p>
+            <p style={toolTipStyles.tooltipText}>
+              Production: <span style={toolTipStyles.tooltipValue}>{data.production} kgCO2e</span>
+            </p>
+          </div>
+        </div>
+      );
+    }
+  
+    return null;
+  };
+
+  const pieChartColors = ['#8884d8', '#82ca9d', '#ffc658'];
+  // Get a random dark color for each product
+  const getRandomColor = () => {
+    const hue = Math.floor(Math.random() * 360); // Random hue between 0 and 360
+    const saturation = Math.floor(Math.random() * 50) + 50; // Saturation between 50% and 100%
+    const lightness = Math.floor(Math.random() * 40) + 20; // Lightness between 20% and 60%
+
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+
+  };
+
+  return (
+    <Box sx={{ width: '100%', padding: '1rem' }}>
+      <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: '1rem' }}>
+        Emissions Statistics
+      </Typography>
+      
+      <Grid container spacing={3}>
+
+        <Grid item xs={12} md={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <ScatterChart
+            width={900}
+            height={400}
+            margin={{
+              top: 20,
+              right: 20,
+              bottom: 10,
+              left: 30,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="quantity" type="number" name="Quantity" unit="kg" />
+            <YAxis dataKey="emissionPerKg" type="number" name="Emission Per kg" unit=" kgCO2e/kg" />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<CustomScatterPlotTooltip />}/>
+            <Legend />
+            {Object.keys(productData).map(productName => (
+              <Scatter key={productName} name={productName} data={productData[productName]} fill={getRandomColor()} />
+            ))}
+          </ScatterChart>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+
+          <BarChart 
+            width={600} 
+            height={400} 
+            margin={{
+              top: 20,
+              right: 20,
+              bottom: 10,
+              left: 10,
+            }}
+            data={productGroupedData} 
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="productName" />
+            <YAxis unit=" kgCO2e" />
+            <Tooltip content={<CustomBarChartTooltip />}/>
+            <Legend />
+            <Bar dataKey="inbound" fill="#8884d8" />
+            <Bar dataKey="outbound" fill="#82ca9d" />
+            <Bar dataKey="production" fill="#ffc658" />
+            <Bar dataKey="total" fill="#ff7300" />
+          </BarChart>
+
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+
+          <Grid container spacing={1} alignItems="center" justifyContent="center" style={{ height: '50vh' }}>
+            
+            <Grid item xs={12} sm={5} container direction="column" alignItems="center">
+              {!selectedProduct && (
+                <Typography variant="h5" sx={{ textAlign: 'center', marginBottom: '1rem' }}>
+                  Select a Product to view Emission Detail
+                </Typography>
+              )}
+              <Select
+                value={selectedProduct}
+                onChange={(e) => setSelectedProduct(e.target.value)}
+                displayEmpty
+                fullWidth
+              >
+                <MenuItem value="" disabled>
+                  Select Product
+                </MenuItem>
+                {productGroupedData.map((product, index) => (
+                  <MenuItem key={index} value={product.productName}>
+                    {product.productName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+
+            <Grid item xs={12} sm={7} container alignItems="center" justifyContent="center">
+              {selectedProductData && (
+                <PieChart width={400} height={400}>
+                  <Pie
+                    data={[
+                      { name: 'inbound', value: parseFloat(selectedProductData.inbound.toFixed(2)) },
+                      { name: 'outbound', value: parseFloat(selectedProductData.outbound.toFixed(2)) },
+                      { name: 'production', value: parseFloat(selectedProductData.production.toFixed(2)) },
+                    ]}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    fill="#8884d8"
+                    label
+                  >
+                    {productGroupedData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={pieChartColors[index % pieChartColors.length]} />
+                    ))}
+                    <Label value={selectedProduct} position="center" />
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              )}
+            </Grid>
+
+          </Grid>
+
+        </Grid>
+
+        {/* <Grid item xs={12} md={6}>
+          <LineChart width={600} height={400} data={productGroupedData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="productName" />
+            <YAxis
+              label={{ value: 'kg CO2e', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
+              tick={{ dy: 10 }}
+            />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="inbound" stroke="#8884d8" />
+            <Line type="monotone" dataKey="outbound" stroke="#82ca9d" />
+            <Line type="monotone" dataKey="production" stroke="#ffc658" />
+            <Line type="monotone" dataKey="total" stroke="#ff7300" />
+          </LineChart>
+        </Grid> */}
+
+      </Grid>
+
+    </Box>
+  );
+};
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
@@ -162,159 +439,6 @@ export default function Dashboard({ darkMode, drawerOpen }) {
     },
   ];
 
-  const Statistics = ({ evaluations }) => {
-
-    const [selectedProduct, setSelectedProduct] = useState('');
-    
-    const productEmissions = evaluations.reduce((acc, evaluation) => {
-      evaluation.results.forEach(result => {
-        if (!acc[result.productName]) {
-          acc[result.productName] = { Inbound: 0, Outbound: 0, Production: 0, total: 0 };
-        }
-        acc[result.productName].Inbound += result.CO2eEmission.Inbound;
-        acc[result.productName].Outbound += result.CO2eEmission.Outbound;
-        acc[result.productName].Production += result.CO2eEmission.Production;
-        acc[result.productName].total += result.totalCO2eEmission;
-      });
-      return acc;
-    }, {});
-  
-    const productData = Object.keys(productEmissions).map(productName => ({
-      productName: productName,
-      ...productEmissions[productName],
-    }));
-
-    // const vendorEmissions = evaluations.reduce((acc, evaluation) => {
-    //   evaluation.results.forEach(result => {
-    //     const vendorId = result.vendorId;
-    //     if (!acc[vendorId]) {
-    //       acc[vendorId] = { Inbound: 0, Outbound: 0, Production: 0, total: 0 };
-    //     }
-    //     acc[vendorId].Inbound += result.CO2eEmission.Inbound;
-    //     acc[vendorId].Outbound += result.CO2eEmission.Outbound;
-    //     acc[vendorId].Production += result.CO2eEmission.Production;
-    //     acc[vendorId].total += result.totalCO2eEmission;
-    //   });
-    //   return acc;
-    // }, {});
-    
-    // const vendorData = Object.keys(vendorEmissions).map(vendorId => ({
-    //   vendorId: parseInt(vendorId),
-    //   ...vendorEmissions[vendorId],
-    // }));
-
-    // Filter data for selected product
-    const selectedProductData = productData.find(item => item.productName === selectedProduct);
-    // Colors for different emissions
-    const COLORS = ['#8884d8', '#82ca9d', '#ffc658'];
-  
-    return (
-      <Box sx={{ width: '100%', padding: '1rem' }}>
-        <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: '1rem' }}>
-          Emissions Statistics
-        </Typography>
-        
-        <Grid container spacing={3}>
-
-          <Grid item xs={12} md={6}>
-            <BarChart width={600} height={400} data={productData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="productName" />
-              <YAxis
-                label={{ value: 'kg CO2e', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
-                tick={{ dy: 10 }}
-              />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="Inbound" fill="#8884d8" />
-              <Bar dataKey="Outbound" fill="#82ca9d" />
-              <Bar dataKey="Production" fill="#ffc658" />
-              <Bar dataKey="total" fill="#ff7300" />
-            </BarChart>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <LineChart width={600} height={400} data={productData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="productName" />
-              <YAxis
-                label={{ value: 'kg CO2e', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
-                tick={{ dy: 10 }}
-              />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="Inbound" stroke="#8884d8" />
-              <Line type="monotone" dataKey="Outbound" stroke="#82ca9d" />
-              <Line type="monotone" dataKey="Production" stroke="#ffc658" />
-              <Line type="monotone" dataKey="total" stroke="#ff7300" />
-            </LineChart>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-
-            <Grid container spacing={1} alignItems="center" justifyContent="center" style={{ height: '50vh' }}>
-              
-              <Grid item xs={12} sm={5} container direction="column" alignItems="center">
-                {!selectedProduct && (
-                  <Typography variant="h5" sx={{ textAlign: 'center', marginBottom: '1rem' }}>
-                    Select a Product to view Emission Detail
-                  </Typography>
-                )}
-                <Select
-                  value={selectedProduct}
-                  onChange={(e) => setSelectedProduct(e.target.value)}
-                  displayEmpty
-                  fullWidth
-                >
-                  <MenuItem value="" disabled>
-                    Select Product
-                  </MenuItem>
-                  {productData.map((product, index) => (
-                    <MenuItem key={index} value={product.productName}>
-                      {product.productName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Grid>
-
-              <Grid item xs={12} sm={7} container alignItems="center" justifyContent="center">
-                {selectedProductData && (
-                  <PieChart width={400} height={400}>
-                    <Pie
-                      data={[
-                        { name: 'Inbound', value: parseFloat(selectedProductData.Inbound) },
-                        { name: 'Outbound', value: parseFloat(selectedProductData.Outbound) },
-                        { name: 'Production', value: parseFloat(selectedProductData.Production) },
-                      ]}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={5}
-                      fill="#8884d8"
-                      label
-                    >
-                      {productData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                      <Label value={selectedProduct} position="center" />
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                )}
-              </Grid>
-
-            </Grid>
-
-          </Grid>
-
-        </Grid>
-
-      </Box>
-    );
-  };
-
   return (
 
     <React.Fragment>
@@ -424,13 +548,13 @@ export default function Dashboard({ darkMode, drawerOpen }) {
                     <AccordionDetails>
                       <div style={{ lineHeight: '2rem', fontFamily: 'Hahmlet', fontSize: '16px' }}>
                         <div>
-                          <strong>Inbound: </strong> {result.CO2eEmission.Inbound} kg CO2e
+                          <strong>Inbound: </strong> {result.CO2eEmission.inbound} kg CO2e
                         </div>
                         <div>
-                          <strong>Outbound: </strong> {result.CO2eEmission.Outbound} kg CO2e
+                          <strong>Outbound: </strong> {result.CO2eEmission.outbound} kg CO2e
                         </div>
                         <div>
-                          <strong>Production: </strong> {result.CO2eEmission.Production} kg CO2e
+                          <strong>Production: </strong> {result.CO2eEmission.production} kg CO2e
                         </div>
                       </div>
                     </AccordionDetails>

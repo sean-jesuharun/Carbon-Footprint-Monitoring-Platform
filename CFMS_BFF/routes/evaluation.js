@@ -29,9 +29,9 @@ router.get('/', async (req, res, next) => {
                         outboundCO2eEmissionKg: undefined,
                         productionCO2eEmissionKg: undefined,
                         CO2eEmission: {
-                            Inbound: inbound,
-                            Outbound: outbound,
-                            Production: production
+                            inbound: inbound,
+                            outbound: outbound,
+                            production: production
                         },
                         totalCO2eEmission,
                         CO2eEmissionPerKg
