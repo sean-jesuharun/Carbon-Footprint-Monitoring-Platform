@@ -67,4 +67,38 @@ router.post('/verify-email', async (req, res) => {
     }
 });
 
+// Initiate Password Reset Route
+router.post('/reset-password', async (req, res) => {
+    const { username } = req.body;
+    const params = {
+        ClientId: clientId,
+        Username: username,
+    };
+    try {
+        const data = await cognito.forgotPassword(params).promise();
+        res.json({ message: 'Password reset initiated. Check your email for verification code.' });
+    } catch (err) {
+        console.error('Error initiating password reset:', err);
+        res.status(400).json({ error: 'Error initiating password reset', message: err.message });
+    }
+});
+
+// Confirm Password Reset Route
+router.post('/confirm-reset-password', async (req, res) => {
+    const { username, code, newPassword } = req.body;
+    const params = {
+        ClientId: clientId,
+        Username: username,
+        ConfirmationCode: code,
+        Password: newPassword,
+    };
+    try {
+        const data = await cognito.confirmForgotPassword(params).promise();
+        res.json({ message: 'Password reset successfully completed. You can now login with your new password.' });
+    } catch (err) {
+        console.error('Error confirming password reset:', err);
+        res.status(400).json({ error: 'Error confirming password reset', message: err.message });
+    }
+});
+
 module.exports = router;

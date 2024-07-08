@@ -34,7 +34,7 @@ const Signup = () => {
         setPasswordStarted(true);
 
         const containsNumber = /[0-9]/.test(value);
-        const containsSpecialChar = /[!@#$%^&*+]/.test(value); // Updated to include '+'
+        const containsSpecialChar = /[!@#$%^&*+]/.test(value);
         const containsUppercase = /[A-Z]/.test(value);
         const containsLowercase = /[a-z]/.test(value);
         setPasswordValid(value.length >= 8 && containsNumber && containsSpecialChar && containsUppercase && containsLowercase);

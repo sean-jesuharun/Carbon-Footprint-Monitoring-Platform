@@ -9,11 +9,11 @@ import BackDrop from '../BackDrop';
 const VerifyEmail = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { username } = location.state || {}; // Destructure state and provide default value
+    const { username } = location.state || {};
 
-    const [code, setCode] = useState(''); // State for verification code
+    const [code, setCode] = useState(''); 
     const [message, setMessage] = useState('');
-    const [isLoading, setIsLoading] = useState(false); // Loading state
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (!username) {
@@ -28,11 +28,11 @@ const VerifyEmail = () => {
             return;
         }
 
-        setIsLoading(true); // Set loading state
-        setMessage(''); // Clear previous messages
+        setIsLoading(true);
+        setMessage('');
 
         try {
-            const response = await verifyEmail(username, code); // Call verifyEmail API function with username and code
+            const response = await verifyEmail(username, code);
 
             // Check if response contains message indicating success
             if (response && response.data && response.data.message === 'Email verification successful') {
@@ -48,7 +48,7 @@ const VerifyEmail = () => {
             const errorMessage = error.response?.data?.error || 'An unexpected error occurred';
             setMessage(`Verification error: ${errorMessage}`);
         } finally {
-            setIsLoading(false); // Clear loading state
+            setIsLoading(false);
         }
     };
 

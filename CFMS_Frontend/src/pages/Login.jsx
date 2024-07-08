@@ -102,6 +102,8 @@ const Login = () => {
                     </div>
                     <Typography variant="subtitle1" sx={{ textAlign: 'center', marginTop: '10px' }}>
                         New member? <Link to="/signup" style={{ color: '#198773', textDecoration: 'none' }}>Sign up </Link>Here
+                        <br></br>
+                        <Link to="/resetpassword" style={{ color: '#198773', textDecoration: 'none' }}> Lost Password </Link> ?
                     </Typography>
                 </Card>
             </div>
