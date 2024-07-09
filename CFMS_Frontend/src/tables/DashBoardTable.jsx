@@ -138,20 +138,36 @@ const Statistics = ({ evaluations }) => {
 
   const pieChartColors = ['#8884d8', '#82ca9d', '#ffc658'];
   // Get a random dark color for each product
+  const colors = [
+    'hsl(0, 50%, 50%)',
+    'hsl(30, 50%, 50%)',
+    'hsl(60, 50%, 50%)',
+    'hsl(90, 50%, 50%)',
+    'hsl(120, 50%, 50%)',
+    'hsl(150, 50%, 50%)',
+    'hsl(180, 50%, 50%)',
+    'hsl(210, 50%, 50%)',
+    'hsl(240, 50%, 50%)',
+    'hsl(270, 50%, 50%)',
+    'hsl(300, 50%, 50%)',
+    'hsl(330, 50%, 50%)'
+  ];
+  
   const getRandomColor = () => {
-    const hue = Math.floor(Math.random() * 360); // Random hue between 0 and 360
-    const saturation = Math.floor(Math.random() * 50) + 50; // Saturation between 50% and 100%
-    const lightness = Math.floor(Math.random() * 40) + 20; // Lightness between 20% and 60%
-
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-
+    if (colors.length === 0) {
+      throw new Error('No more colors available');
+    }
+    const randomIndex = Math.floor(Math.random() * colors.length);
+    const color = colors[randomIndex];
+    colors.splice(randomIndex, 1); // Remove the picked color from the array
+    return color;
   };
 
   return (
     <Box sx={{ width: '100%', padding: '1rem' }}>
-      <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: '1rem' }}>
+      {/* <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: '1rem' }}>
         Emissions Statistics
-      </Typography>
+      </Typography> */}
       
       <Grid container spacing={3}>
 
@@ -162,15 +178,19 @@ const Statistics = ({ evaluations }) => {
             margin={{
               top: 20,
               right: 20,
-              bottom: 10,
-              left: 30,
+              bottom: 40,
+              left: 60,
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="quantity" type="number" name="Quantity" unit="kg" />
-            <YAxis dataKey="emissionPerKg" type="number" name="Emission Per kg" unit=" kgCO2e/kg" />
+            <XAxis dataKey="quantity" type="number" name="Quantity" unit="kg"> 
+              <Label value="Delivered Quantity" offset={-15} position="insideBottom" />
+            </XAxis>
+            <YAxis dataKey="emissionPerKg" type="number" name="Emission Per kg" unit=" kgCO2e/kg"> 
+              <Label value="Emission per kg" angle={-90} position="insideLeft" offset={-50}/>
+            </YAxis>
             <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<CustomScatterPlotTooltip />}/>
-            <Legend />
+            <Legend verticalAlign="top" height={36}/>
             {Object.keys(productData).map(productName => (
               <Scatter key={productName} name={productName} data={productData[productName]} fill={getRandomColor()} />
             ))}
@@ -185,14 +205,18 @@ const Statistics = ({ evaluations }) => {
             margin={{
               top: 20,
               right: 20,
-              bottom: 10,
-              left: 10,
+              bottom: 40,
+              left: 50,
             }}
             data={productGroupedData} 
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="productName" />
-            <YAxis unit=" kgCO2e" />
+            <XAxis dataKey="productName"> 
+              {/* <Label value="Product Name" offset={-5} position="insideBottom" /> */}
+            </XAxis>
+            <YAxis unit=" kgCO2e"> 
+              <Label value="CO2e Emission" angle={-90} position="insideLeft" offset={-30}/>
+            </YAxis>
             <Tooltip content={<CustomBarChartTooltip />}/>
             <Legend />
             <Bar dataKey="inbound" fill="#8884d8" />
