@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Delete, Visibility } from '@mui/icons-material';
-import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, Snackbar, Alert, useMediaQuery, useTheme, Box, Grid, Typography, Accordion, AccordionSummary, AccordionDetails,Divider, Select, MenuItem, } from '@mui/material';
+import { IconButton, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button, Snackbar, Alert, useMediaQuery, useTheme, Box, Grid, Typography, Accordion, AccordionSummary, AccordionDetails,Divider, Select, MenuItem,InputBase } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { styled } from '@mui/system';
+import { styled ,alpha} from '@mui/system';
 import axiosInstance from '../utils/axiosInstance';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, RadialBarChart, RadialBar, Cell, XAxis, YAxis, Tooltip, Legend, CartesianGrid, Label, ScatterChart, Scatter} from 'recharts';
+import SearchIcon from '@mui/icons-material/Search';
 
 const Statistics = ({ evaluations }) => {
 
@@ -304,6 +305,51 @@ const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
   color: '#fff',
 }));
 
+
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 1),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.3),
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '5rem',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex:1,
+  color:'#198773'
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: '#198773',
+  backgroundColor:'#D1E6E4',
+  marginBottom:'0.3rem',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '20%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch',
+    },
+  },
+  borderRadius:'0.5rem'
+}));
+
 export default function Dashboard({ darkMode, drawerOpen }) {
   const [rows, setRows] = useState([]);
   const [open, setOpen] = useState(false);
@@ -313,6 +359,7 @@ export default function Dashboard({ darkMode, drawerOpen }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [searchQuery, setSearchQuery] = useState('');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -390,6 +437,36 @@ export default function Dashboard({ darkMode, drawerOpen }) {
     setSnackbarOpen(false);
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredRows = rows.filter((row) => {
+    // Check for jobName
+    if (typeof row.jobName === 'string' && row.jobName.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return true;
+    }
+  
+    // Check for vehicleId (assuming it's a string or number)
+    if (
+      (typeof row.vehicleId === 'string' && row.vehicleId.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (typeof row.vehicleId === 'number' && row.vehicleId.toString().includes(searchQuery))
+    ) {
+      return true;
+    }
+  
+    // Check for customerId (assuming it's a string or number)
+    if (
+      (typeof row.customerId === 'string' && row.customerId.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (typeof row.customerId === 'number' && row.customerId.toString().includes(searchQuery))
+    ) {
+      return true;
+    }
+  
+    return false;
+  });
+  
+
   const columns = [
     { field: 'jobName', headerName: 'Job Name', width: 200, flex: 1, headerAlign: 'center', align: 'center' },
     { field: 'customerId', headerName: 'Customer id', width: 150, flex: 1, headerAlign: 'center', align: 'center' },
@@ -457,8 +534,19 @@ export default function Dashboard({ darkMode, drawerOpen }) {
         }}
       >
       {/* <div style={{ height: isMobile ? 400 : 600, width: '100%', marginTop: '10px', padding: '0.5rem' }}> */}
-      <DataGrid
-        rows={rows}
+      <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Quick Search"
+              inputProps={{ 'aria-label': 'search' }}
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </Search>
+        <DataGrid
+          rows={filteredRows}
         columns={columns}
         initialState={{
           pagination: {
