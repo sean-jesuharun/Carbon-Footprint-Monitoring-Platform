@@ -205,6 +205,7 @@ export default function CustomerTable({ darkMode, drawerOpen }) {
 
 
   const columns = [
+    { field: 'id', headerName: 'Customer Id', flex: 1, minWidth: 80, headerAlign: 'center', align: 'center' },
     { field: 'customerName', headerName: 'Name', flex: 1, minWidth: 80, headerAlign: 'center', align: 'center' },
     { field: 'location', headerName: 'Location', flex: 1, minWidth: 80, headerAlign: 'center', align: 'center' },
     { field: 'distanceFromWarehouse', headerName: 'Distance From Warehouse', flex: 1, minWidth: 80, headerAlign: 'center', align: 'center' },

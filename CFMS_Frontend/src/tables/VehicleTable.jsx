@@ -220,11 +220,9 @@ export default function VehicleTable({ darkMode, drawerOpen }) {
     return false;
   });
   
-  
-
   const columns = [
     { field: 'model', headerName: 'Model', flex: 1, width: 200, headerAlign: 'center', align: 'center' },
-    { field: 'engineSize', headerName: 'Engine Size', flex: 1, width: 150, headerAlign: 'center', align: 'center' },
+    { field: 'engineSize', headerName: 'Engine Size (L)', flex: 1, width: 150, headerAlign: 'center', align: 'center' },
     { field: 'cylinders', headerName: 'No of Cylinders', flex: 1, width: 130, headerAlign: 'center', align: 'center' },
     { field: 'vehicleType', headerName: 'Vehicle Type', flex: 1, width: 180, headerAlign: 'center', align: 'center' },
     { field: 'transmission', headerName: 'Transmission', flex: 1, width: 180, headerAlign: 'center', align: 'center' },

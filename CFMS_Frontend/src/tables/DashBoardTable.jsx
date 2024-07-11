@@ -171,26 +171,34 @@ const Statistics = ({ evaluations }) => {
       
       <Grid container spacing={3}>
 
-        <Grid item xs={12} md={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Grid item xs={12} md={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
           <ScatterChart
-            width={900}
+            width={700}
             height={400}
             margin={{
-              top: 20,
-              right: 20,
-              bottom: 40,
-              left: 60,
+              top: 10,
+              bottom: 20,
+              left: 20,
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="quantity" type="number" name="Quantity" unit="kg"> 
-              <Label value="Delivered Quantity" offset={-15} position="insideBottom" />
+            <XAxis dataKey="quantity" type="number" name="Quantity">
+              <Label
+                value="Delivered Quantity (kg)"
+                offset={-10}
+                position="insideBottom"
+              />
             </XAxis>
-            <YAxis dataKey="emissionPerKg" type="number" name="Emission Per kg" unit=" kgCO2e/kg"> 
-              <Label value="Emission per kg" angle={-90} position="insideLeft" offset={-50}/>
+            <YAxis dataKey="emissionPerKg" type="number" name="Emission Per kg">
+              <Label
+                value="Emission (kgCO2e/kg)"
+                angle={-90}
+                position="insideLeft"
+                offset={-10}
+              />
             </YAxis>
             <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<CustomScatterPlotTooltip />}/>
-            <Legend verticalAlign="top" height={36}/>
+            <Legend verticalAlign="top" height={40}/>
             {Object.keys(productData).map(productName => (
               <Scatter key={productName} name={productName} data={productData[productName]} fill={getRandomColor()} />
             ))}
@@ -211,11 +219,9 @@ const Statistics = ({ evaluations }) => {
             data={productGroupedData} 
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="productName"> 
-              {/* <Label value="Product Name" offset={-5} position="insideBottom" /> */}
-            </XAxis>
-            <YAxis unit=" kgCO2e"> 
-              <Label value="CO2e Emission" angle={-90} position="insideLeft" offset={-30}/>
+            <XAxis dataKey="productName" /> 
+            <YAxis> 
+              <Label value="Emission (kgCO2e)" angle={-90} position="insideLeft" offset={-10}/>
             </YAxis>
             <Tooltip content={<CustomBarChartTooltip />}/>
             <Legend />
@@ -234,7 +240,7 @@ const Statistics = ({ evaluations }) => {
             <Grid item xs={12} sm={5} container direction="column" alignItems="center">
               {!selectedProduct && (
                 <Typography variant="h5" sx={{ textAlign: 'center', marginBottom: '1rem' }}>
-                  Select a Product to view Emission Detail
+                  Select a Product to view Total Emission Breakdown
                 </Typography>
               )}
               <Select
@@ -313,7 +319,6 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
     backgroundColor: '#ffffff',
     color: 'black',
-    // border: '10px solid #D5E9E5',
   },
 }));
 
@@ -603,7 +608,6 @@ export default function Dashboard({ darkMode, drawerOpen }) {
             backgroundColor: '#D1E6E4',
             color: '#5D6259',
             fontWeight: '1000',
-            // width: '550px',
             textAlign: 'center',
             padding: '1rem',
             fontFamily: 'Inter',
@@ -714,7 +718,7 @@ export default function Dashboard({ darkMode, drawerOpen }) {
         transition: 'margin-left 0.3s',
       }}
     >
-      <Statistics evaluations={rows} />
+      {rows.length > 0 && <Statistics evaluations={rows} />}
     </Paper>
 
     </React.Fragment>

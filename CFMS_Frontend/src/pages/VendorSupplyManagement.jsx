@@ -23,7 +23,7 @@ function VendorSupplyManagement() {
         <Box p={2} sx={{margin:'0 9rem'}}>
         <Box sx={{ display: 'flex', justifyContent: 'center',marginLeft:'4rem',
             marginTop: { xs: 10, sm: 10 },  }}>
-          <Typography variant='h3'  color='#5D6259' fontWeight={1000} >Vendor Supply Management</Typography>
+          <Typography variant='h3'  color='#5D6259' fontWeight={1000} >Inbound Supply Management</Typography>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Button

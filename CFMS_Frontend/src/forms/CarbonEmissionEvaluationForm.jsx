@@ -170,8 +170,8 @@ const DeliveryForm = () => {
       <form onSubmit={handleSubmit}>
         <br />
         <br />
-        <Typography variant='h3' color='#5D6259' fontWeight={1000}>
-          Carbon Emission Evaluation Form
+        <Typography variant='h3' color='#5D6259' fontWeight={1000} style={{ textAlign: 'center' }}>
+          Delivery Form
         </Typography>
         <Card style={{ width: '100%', margin: '2rem auto', borderRadius: '0.5rem', padding: '1rem', border: '10px solid #D5E9E5' }}>
           <CardContent style={{ display: 'flex', flexDirection: 'column' }}>

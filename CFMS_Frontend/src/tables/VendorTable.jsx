@@ -361,9 +361,10 @@ export default function Vendortable({ darkMode, drawerOpen }) {
   );
 
   const columns = [
-    { field: 'vendorName', headerName: 'Name', flex: 1, width: 200, headerAlign: 'center', align: 'center' },
-    { field: 'location', headerName: 'Location', flex: 1, width: 150, headerAlign: 'center', align: 'center' },
-    { field: 'distanceFromWarehouse', headerName: 'Distance From Warehouse', flex: 1, width: 180, headerAlign: 'center', align: 'center' },
+    { field: 'id', headerName: 'Vendor Id', flex: 1, width: 70, headerAlign: 'center', align: 'center' },
+    { field: 'vendorName', headerName: 'Name', flex: 1, width: 150, headerAlign: 'center', align: 'center' },
+    { field: 'location', headerName: 'Location', flex: 1, width: 100, headerAlign: 'center', align: 'center' },
+    { field: 'distanceFromWarehouse', headerName: 'Distance From Warehouse', flex: 1, width: 200, headerAlign: 'center', align: 'center' },
     {
       field: 'vendorProducts',
       headerName: 'Products Details',
